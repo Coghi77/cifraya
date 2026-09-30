@@ -134,7 +134,7 @@ export default function App() {
 
   return <div className="app-shell">
     <header className="site-header glass">
-      <button className="brand" onClick={() => { setView('home'); setError(''); }} aria-label="Ir al inicio"><span className="brand-mark"><Sparkles size={20} /></span><span>KOGI<span className="brand-light">RIFAS</span></span></button>
+      <button className="brand" onClick={() => { setView('home'); setError(''); }} aria-label="Ir al inicio"><span className="brand-mark"><Sparkles size={20} /></span><span>CIFRA<span className="brand-light">YA</span></span></button>
       <nav aria-label="Navegación principal"><button className={view === 'home' ? 'nav-active' : ''} onClick={() => setView('home')}>Campañas</button><button onClick={() => { setView('admin'); setError(''); }}>Panel local</button></nav>
       <span className="local-pill"><span /> Vista local</span>
     </header>
@@ -153,6 +153,6 @@ export default function App() {
 
     {showCheckout && campaign && <div className="modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setShowCheckout(false); }}><div className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button className="modal-close" onClick={() => setShowCheckout(false)} aria-label="Cerrar"><X size={20}/></button><div className="eyebrow">Paso 2 de 2</div><h2 id="modal-title">Apartá tus números</h2><p>Esta es una prueba local. La reserva durará 30 minutos y no implica un pago.</p><div className="modal-numbers">{selected.map(value => <span key={value}><Check size={14}/>{formatted(value)}</span>)}</div><form onSubmit={reserve} className="form-grid"><label>Nombre completo<input required minLength={2} autoComplete="name" value={buyer.buyerName} onChange={event => setBuyer({ ...buyer, buyerName: event.target.value })} /></label><label>Correo electrónico<input required type="email" autoComplete="email" value={buyer.buyerEmail} onChange={event => setBuyer({ ...buyer, buyerEmail: event.target.value })} /></label><label>Teléfono<input required minLength={8} autoComplete="tel" value={buyer.buyerPhone} onChange={event => setBuyer({ ...buyer, buyerPhone: event.target.value })} /></label><div className="modal-total"><span>Total de referencia</span><strong>{money(selected.length * campaign.priceCrc)}</strong></div><button className="button primary full" disabled={busy}>{busy ? 'Apartando...' : 'Confirmar reserva de prueba'} <ArrowRight size={17}/></button></form></div></div>}
 
-    <footer className="site-footer"><span>KOGI RIFAS</span><span>Prototipo local · Fase 1 · Sin pagos habilitados</span></footer>
+    <footer className="site-footer"><span>CIFRAYA</span><span>Prototipo local · Fase 1 · Sin pagos habilitados</span></footer>
   </div>;
 }

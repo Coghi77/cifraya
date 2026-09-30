@@ -2,16 +2,16 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: kogi
-      POSTGRES_PASSWORD: kogi_local
-      POSTGRES_DB: kogi_rifas
+      POSTGRES_USER: cifraya
+      POSTGRES_PASSWORD: cifraya_local
+      POSTGRES_DB: cifraya
     ports:
       - "127.0.0.1:5434:5432"
     volumes:
-      - kogi_rifas_pg:/var/lib/postgresql/data
+      - cifraya_pg:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U kogi -d kogi_rifas"]
+      test: ["CMD-SHELL", "pg_isready -U cifraya -d cifraya"]
       interval: 5s
       retries: 10
 volumes:
-  kogi_rifas_pg:
+  cifraya_pg:

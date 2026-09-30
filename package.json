@@ -1,13 +1,13 @@
 {
-  "name": "kogi-rifas",
+  "name": "cifraya",
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "dev": "pnpm --parallel --filter @kogi-rifas/api --filter @kogi-rifas/web dev",
-    "dev:api": "pnpm --filter @kogi-rifas/api dev",
-    "dev:web": "pnpm --filter @kogi-rifas/web dev",
-    "build": "pnpm --filter @kogi-rifas/api build && pnpm --filter @kogi-rifas/web build",
-    "typecheck": "pnpm --filter @kogi-rifas/api typecheck && pnpm --filter @kogi-rifas/web typecheck",
+    "dev": "pnpm --parallel --filter @cifraya/api --filter @cifraya/web dev",
+    "dev:api": "pnpm --filter @cifraya/api dev",
+    "dev:web": "pnpm --filter @cifraya/web dev",
+    "build": "pnpm --filter @cifraya/api build && pnpm --filter @cifraya/web build",
+    "typecheck": "pnpm --filter @cifraya/api typecheck && pnpm --filter @cifraya/web typecheck",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx --env-file=.env prisma/seed.ts"

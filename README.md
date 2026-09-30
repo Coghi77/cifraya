@@ -1,4 +1,4 @@
-# Kogi Rifas
+# Cifraya
 
 Proyecto local e independiente de Alessandro Kogi. Esta carpeta no pertenece a Autoids, Autovoid ni V ONE B. No tiene configuración de despliegue ni credenciales de servicios externos.
 
