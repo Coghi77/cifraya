@@ -1,0 +1,22 @@
+{
+  "name": "@kogi-rifas/api",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file=../../.env src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@fastify/cors": "^10.1.0",
+    "@prisma/client": "^6.16.0",
+    "fastify": "^5.10.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.1",
+    "typescript": "^5.9.3"
+  }
+}

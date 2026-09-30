@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CampaignStatus {
+  DRAFT
+  LIVE
+  PAUSED
+  CLOSED
+}
+
+enum NumberStatus {
+  AVAILABLE
+  RESERVED
+  SOLD
+}
+
+enum ReservationStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+model Campaign {
+  id             String         @id @default(cuid())
+  slug           String         @unique
+  title          String
+  description    String         @default("")
+  prize          String
+  imageUrl       String?
+  priceCrc       Int
+  numberCount    Int
+  numberWidth    Int
+  status         CampaignStatus @default(DRAFT)
+  drawDate       DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  numbers        EntryNumber[]
+  reservations   Reservation[]
+}
+
+model EntryNumber {
+  id             String        @id @default(cuid())
+  campaignId     String
+  value          Int
+  status         NumberStatus  @default(AVAILABLE)
+  reservationId  String?
+  campaign       Campaign      @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  reservation    Reservation?  @relation(fields: [reservationId], references: [id], onDelete: SetNull)
+
+  @@unique([campaignId, value])
+  @@index([campaignId, status])
+  @@index([reservationId])
+}
+
+model Reservation {
+  id             String            @id @default(cuid())
+  lookupToken    String            @unique
+  campaignId     String
+  buyerName      String
+  buyerEmail     String
+  buyerPhone     String
+  status         ReservationStatus @default(ACTIVE)
+  expiresAt      DateTime
+  createdAt      DateTime          @default(now())
+  campaign       Campaign          @relation(fields: [campaignId], references: [id])
+  numbers        EntryNumber[]
+
+  @@index([status, expiresAt])
+}
