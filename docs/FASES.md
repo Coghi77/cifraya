@@ -12,7 +12,7 @@
 - Proyecto independiente con web React, API Fastify y PostgreSQL/Prisma.
 - Campaña configurable, publicación manual, números por campaña y vista pública móvil.
 - Reserva exclusiva de 30 minutos; vencimiento libera números.
-- Solo entorno local, sin cobros ni recepción de comprobantes.
+- Entorno local y demo gratuita opcional para pruebas, sin cobros ni recepción de comprobantes.
 
 **Cierre:** una campaña de prueba se crea, se publica y dos personas no pueden reservar el mismo número. Una reserva vencida se libera. Las pruebas de simultaneidad se ejecutan sobre PostgreSQL local.
 

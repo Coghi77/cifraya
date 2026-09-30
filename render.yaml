@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: cifraya-demo
+    runtime: node
+    plan: free
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm db:generate && pnpm build
+    startCommand: pnpm db:deploy && pnpm --filter @cifraya/api start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 22
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_TOKEN
+        generateValue: true

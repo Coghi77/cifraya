@@ -1,12 +1,20 @@
 import { randomBytes } from 'node:crypto';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import fastifyStatic from '@fastify/static';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 
 const db = new PrismaClient();
 const app = Fastify({ logger: true });
 await app.register(cors, { origin: ['http://127.0.0.1:4173', 'http://localhost:4173'] });
+
+if (process.env.NODE_ENV === 'production') {
+  const apiDirectory = dirname(fileURLToPath(import.meta.url));
+  await app.register(fastifyStatic, { root: resolve(apiDirectory, '../../web/dist') });
+}
 
 const campaignInput = z.object({
   title: z.string().min(3).max(120),
@@ -199,4 +207,4 @@ timer.unref();
 app.addHook('onClose', async () => { clearInterval(timer); await db.$disconnect(); });
 
 const port = Number(process.env.PORT || 4100);
-await app.listen({ host: '127.0.0.1', port });
+await app.listen({ host: process.env.NODE_ENV === 'production' ? '0.0.0.0' : '127.0.0.1', port });
