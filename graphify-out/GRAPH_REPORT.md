@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 235 nodes · 302 edges · 20 communities (14 shown, 4 thin omitted)
+- 239 nodes · 306 edges · 20 communities (14 shown, 4 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `186c2dd6`
+- Built from commit: `9b722cde`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -40,7 +40,7 @@
 4. `api()` - 8 edges
 5. `loadAdmin()` - 8 edges
 6. `compilerOptions` - 8 edges
-7. `react` - 7 edges
+7. `react` - 8 edges
 8. `"Campaign"` - 7 edges
 9. `addPhotos()` - 6 edges
 10. `expireAdminSession()` - 6 edges
@@ -71,12 +71,12 @@ Cohesion: 0.13
 Nodes (24): api(), App(), addPhotos(), createRaffle(), expireAdminSession(), goHome(), goPublic(), loadAdmin() (+16 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.08
-Nodes (24): dependencies, lucide-react, react, react-dom, devDependencies, @types/react, @types/react-dom, typescript (+16 more)
+Cohesion: 0.09
+Nodes (19): AdminReservation, ApiError, coverOf(), EntryNumber, formatNumber(), LookupResult, NumberProposal, ProofUploader() (+11 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.11
-Nodes (17): AdminReservation, ApiError, coverOf(), EntryNumber, formatNumber(), LookupResult, NumberProposal, ProofUploader() (+9 more)
+Cohesion: 0.08
+Nodes (24): dependencies, lucide-react, react, react-dom, devDependencies, @types/react, @types/react-dom, typescript (+16 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.12
@@ -119,24 +119,24 @@ Cohesion: 0.33
 Nodes (6): scripts, build, dev, start, test, typecheck
 
 ## Knowledge Gaps
-- **113 isolated node(s):** `AdminReservation`, `EntryNumber`, `LookupResult`, `NumberProposal`, `Raffle` (+108 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 139 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **114 isolated node(s):** `AdminReservation`, `EntryNumber`, `LookupResult`, `NumberProposal`, `Raffle` (+109 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 141 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `typescript` connect `Community 5` to `Community 0`, `Community 2`?**
+- **Why does `typescript` connect `Community 5` to `Community 0`, `Community 3`?**
   _High betweenness centrality (0.311) - this node is a cross-community bridge._
-- **Why does `react` connect `Community 3` to `Community 8`, `Community 2`, `Community 6`?**
-  _High betweenness centrality (0.191) - this node is a cross-community bridge._
-- **Why does `App()` connect `Community 1` to `Community 3`?**
-  _High betweenness centrality (0.122) - this node is a cross-community bridge._
+- **Why does `react` connect `Community 2` to `Community 8`, `Community 3`, `Community 6`?**
+  _High betweenness centrality (0.203) - this node is a cross-community bridge._
+- **Why does `App()` connect `Community 1` to `Community 2`?**
+  _High betweenness centrality (0.121) - this node is a cross-community bridge._
 - **What connects `AdminReservation`, `EntryNumber`, `LookupResult` to the rest of the system?**
-  _113 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _114 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.06401137980085349 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.12903225806451613 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.08 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08994708994708994 - nodes in this community are weakly interconnected._

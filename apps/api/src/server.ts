@@ -529,6 +529,48 @@ app.post('/api/admin/campaigns', async (request, reply) => {
   return reply.code(201).send(campaign);
 });
 
+app.patch<{ Params: { id: string } }>('/api/admin/campaigns/:id', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
+  const current = await db.campaign.findUnique({ where: { id: request.params.id }, select: { status: true } });
+  if (!current) return reply.code(404).send({ error: 'Rifa no encontrada.' });
+  const parsed = (current.status === 'DRAFT' ? campaignInput : campaignInput.pick({ title: true, description: true }).strict()).safeParse(request.body);
+  if (!parsed.success) return reply.code(400).send({ error: 'Revisá los datos de la rifa.' });
+  try {
+    const updated = await db.$transaction(async tx => {
+      const campaign = await tx.campaign.findUnique({ where: { id: request.params.id }, select: { status: true, numberCount: true, _count: { select: { reservations: true, winners: true } } } });
+      if (!campaign || campaign.status !== current.status) throw new Error('CAMPAIGN_CHANGED');
+      if (campaign.status !== 'DRAFT') return tx.campaign.update({ where: { id: request.params.id }, data: { title: parsed.data.title, description: parsed.data.description } });
+      const input = parsed.data as z.infer<typeof campaignInput>;
+      if (campaign._count.reservations || campaign._count.winners) throw new Error('CAMPAIGN_CHANGED');
+      if ((input.prizeCount >= 2 && !input.secondPrize) || (input.prizeCount === 3 && !input.thirdPrize)) throw new Error('INVALID_PRIZES');
+      if (new Set(input.packages.map(item => item.quantity)).size !== input.packages.length || input.packages.some(item => item.priceCrc >= item.quantity * input.priceCrc)) throw new Error('INVALID_PACKAGES');
+      if (input.numberCount !== campaign.numberCount) {
+        await tx.entryNumber.deleteMany({ where: { campaignId: request.params.id } });
+        for (let start = 0; start < input.numberCount; start += 1000) await tx.entryNumber.createMany({
+          data: Array.from({ length: Math.min(1000, input.numberCount - start) }, (_, offset) => ({ campaignId: request.params.id, value: start + offset })),
+        });
+      }
+      await tx.pricePackage.deleteMany({ where: { campaignId: request.params.id } });
+      return tx.campaign.update({ where: { id: request.params.id }, data: {
+        title: input.title, slug: input.slug, description: input.description, prize: input.prize,
+        prizeCount: input.prizeCount, secondPrize: input.prizeCount >= 2 ? input.secondPrize : null,
+        thirdPrize: input.prizeCount === 3 ? input.thirdPrize : null, priceCrc: input.priceCrc,
+        numberCount: input.numberCount, numberWidth: String(input.numberCount - 1).length,
+        packages: { create: input.packages },
+      } });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, timeout: 60_000 });
+    broadcast('campaigns');
+    return updated;
+  } catch (error) {
+    if (error instanceof Error && error.message === 'CAMPAIGN_CHANGED') return reply.code(409).send({ error: 'La rifa cambió. Actualizá el panel antes de editarla.' });
+    if (error instanceof Error && error.message === 'INVALID_PRIZES') return reply.code(400).send({ error: 'Indicá el premio de cada posición.' });
+    if (error instanceof Error && error.message === 'INVALID_PACKAGES') return reply.code(400).send({ error: 'Revisá cantidad y precio de los paquetes.' });
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') return reply.code(409).send({ error: 'Ese identificador URL ya existe.' });
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2034') return reply.code(409).send({ error: 'La rifa cambió. Intentá de nuevo.' });
+    throw error;
+  }
+});
+
 app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/publish', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   const campaign = await db.campaign.findUnique({ where: { id: request.params.id } });
