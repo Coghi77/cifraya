@@ -36,7 +36,7 @@ stateDiagram-v2
   PENDING_REVIEW --> CANCELLED: admin rechaza con motivo
 ```
 
-- Rifas admiten **100, 1.000 o 10.000 números** (`00–99`, `000–999`, `0000–9999`). Menos de 200: selección manual. Desde 200: propuesta aleatoria del servidor y máximo cinco cambios por selección. Los paquetes ajustan el precio automáticamente.
+- Rifas admiten **100, 1.000 o 10.000 números** (`00–99`, `000–999`, `0000–9999`). La compra se hace escogiendo un paquete; el servidor asigna esa cantidad de números disponibles al azar y permite cinco regeneraciones del conjunto completo. El precio de la reserva es el precio exacto del paquete. Sin paquetes configurados, se ofrece un boleto individual como compatibilidad.
 - Cada rifa configura de uno a tres premios por posición. `Campaign.prize` es el primer premio para conservar rifas anteriores; `secondPrize` y `thirdPrize` se usan según `prizeCount`. Los ganadores se publican en orden, con números vendidos distintos; la rifa se cierra al publicar el último. La migración asigna primer puesto a ganadores anteriores.
 - Edición: un borrador permite cambiar URL, precio, cantidad de números, paquetes y premios; al cambiar la cantidad se reconstruye el inventario dentro de una transacción, siempre sin reservas. Una rifa publicada o cerrada solo permite corregir título y descripción; fotos se administran por separado.
 - La propuesta aleatoria no aparta números. La reserva sí los reclama en transacción serializable; un conflicto debe devolver 409. Un comprobante presentado a tiempo conserva el apartado durante la revisión. Solo `CONFIRMED` puede resultar ganador.

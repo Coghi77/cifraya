@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 239 nodes · 306 edges · 20 communities (14 shown, 4 thin omitted)
+- 236 nodes · 304 edges · 20 communities (14 shown, 4 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9b722cde`
+- Built from commit: `078d9591`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -34,13 +34,13 @@
 - Community 19
 
 ## God Nodes (most connected - your core abstractions)
-1. `App()` - 31 edges
+1. `App()` - 30 edges
 2. `compilerOptions` - 15 edges
 3. `scripts` - 10 edges
 4. `api()` - 8 edges
 5. `loadAdmin()` - 8 edges
-6. `compilerOptions` - 8 edges
-7. `react` - 8 edges
+6. `react` - 8 edges
+7. `compilerOptions` - 8 edges
 8. `"Campaign"` - 7 edges
 9. `addPhotos()` - 6 edges
 10. `expireAdminSession()` - 6 edges
@@ -63,16 +63,16 @@
 ## Communities (20 total, 4 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.06
+Cohesion: 0.07
 Nodes (30): devDependencies, tsx, typescript, name, private, type, version, issueAdminSession() (+22 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.13
-Nodes (24): api(), App(), addPhotos(), createRaffle(), expireAdminSession(), goHome(), goPublic(), loadAdmin() (+16 more)
+Cohesion: 0.09
+Nodes (20): AdminReservation, ApiError, formatNumber(), LookupResult, NumberProposal, offersFor(), ProofUploader(), Raffle (+12 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.09
-Nodes (19): AdminReservation, ApiError, coverOf(), EntryNumber, formatNumber(), LookupResult, NumberProposal, ProofUploader() (+11 more)
+Cohesion: 0.15
+Nodes (23): api(), App(), addPhotos(), createRaffle(), expireAdminSession(), goHome(), goPublic(), loadAdmin() (+15 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.08
@@ -119,24 +119,24 @@ Cohesion: 0.33
 Nodes (6): scripts, build, dev, start, test, typecheck
 
 ## Knowledge Gaps
-- **114 isolated node(s):** `AdminReservation`, `EntryNumber`, `LookupResult`, `NumberProposal`, `Raffle` (+109 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 141 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **113 isolated node(s):** `AdminReservation`, `LookupResult`, `NumberProposal`, `Raffle`, `Reservation` (+108 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 137 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `typescript` connect `Community 5` to `Community 0`, `Community 3`?**
-  _High betweenness centrality (0.311) - this node is a cross-community bridge._
-- **Why does `react` connect `Community 2` to `Community 8`, `Community 3`, `Community 6`?**
-  _High betweenness centrality (0.203) - this node is a cross-community bridge._
-- **Why does `App()` connect `Community 1` to `Community 2`?**
-  _High betweenness centrality (0.121) - this node is a cross-community bridge._
-- **What connects `AdminReservation`, `EntryNumber`, `LookupResult` to the rest of the system?**
-  _114 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _High betweenness centrality (0.309) - this node is a cross-community bridge._
+- **Why does `react` connect `Community 1` to `Community 8`, `Community 3`, `Community 6`?**
+  _High betweenness centrality (0.204) - this node is a cross-community bridge._
+- **Why does `App()` connect `Community 2` to `Community 1`?**
+  _High betweenness centrality (0.111) - this node is a cross-community bridge._
+- **What connects `AdminReservation`, `LookupResult`, `NumberProposal` to the rest of the system?**
+  _113 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.06401137980085349 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06606606606606606 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.12903225806451613 - nodes in this community are weakly interconnected._
-- **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.08994708994708994 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08620689655172414 - nodes in this community are weakly interconnected._
+- **Should `Community 3` be split into smaller, more focused modules?**
+  _Cohesion score 0.08 - nodes in this community are weakly interconnected._
