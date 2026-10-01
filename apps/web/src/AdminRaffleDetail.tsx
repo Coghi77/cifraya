@@ -28,7 +28,7 @@ async function adminRequest<T>(url: string, token: string, options: RequestInit 
 const numberLabel = (value: number, width: number) => String(value).padStart(width, '0');
 const currency = (value: number) => new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC', maximumFractionDigits: 0 }).format(value);
 
-export default function AdminRaffleDetail({ id, token, onBack, onChange }: { id: string; token: string; onBack: () => void; onChange: () => void }) {
+export default function AdminRaffleDetail({ id, token, onBack, onChange, onReview }: { id: string; token: string; onBack: () => void; onChange: () => void; onReview: (id: string) => void }) {
   const [overview, setOverview] = useState<Overview | null>(null);
   const [history, setHistory] = useState<History | null>(null);
   const [page, setPage] = useState(1);
@@ -52,16 +52,12 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange }: { id:
     } catch (cause) { setError((cause as Error).message); }
   }, [id, token, page, historyPage, status, number]);
   useEffect(() => { void reload(); }, [reload]);
-
-  async function confirmReservation(reservationId: string) {
-    if (!window.confirm('¿Confirmás que verificaste el pago? Los números pasarán a vendidos.')) return;
-    setBusy(true);
-    try {
-      await adminRequest(`/api/admin/reservations/${reservationId}/confirm`, token, { method: 'POST' });
-      await reload(); onChange();
-    } catch (cause) { setError((cause as Error).message); }
-    finally { setBusy(false); }
-  }
+  useEffect(() => {
+    const refresh = () => { if (document.visibilityState === 'visible') void reload(); };
+    const interval = window.setInterval(refresh, 20_000);
+    window.addEventListener('cifraya:update', refresh);
+    return () => { window.clearInterval(interval); window.removeEventListener('cifraya:update', refresh); };
+  }, [reload]);
 
   async function publishWinner() {
     if (!selectedWinner) return;
@@ -87,6 +83,6 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange }: { id:
       {overview.pageCount > 1 && <div className="admin-detail-pages"><button disabled={page <= 1} onClick={() => setPage(page - 1)}>Anterior</button><span>{page} / {overview.pageCount}</span><button disabled={page >= overview.pageCount} onClick={() => setPage(page + 1)}>Siguiente</button></div>}
       {selectedWinner && <div className="admin-winner-confirm" role="dialog" aria-label="Publicar ganador"><div><strong>Número {numberLabel(selectedWinner.value, overview.campaign.numberWidth)}</strong><span>{selectedWinner.reservation?.buyerName}</span></div><button type="button" onClick={() => setSelectedWinner(null)}>Cancelar</button><button type="button" disabled={busy} onClick={() => void publishWinner()}>Publicar ganador</button></div>}
     </>}
-    <div className="admin-history"><h3>Historial de personas y boletos</h3><p>Reservas, compras confirmadas y vencimientos de esta rifa.</p>{history?.reservations.map(item => <article className="admin-history-row" key={item.id}><div><strong>{item.buyerName}</strong><span>{item.buyerEmail} · {item.buyerPhone}</span><small>{new Date(item.createdAt).toLocaleString('es-CR')} · {currency(item.totalCrc)}</small></div><div className="admin-history-values">{item.selectedValues.map(value => <span key={value}>{numberLabel(value, overview?.campaign.numberWidth || 2)}</span>)}</div><div className="admin-history-actions"><strong>{item.status === 'CONFIRMED' ? 'Vendido' : item.status === 'ACTIVE' ? 'Apartado' : item.status === 'EXPIRED' ? 'Vencido' : 'Cancelado'}</strong>{item.status === 'ACTIVE' && <button disabled={busy} onClick={() => void confirmReservation(item.id)}>Confirmar pago</button>}</div></article>)}{history?.reservations.length === 0 && <p>No hay movimientos todavía.</p>}{history && history.pageCount > 1 && <div className="admin-detail-pages"><button disabled={historyPage <= 1} onClick={() => setHistoryPage(historyPage - 1)}>Anterior</button><span>{historyPage} / {history.pageCount}</span><button disabled={historyPage >= history.pageCount} onClick={() => setHistoryPage(historyPage + 1)}>Siguiente</button></div>}</div>
+    <div className="admin-history"><h3>Historial de personas y boletos</h3><p>Reservas, compras confirmadas y vencimientos de esta rifa.</p>{history?.reservations.map(item => <article className="admin-history-row" key={item.id}><div><strong>{item.buyerName}</strong><span>{item.buyerEmail} · {item.buyerPhone}</span><small>{new Date(item.createdAt).toLocaleString('es-CR')} · {currency(item.totalCrc)}</small></div><div className="admin-history-values">{item.selectedValues.map(value => <span key={value}>{numberLabel(value, overview?.campaign.numberWidth || 2)}</span>)}</div><div className="admin-history-actions"><strong>{item.status === 'CONFIRMED' ? 'Vendido' : item.status === 'PENDING_REVIEW' ? 'En revisión' : item.status === 'ACTIVE' ? 'Apartado' : item.status === 'EXPIRED' ? 'Vencido' : 'Cancelado'}</strong>{['ACTIVE', 'PENDING_REVIEW'].includes(item.status) && <button disabled={busy} onClick={() => onReview(item.id)}>Revisar</button>}</div></article>)}{history?.reservations.length === 0 && <p>No hay movimientos todavía.</p>}{history && history.pageCount > 1 && <div className="admin-detail-pages"><button disabled={historyPage <= 1} onClick={() => setHistoryPage(historyPage - 1)}>Anterior</button><span>{historyPage} / {history.pageCount}</span><button disabled={historyPage >= history.pageCount} onClick={() => setHistoryPage(historyPage + 1)}>Siguiente</button></div>}</div>
   </section>;
 }

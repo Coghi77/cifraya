@@ -1,4 +1,4 @@
-import { randomBytes, timingSafeEqual } from 'node:crypto';
+import { randomBytes, randomInt, timingSafeEqual } from 'node:crypto';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Fastify from 'fastify';
@@ -9,6 +9,8 @@ import { z } from 'zod';
 
 const db = new PrismaClient();
 const app = Fastify({ logger: true });
+const subscribers = new Set<(event: string) => void>();
+function broadcast(event: string) { for (const subscriber of subscribers) subscriber(event); }
 await app.register(cors, { origin: ['http://127.0.0.1:4173', 'http://localhost:4173'] });
 
 if (process.env.NODE_ENV === 'production') {
@@ -41,6 +43,19 @@ const reservationInput = z.object({
   buyerEmail: z.string().email().max(200),
   buyerPhone: z.string().min(8).max(25),
 });
+
+const proposalInput = z.object({ quantity: z.number().int().min(1).max(20) });
+function sessionKey(cookie: string | undefined) {
+  return cookie?.match(/(?:^|;\s*)cifraya_selection=([a-f0-9]{48})(?:;|$)/)?.[1];
+}
+function pickRandom(values: number[], count: number) {
+  const pool = [...values];
+  for (let index = 0; index < count; index++) {
+    const chosen = randomInt(index, pool.length);
+    [pool[index], pool[chosen]] = [pool[chosen], pool[index]];
+  }
+  return pool.slice(0, count);
+}
 
 const photoInput = z.object({
   mimeType: z.enum(['image/jpeg', 'image/png', 'image/webp']),
@@ -112,8 +127,9 @@ async function expireReservations() {
     select: { id: true },
     take: 100,
   });
+  let expiredAny = false;
   for (const { id } of overdue) {
-    await db.$transaction(async tx => {
+    const expired = await db.$transaction(async tx => {
       const changed = await tx.reservation.updateMany({
         where: { id, status: 'ACTIVE', expiresAt: { lte: new Date() } },
         data: { status: 'EXPIRED' },
@@ -124,11 +140,24 @@ async function expireReservations() {
           data: { status: 'AVAILABLE', reservationId: null },
         });
       }
+      return changed.count > 0;
     });
+    expiredAny ||= expired;
   }
+  if (expiredAny) broadcast('reservations');
 }
 
 app.get('/api/health', async () => ({ ok: true }));
+
+app.get('/api/events', (_request, reply) => {
+  reply.hijack();
+  reply.raw.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', Connection: 'keep-alive', 'X-Accel-Buffering': 'no' });
+  reply.raw.write('retry: 3000\n\n');
+  const send = (event: string) => { if (!reply.raw.destroyed) reply.raw.write(`event: update\ndata: ${event}\n\n`); };
+  subscribers.add(send);
+  const heartbeat = setInterval(() => { if (!reply.raw.destroyed) reply.raw.write(': heartbeat\n\n'); }, 25_000);
+  reply.raw.on('close', () => { clearInterval(heartbeat); subscribers.delete(send); });
+});
 
 app.get('/api/campaigns', async () => {
   await expireReservations();
@@ -171,6 +200,70 @@ app.get<{ Params: { slug: string }; Querystring: { page?: string } }>('/api/camp
   return { page, pageCount: Math.ceil(campaign.numberCount / 100), numbers };
 });
 
+app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal', async (request, reply) => {
+  await expireReservations();
+  const parsed = proposalInput.safeParse(request.body);
+  if (!parsed.success) return reply.code(400).send({ error: 'Elegí entre 1 y 20 números.' });
+  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, select: { id: true, status: true, numberCount: true } });
+  if (!campaign || campaign.status !== 'LIVE' || campaign.numberCount < 200) return reply.code(404).send({ error: 'Rifa no disponible para asignación aleatoria.' });
+  let key = sessionKey(request.headers.cookie);
+  if (!key) {
+    key = randomBytes(24).toString('hex');
+    reply.header('Set-Cookie', `cifraya_selection=${key}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`);
+  }
+  try {
+    const proposal = await db.$transaction(async tx => {
+      const existing = await tx.numberProposal.findUnique({ where: { campaignId_sessionKey: { campaignId: campaign.id, sessionKey: key } } });
+      const valid = existing && !existing.consumedAt && existing.expiresAt > new Date();
+      const currentAvailable = valid ? await tx.entryNumber.count({ where: { campaignId: campaign.id, value: { in: existing.values }, status: 'AVAILABLE' } }) : 0;
+      if (valid && existing.values.length === parsed.data.quantity && currentAvailable === existing.values.length) return existing;
+      if (valid && existing.values.length !== parsed.data.quantity && existing.changesUsed >= 5) throw new Error('NO_CHANGES_LEFT');
+      const available = await tx.entryNumber.findMany({ where: { campaignId: campaign.id, status: 'AVAILABLE' }, select: { value: true } });
+      if (available.length < parsed.data.quantity) throw new Error('NOT_ENOUGH_NUMBERS');
+      const values = pickRandom(available.map(item => item.value), parsed.data.quantity);
+      return tx.numberProposal.upsert({
+        where: { campaignId_sessionKey: { campaignId: campaign.id, sessionKey: key } },
+        create: { campaignId: campaign.id, sessionKey: key, values, expiresAt: new Date(Date.now() + 15 * 60_000) },
+        update: { values, changesUsed: valid ? existing.changesUsed + (existing.values.length === parsed.data.quantity ? 0 : 1) : 0, expiresAt: new Date(Date.now() + 15 * 60_000), consumedAt: null },
+      });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    return { values: proposal.values, changesRemaining: 5 - proposal.changesUsed };
+  } catch (error) {
+    if (error instanceof Error && error.message === 'NO_CHANGES_LEFT') return reply.code(409).send({ error: 'Ya usaste los cinco cambios disponibles.' });
+    if (error instanceof Error && error.message === 'NOT_ENOUGH_NUMBERS') return reply.code(409).send({ error: 'No quedan suficientes números disponibles.' });
+    if (error instanceof Prisma.PrismaClientKnownRequestError && ['P2002', 'P2034'].includes(error.code)) return reply.code(409).send({ error: 'La selección cambió. Intentá de nuevo.' });
+    throw error;
+  }
+});
+
+app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal/change', async (request, reply) => {
+  await expireReservations();
+  const parsed = z.object({ index: z.number().int().min(0).max(19) }).safeParse(request.body);
+  const key = sessionKey(request.headers.cookie);
+  if (!parsed.success || !key) return reply.code(400).send({ error: 'Primero generá tus números.' });
+  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, select: { id: true, status: true } });
+  if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible.' });
+  try {
+    const proposal = await db.$transaction(async tx => {
+      const existing = await tx.numberProposal.findUnique({ where: { campaignId_sessionKey: { campaignId: campaign.id, sessionKey: key } } });
+      if (!existing || existing.consumedAt || existing.expiresAt <= new Date() || parsed.data.index >= existing.values.length) throw new Error('PROPOSAL_EXPIRED');
+      if (existing.changesUsed >= 5) throw new Error('NO_CHANGES_LEFT');
+      const available = await tx.entryNumber.findMany({ where: { campaignId: campaign.id, status: 'AVAILABLE', value: { notIn: existing.values } }, select: { value: true } });
+      if (!available.length) throw new Error('NOT_ENOUGH_NUMBERS');
+      const values = [...existing.values];
+      values[parsed.data.index] = available[randomInt(available.length)].value;
+      return tx.numberProposal.update({ where: { id: existing.id }, data: { values, changesUsed: { increment: 1 }, expiresAt: new Date(Date.now() + 15 * 60_000) } });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    return { values: proposal.values, changesRemaining: 5 - proposal.changesUsed };
+  } catch (error) {
+    if (error instanceof Error && error.message === 'PROPOSAL_EXPIRED') return reply.code(409).send({ error: 'La selección venció. Generá otra.' });
+    if (error instanceof Error && error.message === 'NO_CHANGES_LEFT') return reply.code(409).send({ error: 'Ya usaste los cinco cambios disponibles.' });
+    if (error instanceof Error && error.message === 'NOT_ENOUGH_NUMBERS') return reply.code(409).send({ error: 'No hay otro número disponible.' });
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2034') return reply.code(409).send({ error: 'La selección cambió. Intentá de nuevo.' });
+    throw error;
+  }
+});
+
 app.post('/api/reservations', async (request, reply) => {
   await expireReservations();
   const parsed = reservationInput.safeParse(request.body);
@@ -184,6 +277,14 @@ app.post('/api/reservations', async (request, reply) => {
 
   try {
     const reservation = await db.$transaction(async tx => {
+      if (campaign.numberCount >= 200) {
+        const key = sessionKey(request.headers.cookie);
+        if (!key) throw new Error('PROPOSAL_REQUIRED');
+        const proposal = await tx.numberProposal.findUnique({ where: { campaignId_sessionKey: { campaignId: campaign.id, sessionKey: key } } });
+        if (!proposal || proposal.consumedAt || proposal.expiresAt <= new Date() || proposal.values.length !== uniqueValues.length || proposal.values.some((value, index) => value !== uniqueValues[index])) throw new Error('PROPOSAL_REQUIRED');
+        const consumed = await tx.numberProposal.updateMany({ where: { id: proposal.id, consumedAt: null, expiresAt: { gt: new Date() } }, data: { consumedAt: new Date() } });
+        if (consumed.count !== 1) throw new Error('PROPOSAL_REQUIRED');
+      }
       const created = await tx.reservation.create({
         data: {
           lookupToken: randomBytes(24).toString('hex'),
@@ -203,6 +304,7 @@ app.post('/api/reservations', async (request, reply) => {
       if (claimed.count !== uniqueValues.length) throw new Error('NUMBER_UNAVAILABLE');
       return created;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    broadcast('reservations');
     return reply.code(201).send({
       token: reservation.lookupToken,
       expiresAt: reservation.expiresAt,
@@ -210,6 +312,7 @@ app.post('/api/reservations', async (request, reply) => {
       totalCrc: reservation.totalCrc,
     });
   } catch (error) {
+    if (error instanceof Error && error.message === 'PROPOSAL_REQUIRED') return reply.code(409).send({ error: 'Generá tus números desde esta página antes de apartarlos.' });
     if (error instanceof Error && error.message === 'NUMBER_UNAVAILABLE') {
       return reply.code(409).send({ error: 'Uno de los números acaba de ser apartado. Actualizá la selección.' });
     }
@@ -224,7 +327,7 @@ app.get<{ Params: { token: string } }>('/api/reservations/:token', async (reques
   await expireReservations();
   const reservation = await db.reservation.findUnique({
     where: { lookupToken: request.params.token },
-    include: { campaign: { select: { title: true, numberWidth: true, priceCrc: true } }, numbers: { select: { value: true } } },
+    include: { campaign: { select: { title: true, numberWidth: true, priceCrc: true } }, numbers: { select: { value: true } }, _count: { select: { proofs: true } } },
   });
   if (!reservation) return reply.code(404).send({ error: 'Reserva no encontrada' });
   return {
@@ -232,6 +335,9 @@ app.get<{ Params: { token: string } }>('/api/reservations/:token', async (reques
     expiresAt: reservation.expiresAt,
     buyerName: reservation.buyerName,
     totalCrc: reservation.totalCrc,
+    proofCount: reservation._count.proofs,
+    proofSubmittedAt: reservation.proofSubmittedAt,
+    reviewNote: reservation.reviewNote,
     values: reservation.selectedValues.length ? reservation.selectedValues : reservation.numbers.map(number => number.value),
     campaign: reservation.campaign,
   };
@@ -249,6 +355,9 @@ app.post('/api/reservations/lookup', async (request, reply) => {
       expiresAt: true,
       selectedValues: true,
       totalCrc: true,
+      proofSubmittedAt: true,
+      reviewNote: true,
+      _count: { select: { proofs: true } },
       numbers: { select: { value: true } },
       campaign: { select: { title: true, numberWidth: true, priceCrc: true } },
     },
@@ -258,10 +367,42 @@ app.post('/api/reservations/lookup', async (request, reply) => {
     buyerName: reservation.buyerName,
     status: reservation.status,
     totalCrc: reservation.totalCrc,
+    proofCount: reservation._count.proofs,
+    proofSubmittedAt: reservation.proofSubmittedAt,
+    reviewNote: reservation.reviewNote,
     expiresAt: reservation.expiresAt,
     values: reservation.selectedValues.length ? reservation.selectedValues : reservation.numbers.map(number => number.value),
     campaign: reservation.campaign,
   };
+});
+
+app.post<{ Params: { token: string } }>('/api/reservations/:token/proofs', { bodyLimit: 3_000_000 }, async (request, reply) => {
+  await expireReservations();
+  if (!/^[a-f0-9]{48}$/i.test(request.params.token)) return reply.code(404).send({ error: 'Reserva no encontrada.' });
+  const parsed = photoInput.safeParse(request.body);
+  if (!parsed.success) return reply.code(400).send({ error: 'El comprobante debe ser JPG, PNG o WebP y pesar menos de 2 MB.' });
+  const bytes = Buffer.from(parsed.data.base64, 'base64');
+  if (!validPhoto(bytes, parsed.data.mimeType)) return reply.code(400).send({ error: 'Archivo inválido o demasiado grande.' });
+  try {
+    const proof = await db.$transaction(async tx => {
+      const reservation = await tx.reservation.findUnique({ where: { lookupToken: request.params.token }, select: { id: true, status: true, expiresAt: true, _count: { select: { proofs: true } } } });
+      if (!reservation || !['ACTIVE', 'PENDING_REVIEW'].includes(reservation.status) || (reservation.status === 'ACTIVE' && reservation.expiresAt <= new Date())) throw new Error('RESERVATION_CLOSED');
+      if (reservation._count.proofs >= 3) throw new Error('PROOF_LIMIT');
+      const created = await tx.paymentProof.create({ data: { reservationId: reservation.id, mimeType: parsed.data.mimeType, data: bytes }, select: { id: true } });
+      if (reservation.status === 'ACTIVE') {
+        const updated = await tx.reservation.updateMany({ where: { id: reservation.id, status: 'ACTIVE', expiresAt: { gt: new Date() } }, data: { status: 'PENDING_REVIEW', proofSubmittedAt: new Date() } });
+        if (updated.count !== 1) throw new Error('RESERVATION_CLOSED');
+      }
+      return created;
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    broadcast('proofs');
+    return reply.code(201).send({ id: proof.id, status: 'PENDING_REVIEW' });
+  } catch (error) {
+    if (error instanceof Error && error.message === 'RESERVATION_CLOSED') return reply.code(409).send({ error: 'La reserva ya venció o fue revisada.' });
+    if (error instanceof Error && error.message === 'PROOF_LIMIT') return reply.code(409).send({ error: 'Podés adjuntar hasta tres comprobantes.' });
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2034') return reply.code(409).send({ error: 'La reserva cambió. Intentá de nuevo.' });
+    throw error;
+  }
 });
 
 app.get('/api/admin/campaigns', async (request, reply) => {
@@ -290,6 +431,7 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/photos', { bodyLi
     data: { campaignId: campaign.id, mimeType: parsed.data.mimeType, data: bytes, sortOrder: campaign._count.photos },
     select: { id: true },
   });
+  broadcast('campaigns');
   return reply.code(201).send({ id: photo.id, url: `/api/campaign-photos/${photo.id}` });
 });
 
@@ -297,6 +439,7 @@ app.delete<{ Params: { id: string } }>('/api/admin/campaign-photos/:id', async (
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   const deleted = await db.campaignPhoto.deleteMany({ where: { id: request.params.id } });
   if (!deleted.count) return reply.code(404).send({ error: 'Foto no encontrada' });
+  broadcast('campaigns');
   return { ok: true };
 });
 
@@ -304,8 +447,8 @@ app.get('/api/admin/reservations', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   await expireReservations();
   const reservations = await db.reservation.findMany({
-    where: { status: 'ACTIVE' },
-    orderBy: { createdAt: 'desc' },
+    where: { status: { in: ['ACTIVE', 'PENDING_REVIEW'] } },
+    orderBy: [{ status: 'desc' }, { createdAt: 'desc' }],
     take: 100,
     select: {
       id: true,
@@ -314,15 +457,39 @@ app.get('/api/admin/reservations', async (request, reply) => {
       createdAt: true,
       expiresAt: true,
       selectedValues: true,
+      totalCrc: true,
+      proofSubmittedAt: true,
+      _count: { select: { proofs: true } },
       campaign: { select: { title: true, numberWidth: true } },
       numbers: { select: { value: true }, orderBy: { value: 'asc' } },
     },
   });
-  return reservations.map(({ numbers, selectedValues, ...reservation }) => ({
+  return reservations.map(({ numbers, selectedValues, _count, ...reservation }) => ({
     ...reservation,
+    proofCount: _count.proofs,
     ticketCount: selectedValues.length || numbers.length,
     values: selectedValues.length ? selectedValues : numbers.map(number => number.value),
   }));
+});
+
+app.get<{ Params: { id: string } }>('/api/admin/reservations/:id', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
+  await expireReservations();
+  const reservation = await db.reservation.findUnique({ where: { id: request.params.id }, select: {
+    id: true, buyerName: true, buyerEmail: true, buyerPhone: true, selectedValues: true, status: true, totalCrc: true,
+    createdAt: true, expiresAt: true, proofSubmittedAt: true, confirmedAt: true, reviewNote: true,
+    campaign: { select: { title: true, numberWidth: true } },
+    proofs: { orderBy: { createdAt: 'asc' }, select: { id: true, createdAt: true } },
+  } });
+  if (!reservation) return reply.code(404).send({ error: 'Reserva no encontrada.' });
+  return reservation;
+});
+
+app.get<{ Params: { id: string } }>('/api/admin/payment-proofs/:id', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
+  const proof = await db.paymentProof.findUnique({ where: { id: request.params.id }, select: { mimeType: true, data: true } });
+  if (!proof) return reply.code(404).send({ error: 'Comprobante no encontrado.' });
+  return reply.type(proof.mimeType).header('Cache-Control', 'private, no-store').send(Buffer.from(proof.data));
 });
 
 app.post('/api/admin/campaigns', async (request, reply) => {
@@ -358,6 +525,7 @@ app.post('/api/admin/campaigns', async (request, reply) => {
     }
     return created;
   }, { timeout: 60_000 });
+  broadcast('campaigns');
   return reply.code(201).send(campaign);
 });
 
@@ -366,7 +534,9 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/publish', async (
   const campaign = await db.campaign.findUnique({ where: { id: request.params.id } });
   if (!campaign) return reply.code(404).send({ error: 'Rifa no encontrada' });
   if (campaign.status !== 'DRAFT') return reply.code(409).send({ error: 'Solo se publican rifas en borrador' });
-  return db.campaign.update({ where: { id: campaign.id }, data: { status: 'LIVE' } });
+  const published = await db.campaign.update({ where: { id: campaign.id }, data: { status: 'LIVE' } });
+  broadcast('campaigns');
+  return published;
 });
 
 app.get('/api/winners', async () => {
@@ -416,18 +586,38 @@ app.post<{ Params: { id: string } }>('/api/admin/reservations/:id/confirm', asyn
   await expireReservations();
   try {
     const confirmed = await db.$transaction(async tx => {
-      const reservation = await tx.reservation.findUnique({ where: { id: request.params.id }, select: { selectedValues: true } });
-      if (!reservation) throw new Error('RESERVATION_NOT_ACTIVE');
-      const changed = await tx.reservation.updateMany({ where: { id: request.params.id, status: 'ACTIVE', expiresAt: { gt: new Date() } }, data: { status: 'CONFIRMED', confirmedAt: new Date() } });
+      const reservation = await tx.reservation.findUnique({ where: { id: request.params.id }, select: { selectedValues: true, _count: { select: { proofs: true } } } });
+      if (!reservation || reservation._count.proofs === 0) throw new Error('RESERVATION_NOT_ACTIVE');
+      const changed = await tx.reservation.updateMany({ where: { id: request.params.id, status: 'PENDING_REVIEW' }, data: { status: 'CONFIRMED', confirmedAt: new Date() } });
       if (changed.count !== 1) throw new Error('RESERVATION_NOT_ACTIVE');
       const sold = await tx.entryNumber.updateMany({ where: { reservationId: request.params.id, status: 'RESERVED' }, data: { status: 'SOLD' } });
       if (sold.count !== reservation.selectedValues.length) throw new Error('RESERVATION_NOT_ACTIVE');
       return true;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    broadcast('reservations');
     return { confirmed };
   } catch (error) {
-    if (error instanceof Error && error.message === 'RESERVATION_NOT_ACTIVE') return reply.code(409).send({ error: 'La reserva venció o ya fue confirmada. Actualizá la rifa.' });
+    if (error instanceof Error && error.message === 'RESERVATION_NOT_ACTIVE') return reply.code(409).send({ error: 'La reserva debe tener un comprobante pendiente de revisión.' });
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2034') return reply.code(409).send({ error: 'La reserva cambió mientras se confirmaba. Intentá de nuevo.' });
+    throw error;
+  }
+});
+
+app.post<{ Params: { id: string } }>('/api/admin/reservations/:id/reject', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
+  const parsed = z.object({ reason: z.string().trim().min(3).max(500) }).safeParse(request.body);
+  if (!parsed.success) return reply.code(400).send({ error: 'Indicá el motivo del rechazo.' });
+  try {
+    await db.$transaction(async tx => {
+      const changed = await tx.reservation.updateMany({ where: { id: request.params.id, status: 'PENDING_REVIEW' }, data: { status: 'CANCELLED', reviewNote: parsed.data.reason } });
+      if (changed.count !== 1) throw new Error('RESERVATION_NOT_PENDING');
+      await tx.entryNumber.updateMany({ where: { reservationId: request.params.id, status: 'RESERVED' }, data: { status: 'AVAILABLE', reservationId: null } });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    broadcast('reservations');
+    return { ok: true };
+  } catch (error) {
+    if (error instanceof Error && error.message === 'RESERVATION_NOT_PENDING') return reply.code(409).send({ error: 'Esta reserva ya fue revisada.' });
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2034') return reply.code(409).send({ error: 'La reserva cambió. Intentá de nuevo.' });
     throw error;
   }
 });
@@ -446,6 +636,7 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/winner', async (r
       await tx.campaign.update({ where: { id: request.params.id }, data: { status: 'CLOSED' } });
       return winner;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    broadcast('winners');
     return reply.code(201).send(winner);
   } catch (error) {
     if (error instanceof Error && error.message === 'WINNER_NOT_ALLOWED') return reply.code(409).send({ error: 'La rifa no está abierta o ya tiene ganador.' });
@@ -457,7 +648,11 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/winner', async (r
 
 const timer = setInterval(() => expireReservations().catch(error => app.log.error(error)), 60_000);
 timer.unref();
-app.addHook('onClose', async () => { clearInterval(timer); await db.$disconnect(); });
+const proposalCleanup = setInterval(() => {
+  void db.numberProposal.deleteMany({ where: { expiresAt: { lt: new Date(Date.now() - 24 * 60 * 60_000) } } }).catch(error => app.log.error(error));
+}, 60 * 60_000);
+proposalCleanup.unref();
+app.addHook('onClose', async () => { clearInterval(timer); clearInterval(proposalCleanup); await db.$disconnect(); });
 
 const port = Number(process.env.PORT || 4100);
 await app.listen({ host: process.env.NODE_ENV === 'production' ? '0.0.0.0' : '127.0.0.1', port });

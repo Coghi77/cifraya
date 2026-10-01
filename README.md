@@ -4,7 +4,11 @@ Proyecto independiente de Alessandro Kogi. Esta carpeta no pertenece a Autoids, 
 
 ## Estado
 
-**Fase 1 para pruebas:** el inicio muestra la rifa activa; la navegación pública ofrece Inicio, Buscar boletos y Ganadores. Buscar boletos consulta una reserva mediante el código privado entregado al apartar números. Ganadores muestra un estado vacío hasta que existan sorteos verificados. El panel para crear y publicar rifas, revisar números y reservas de 30 minutos tiene una ruta directa fuera de la navegación pública y pide un PIN de seis dígitos configurado en `ADMIN_PIN`. **No se reciben pagos ni comprobantes ni se muestran compras confirmadas.**
+El inicio muestra la rifa activa; la navegación pública ofrece Inicio, Buscar boletos y Ganadores. Las rifas con menos de 200 números permiten escogerlos; desde 200 números el servidor propone números disponibles al azar y permite cinco cambios por selección. Los paquetes ajustan automáticamente el precio según la cantidad. Los números se apartan durante 30 minutos; el comprador puede adjuntar hasta tres imágenes de su comprobante SINPE al reservar o durante ese plazo. Al recibirlo, la reserva pasa a revisión y los números permanecen apartados hasta que administración confirme o rechace el pago.
+
+El panel, accesible por una ruta directa y protegido con `ADMIN_PIN`, muestra compradores, números, monto y comprobantes. La confirmación marca los números como vendidos; el rechazo exige un motivo y los libera. Buscar boletos consulta el estado mediante el código privado. Ganadores publica el resultado cuando administración selecciona un número vendido. Las vistas se actualizan mediante eventos del servidor y consultas periódicas de respaldo, sin depender de una recarga manual.
+
+La verificación de SINPE es **manual**: una imagen no prueba por sí sola que el dinero llegó. Antes de confirmar, administración debe cotejar el pago en su cuenta. Los comprobantes se guardan en PostgreSQL, por lo que conviene vigilar la capacidad de Supabase.
 
 Cada rifa admite hasta cinco fotos del premio. El panel permite cargarlas al crear el borrador o después, y eliminarlas. La primera foto es la portada; las demás aparecen en la galería de la rifa. El navegador reduce cada imagen a un máximo de 1600 píxeles y el servidor limita cada archivo guardado a 2 MB. Se almacenan en PostgreSQL para que no desaparezcan cuando Render reinicie el servicio; conviene vigilar el espacio disponible en el plan gratuito de Supabase.
 
@@ -21,9 +25,9 @@ Requisitos: Node.js 20+, pnpm 9+ y Docker Desktop.
 
 El panel pide `ADMIN_PIN` y entrega una sesión temporal de ocho horas. El PIN no se guarda en el navegador. Tras cinco intentos fallidos desde una dirección IP se bloquea el acceso durante 15 minutos. La ruta directa solo facilita el acceso al dueño; no es una medida de seguridad por sí misma. Antes de usar el sistema con participantes reales, conviene sustituir el PIN por cuentas con permisos y autenticación más fuerte.
 
-## Demo en línea sin costo
+## Entorno en línea gratuito
 
-El archivo `render.yaml` prepara **un solo Web Service Free** de Render para la web y la API. La base de datos de prueba puede ser un proyecto **Free** de Supabase. No añadir tarjeta ni activar planes o complementos pagos. Esta configuración es solo para pruebas: Render puede dormir el servicio tras 15 minutos sin visitas y Supabase puede pausar proyectos inactivos. No se deben usar datos personales reales ni cobrar participaciones.
+El archivo `render.yaml` prepara **un solo Web Service Free** de Render para la web y la API. La base de datos puede ser un proyecto **Free** de Supabase. Esta configuración no garantiza disponibilidad 24/7: Render duerme el servicio tras un período sin visitas y Supabase puede pausar proyectos inactivos. Para operar con clientes reales se necesita infraestructura con disponibilidad, respaldo y capacidad acordes al volumen.
 
 1. Crear un proyecto Free en Supabase con una cuenta propia. En **Connect**, copiar la cadena **Session pooler** (puerto `5432`); sustituir `[YOUR-PASSWORD]` por la contraseña de la base, codificando caracteres especiales si hace falta. Guardarla solo en Render como `DATABASE_URL`.
 2. En Render, conectar el repositorio `Coghi77/cifraya` y crear un **Blueprint** desde `render.yaml`. Comprobar que el único servicio tenga plan **Free**. Render solicitará `DATABASE_URL` y `ADMIN_PIN` durante la creación y generará `ADMIN_TOKEN`.
@@ -34,7 +38,7 @@ No se crea una base de datos Free de Render porque caduca a los 30 días. Si Ren
 
 ## Diseño
 
-Identidad editorial con azul tinta, coral, lima y papel cálido. La selección de números usa estados contrastados y el pase visual muestra nombre, cantidad de boletos, números y vencimiento. El panel de operación usa superficies oscuras de alto contraste.
+Identidad en blanco y negro con superficies oscuras para el panel. El pase visual muestra nombre, cantidad de boletos, números y estado de la reserva.
 
 ## Fases
 
