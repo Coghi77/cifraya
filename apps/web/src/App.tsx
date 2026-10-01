@@ -139,6 +139,7 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [adminToken, setAdminToken] = useState('');
+  const [adminPin, setAdminPin] = useState('');
   const [adminUnlocked, setAdminUnlocked] = useState(false);
   const [adminRaffles, setAdminRaffles] = useState<Raffle[]>([]);
   const [adminReservations, setAdminReservations] = useState<AdminReservation[]>([]);
@@ -170,7 +171,7 @@ export default function App() {
   function goPublic(next: 'home' | 'lookup' | 'winners') {
     const path = next === 'home' ? '/' : next === 'lookup' ? '/buscar-boletos' : '/ganadores';
     window.history.pushState({}, '', path);
-    setView(next); setError(''); setShowCheckout(false); setAdminToken(''); setAdminUnlocked(false);
+    setView(next); setError(''); setShowCheckout(false); setAdminToken(''); setAdminPin(''); setAdminUnlocked(false);
     if (next === 'home') void loadRaffles();
     window.scrollTo(0, 0);
   }
@@ -230,14 +231,11 @@ export default function App() {
     finally { setBusy(false); }
   }
 
-  async function loadAdmin() {
-    if (adminToken.length < 24) {
-      setError('La clave del panel debe tener al menos 24 caracteres. Revisá ADMIN_TOKEN en Render.');
-      return;
-    }
+  async function loadAdmin(token = adminToken) {
+    if (!token) return;
     setBusy(true); setError('');
     try {
-      const headers = { Authorization: 'Bearer ' + adminToken };
+      const headers = { Authorization: 'Bearer ' + token };
       const [list, holds] = await Promise.all([
         api<Raffle[]>('/api/admin/campaigns', { headers }),
         api<AdminReservation[]>('/api/admin/reservations', { headers }),
@@ -245,10 +243,21 @@ export default function App() {
       setAdminRaffles(list); setAdminReservations(holds); setAdminUnlocked(true);
     } catch (cause) {
       setAdminUnlocked(false); setAdminRaffles([]); setAdminReservations([]);
-      setError((cause as Error).message === 'Acceso no autorizado'
-        ? 'La clave no coincide con ADMIN_TOKEN de Render. Copiá el valor exacto desde Environment.'
-        : (cause as Error).message);
+      setAdminToken('');
+      setError((cause as Error).message === 'Acceso no autorizado' ? 'La sesión venció. Ingresá el PIN de nuevo.' : (cause as Error).message);
     } finally { setBusy(false); }
+  }
+
+  async function unlockAdmin(event: FormEvent) {
+    event.preventDefault();
+    setBusy(true); setError('');
+    try {
+      const session = await api<{ token: string }>('/api/admin/login', { method: 'POST', body: JSON.stringify({ pin: adminPin }) });
+      setAdminToken(session.token);
+      setAdminPin('');
+      await loadAdmin(session.token);
+    } catch (cause) { setError((cause as Error).message); }
+    finally { setBusy(false); }
   }
 
   async function createRaffle(event: FormEvent) {
@@ -383,7 +392,7 @@ export default function App() {
 
     {view === 'admin' && <main className="admin-page">
       <div className="admin-top"><div><div className="eyebrow">CIFRAYA / ESTUDIO</div><h1>Centro de control<span>✳</span></h1><p>Tu espacio para crear rifas y revisar las reservas de prueba.</p></div><div className="admin-badge"><LockKeyhole size={16}/> Acceso con clave</div></div>
-      {!adminUnlocked ? <section className="admin-login"><div className="admin-login-icon"><LockKeyhole size={26}/></div><h2>Entrá a tu estudio</h2><p>La dirección abre el panel; la clave protege los datos y las acciones.</p><form onSubmit={event => { event.preventDefault(); void loadAdmin(); }} className="form-grid"><label>Clave del panel<input type="password" required value={adminToken} onChange={event => setAdminToken(event.target.value)} autoComplete="off" placeholder="ADMIN_TOKEN de Render" /></label><button className="button primary full" disabled={busy}>{busy ? 'Verificando...' : 'Ingresar al panel'} <ArrowRight size={17}/></button></form></section> : <>
+      {!adminUnlocked ? <section className="admin-login"><div className="admin-login-icon"><LockKeyhole size={26}/></div><h2>Entrá a tu estudio</h2><p>Ingresá tu PIN de seis dígitos.</p><form onSubmit={event => void unlockAdmin(event)} className="form-grid"><label>PIN de administrador<input type="password" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required value={adminPin} onChange={event => setAdminPin(event.target.value.replace(/\D/g, ''))} autoComplete="off" placeholder="6 dígitos" /></label><button className="button primary full" disabled={busy || adminPin.length !== 6}>{busy ? 'Verificando...' : 'Ingresar al panel'} <ArrowRight size={17}/></button></form></section> : <>
         <div className="admin-stats"><div><small>RIFAS</small><strong>{adminRaffles.length}</strong><span>Creadas en el sistema</span></div><div><small>RESERVAS ACTIVAS</small><strong>{activeHolds.length}</strong><span>De prueba, con vencimiento</span></div><div><small>BOLETOS APARTADOS</small><strong>{heldTickets}</strong><span>Ninguno es una compra</span></div></div>
         <div className="admin-layout"><section className="admin-card"><div className="card-title"><Plus size={20}/><h2>Nueva rifa</h2></div><p className="muted">Se crea como borrador. Publicala cuando esté lista.</p><form onSubmit={createRaffle} className="form-grid"><label>Nombre de la rifa<input required minLength={3} value={draft.title} onChange={event => setDraft({ ...draft, title: event.target.value })} placeholder="Ej. Rifa de octubre" /></label><label>Identificador URL<input required pattern="[a-z0-9]+(-[a-z0-9]+)*" value={draft.slug} onChange={event => setDraft({ ...draft, slug: event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })} placeholder="rifa-octubre" /></label><label>Premio<input required value={draft.prize} onChange={event => setDraft({ ...draft, prize: event.target.value })} placeholder="Premio principal" /></label><label>Descripción<textarea value={draft.description} onChange={event => setDraft({ ...draft, description: event.target.value })} rows={3} placeholder="Contá de qué trata la rifa" /></label><div className="form-row"><label>Precio por boleto (₡)<input type="text" inputMode="numeric" pattern="[0-9]+" required maxLength={10} placeholder="Ej. 1000" value={draft.priceCrc} onChange={event => setDraft({ ...draft, priceCrc: event.target.value.replace(/\D/g, '') })} /></label><label>Cantidad de boletos<input type="text" inputMode="numeric" pattern="[0-9]+" required maxLength={6} placeholder="Ej. 100" value={draft.numberCount} onChange={event => setDraft({ ...draft, numberCount: event.target.value.replace(/\D/g, '') })} /></label></div><label>Fotos del premio (hasta 5)<input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={event => { const files = Array.from(event.target.files || []); if (files.length > 5) { setError('Podés agregar hasta 5 fotos por rifa.'); event.target.value = ''; return; } setDraftPhotos(files); }} /><span className="photo-hint">{draftPhotos.length ? `${draftPhotos.length} foto${draftPhotos.length === 1 ? '' : 's'} seleccionada${draftPhotos.length === 1 ? '' : 's'}` : 'JPG, PNG o WebP. Las fotos se optimizan al cargar.'}</span></label><button className="button primary full" disabled={busy}>Crear borrador <ArrowRight size={17}/></button></form></section>
         <section className="admin-card"><div className="card-title"><Ticket size={20}/><h2>Tus rifas</h2></div><p className="muted">Administrá las fotos antes o después de publicar.</p><div className="admin-list">{adminRaffles.map(item => <div className="admin-item admin-raffle-item" key={item.id}><div className="admin-raffle-heading"><div><strong>{item.title}</strong><span>{item.numberCount.toLocaleString('es-CR')} boletos · {money(item.priceCrc)} c/u</span></div><div><span className={'state ' + item.status.toLowerCase()}>{item.status === 'DRAFT' ? 'Borrador' : 'Abierta'}</span>{item.status === 'DRAFT' ? <button type="button" className="mini-button" onClick={() => void publish(item.id)} disabled={busy || publishingId !== null}>{publishingId === item.id ? 'Publicando...' : 'Publicar'}</button> : <button type="button" className="mini-button" onClick={() => void openRaffle(item.slug)}>Ver rifa</button>}</div></div>{publishFeedback?.id === item.id && <p className={publishFeedback.error ? 'publish-feedback error' : 'publish-feedback'} role="status">{publishFeedback.text}</p>}<div className="admin-photo-list">{item.photos.map(photo => <div className="admin-photo" key={photo.id}><AdminPhoto id={photo.id} token={adminToken}/><button type="button" onClick={() => void removePhoto(photo.id)} disabled={busy} aria-label="Eliminar foto"><X size={15}/></button></div>)}{item.photos.length === 0 && <span>Sin fotos todavía</span>}</div><label className="admin-photo-upload">{item.photos.length >= 5 ? 'Máximo de 5 fotos' : 'Agregar fotos'}<input type="file" accept="image/jpeg,image/png,image/webp" multiple disabled={busy || item.photos.length >= 5} onChange={event => { const files = Array.from(event.target.files || []); event.target.value = ''; if (files.length + item.photos.length > 5) { setError('Cada rifa admite hasta 5 fotos.'); return; } void addPhotos(item.id, files); }}/></label></div>)}{adminRaffles.length === 0 && <div className="empty-state small">Todavía no hay rifas creadas.</div>}</div></section></div>

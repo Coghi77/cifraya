@@ -15,3 +15,5 @@ services:
         sync: false
       - key: ADMIN_TOKEN
         generateValue: true
+      - key: ADMIN_PIN
+        sync: false

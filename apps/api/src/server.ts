@@ -1,4 +1,4 @@
-import { randomBytes } from 'node:crypto';
+import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Fastify from 'fastify';
@@ -57,10 +57,42 @@ function validPhoto(data: Buffer, mimeType: string) {
   return data.subarray(0, 4).toString() === 'RIFF' && data.subarray(8, 12).toString() === 'WEBP';
 }
 
+const adminSessions = new Map<string, number>();
+const failedLogins = new Map<string, { count: number; resetAt: number }>();
+
 function adminAuthorized(header: string | undefined) {
+  if (!header?.startsWith('Bearer ')) return false;
+  const token = header.slice(7);
+  const expiresAt = adminSessions.get(token);
+  if (expiresAt) {
+    if (expiresAt > Date.now()) return true;
+    adminSessions.delete(token);
+  }
   const expected = process.env.ADMIN_TOKEN;
-  return Boolean(expected && expected.length >= 24 && header === `Bearer ${expected}`);
+  return Boolean(expected && expected.length >= 24 && token === expected);
 }
+
+app.post('/api/admin/login', async (request, reply) => {
+  const key = request.ip;
+  const now = Date.now();
+  const attempts = failedLogins.get(key);
+  if (attempts && attempts.resetAt > now && attempts.count >= 5) {
+    return reply.code(429).send({ error: 'Demasiados intentos. Volvé a intentar en 15 minutos.' });
+  }
+  const parsed = z.object({ pin: z.string().regex(/^\d{6}$/) }).safeParse(request.body);
+  const expected = process.env.ADMIN_PIN;
+  const valid = Boolean(parsed.success && expected && /^\d{6}$/.test(expected) &&
+    timingSafeEqual(Buffer.from(parsed.data.pin), Buffer.from(expected)));
+  if (!valid) {
+    const current = attempts?.resetAt && attempts.resetAt > now ? attempts : { count: 0, resetAt: now + 15 * 60_000 };
+    failedLogins.set(key, { count: current.count + 1, resetAt: current.resetAt });
+    return reply.code(401).send({ error: 'PIN incorrecto o no configurado.' });
+  }
+  failedLogins.delete(key);
+  const token = randomBytes(32).toString('hex');
+  adminSessions.set(token, now + 8 * 60 * 60_000);
+  return { token };
+});
 
 async function expireReservations() {
   const overdue = await db.reservation.findMany({
