@@ -149,7 +149,7 @@ a { color: inherit; text-decoration: none; }
 .button.primary:hover:not(:disabled) { background: #ddd; }
 .current-empty { grid-template-columns: minmax(200px, 1fr) 1fr; min-height: 460px; align-items: center; }
 .current-empty > img { display: block; width: min(300px, 65%); justify-self: center; }
-.current-empty > img { mix-blend-mode: screen; }
+.current-empty > img { filter: grayscale(1) contrast(8); mix-blend-mode: screen; }
 .current-empty > div { padding: 35px; }
 .site-header { background: #fffffff0; border-bottom-color: #d6d6d6; }
 .site-header nav .nav-active { background: #111; color: #fff; }
@@ -166,6 +166,11 @@ a { color: inherit; text-decoration: none; }
 .admin-card, .admin-login, .admin-stats > div { background: #1d1d1d; }
 .ticket-main { background: #fff; }
 .ticket-stub { background: #f2f2f2; }
+.site-footer { justify-content: flex-start; padding: 15px max(5vw, 24px); background: #000; }
+.site-footer .footer-brand { width: 112px; height: 68px; }
+.site-footer .footer-brand img { width: 140px; height: 140px; top: -37px; left: -10px; filter: grayscale(1) contrast(8); }
+.how-section h2 em { font-family: inherit; font-style: normal; font-weight: inherit; }
+.how-grid span { font-family: inherit; font-style: normal; font-weight: 800; }
 .brand { position: relative; width: 165px; height: 96px; flex: none; overflow: hidden; }
 .brand-logo { position: absolute; top: -50px; left: -12px; width: 190px; height: 190px; max-width: none; border-radius: 0; object-fit: contain; background: transparent; filter: grayscale(1) invert(1) contrast(5); mix-blend-mode: multiply; }
 .footer-brand { position: relative; display: block; width: 150px; height: 83px; overflow: hidden; }
