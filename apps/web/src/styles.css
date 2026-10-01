@@ -151,7 +151,7 @@ a { color: inherit; text-decoration: none; }
 .current-empty > img { display: block; width: min(300px, 65%); justify-self: center; }
 .current-empty > img { filter: grayscale(1) contrast(8); mix-blend-mode: screen; }
 .current-empty > div { padding: 35px; }
-.site-header { background: #fffffff0; border-bottom-color: #d6d6d6; }
+.site-header { background: #fff; backdrop-filter: none; border-bottom-color: #d6d6d6; }
 .site-header nav .nav-active { background: #111; color: #fff; }
 .eyebrow, .heading-star { color: #111; }
 .how-section { background: #f2f2f2; }
