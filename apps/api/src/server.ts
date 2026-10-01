@@ -14,6 +14,12 @@ await app.register(cors, { origin: ['http://127.0.0.1:4173', 'http://localhost:4
 if (process.env.NODE_ENV === 'production') {
   const apiDirectory = dirname(fileURLToPath(import.meta.url));
   await app.register(fastifyStatic, { root: resolve(apiDirectory, '../../web/dist') });
+  app.setNotFoundHandler((request, reply) => {
+    if ((request.method === 'GET' || request.method === 'HEAD') && !request.url.startsWith('/api/')) {
+      return reply.sendFile('index.html');
+    }
+    return reply.code(404).send({ error: 'No encontrado' });
+  });
 }
 
 const campaignInput = z.object({
@@ -160,6 +166,30 @@ app.get<{ Params: { token: string } }>('/api/reservations/:token', async (reques
 app.get('/api/admin/campaigns', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   return db.campaign.findMany({ orderBy: { createdAt: 'desc' } });
+});
+
+app.get('/api/admin/reservations', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
+  await expireReservations();
+  const reservations = await db.reservation.findMany({
+    where: { status: 'ACTIVE' },
+    orderBy: { createdAt: 'desc' },
+    take: 100,
+    select: {
+      id: true,
+      buyerName: true,
+      status: true,
+      createdAt: true,
+      expiresAt: true,
+      campaign: { select: { title: true, numberWidth: true } },
+      numbers: { select: { value: true }, orderBy: { value: 'asc' } },
+    },
+  });
+  return reservations.map(({ numbers, ...reservation }) => ({
+    ...reservation,
+    ticketCount: numbers.length,
+    values: numbers.map(number => number.value),
+  }));
 });
 
 app.post('/api/admin/campaigns', async (request, reply) => {
