@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import AdminParticipantDetail from './AdminParticipantDetail';
 
 type NumberRow = {
@@ -28,6 +28,12 @@ async function adminRequest<T>(url: string, token: string, options: RequestInit 
 
 const numberLabel = (value: number, width: number) => String(value).padStart(width, '0');
 const currency = (value: number) => new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC', maximumFractionDigits: 0 }).format(value);
+const statusOptions = [
+  { value: '', label: 'Todos' },
+  { value: 'AVAILABLE', label: 'Disponibles' },
+  { value: 'RESERVED', label: 'Apartados' },
+  { value: 'SOLD', label: 'Vendidos' },
+];
 
 export default function AdminRaffleDetail({ id, token, onBack, onChange, onReview }: { id: string; token: string; onBack: () => void; onChange: () => void; onReview: (id: string) => void }) {
   const [overview, setOverview] = useState<Overview | null>(null);
@@ -37,6 +43,10 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange, onRevie
   const [status, setStatus] = useState('');
   const [number, setNumber] = useState('');
   const [selectedWinner, setSelectedWinner] = useState<NumberRow | null>(null);
+  const [winnerError, setWinnerError] = useState('');
+  const [statusOpen, setStatusOpen] = useState(false);
+  const statusRef = useRef<HTMLDivElement>(null);
+  const winnerCancelRef = useRef<HTMLButtonElement>(null);
   const [selectedTicket, setSelectedTicket] = useState<NumberRow | null>(null);
   const [participantReservationId, setParticipantReservationId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -61,6 +71,21 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange, onRevie
     window.addEventListener('cifraya:update', refresh);
     return () => { window.clearInterval(interval); window.removeEventListener('cifraya:update', refresh); };
   }, [reload]);
+  useEffect(() => {
+    if (!statusOpen) return;
+    const closeOutside = (event: PointerEvent) => { if (!statusRef.current?.contains(event.target as Node)) setStatusOpen(false); };
+    const closeEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setStatusOpen(false); };
+    document.addEventListener('pointerdown', closeOutside);
+    document.addEventListener('keydown', closeEscape);
+    return () => { document.removeEventListener('pointerdown', closeOutside); document.removeEventListener('keydown', closeEscape); };
+  }, [statusOpen]);
+  useEffect(() => {
+    if (!selectedWinner) return;
+    winnerCancelRef.current?.focus();
+    const closeEscape = (event: KeyboardEvent) => { if (event.key === 'Escape' && !busy) setSelectedWinner(null); };
+    document.addEventListener('keydown', closeEscape);
+    return () => document.removeEventListener('keydown', closeEscape);
+  }, [selectedWinner, busy]);
 
   async function publishWinner() {
     if (!selectedWinner) return;
@@ -68,7 +93,7 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange, onRevie
     try {
       await adminRequest(`/api/admin/campaigns/${id}/winner`, token, { method: 'POST', body: JSON.stringify({ numberValue: selectedWinner.value }) });
       setSelectedWinner(null); await reload(); onChange();
-    } catch (cause) { setError((cause as Error).message); }
+    } catch (cause) { setWinnerError((cause as Error).message); }
     finally { setBusy(false); }
   }
 
@@ -79,14 +104,14 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange, onRevie
     {overview && <>
       <div className="admin-detail-stats"><div><strong>{overview.counts.AVAILABLE || 0}</strong><span>Disponibles</span></div><div><strong>{overview.counts.RESERVED || 0}</strong><span>Apartados</span></div><div><strong>{overview.counts.SOLD || 0}</strong><span>Vendidos</span></div></div>
       {overview.campaign.winner && <div className="admin-winner-banner">Ganador publicado: {numberLabel(overview.campaign.winner.numberValue, overview.campaign.numberWidth)}</div>}
-      <div className="admin-detail-controls"><label>Buscar número<input inputMode="numeric" value={number} onChange={event => { setPage(1); setNumber(event.target.value.replace(/\D/g, '').slice(0, 5)); }} placeholder={'Ej. ' + '0'.repeat(overview.campaign.numberWidth - 1) + '1'} /></label><label>Estado<select value={status} onChange={event => { setPage(1); setStatus(event.target.value); }}><option value="">Todos</option><option value="AVAILABLE">Disponibles</option><option value="RESERVED">Apartados</option><option value="SOLD">Vendidos</option></select></label></div>
+      <div className="admin-detail-controls"><label>Buscar número<input inputMode="numeric" value={number} onChange={event => { setPage(1); setNumber(event.target.value.replace(/\D/g, '').slice(0, 5)); }} placeholder={'Ej. ' + '0'.repeat(overview.campaign.numberWidth - 1) + '1'} /></label><div className="admin-status-filter" ref={statusRef}><span>Estado</span><button type="button" className="admin-status-trigger" aria-label={`Estado: ${statusOptions.find(option => option.value === status)?.label}`} aria-expanded={statusOpen} aria-controls="ticket-status-options" onClick={() => setStatusOpen(open => !open)}>{statusOptions.find(option => option.value === status)?.label}<span aria-hidden="true">⌄</span></button>{statusOpen && <div id="ticket-status-options" className="admin-status-options" role="group" aria-label="Filtrar por estado">{statusOptions.map(option => <button key={option.value} type="button" aria-pressed={status === option.value} onClick={() => { setPage(1); setStatus(option.value); setStatusOpen(false); }}>{option.label}{status === option.value && <span aria-hidden="true">✓</span>}</button>)}</div>}</div></div>
       <p className="admin-detail-help">Abrí un boleto para ver sus números y el historial del participante.</p>
       <div className="admin-ticket-grid">{overview.numbers.map(item => <button className={'admin-ticket-card ' + item.status.toLowerCase()} type="button" key={item.value} onClick={() => { setSelectedTicket(item); if (item.reservation) setParticipantReservationId(item.reservation.id); }} aria-label={`Boleto ${numberLabel(item.value, overview.campaign.numberWidth)}, ${item.status === 'SOLD' ? 'vendido' : item.status === 'RESERVED' ? 'apartado' : 'disponible'}${item.reservation ? ', ' + item.reservation.buyerName : ''}`}><span className="admin-ticket-top"><span>CIFRAYA / BOLETO</span><span>{item.status === 'SOLD' ? 'VENDIDO' : item.status === 'RESERVED' ? 'APARTADO' : 'DISPONIBLE'}</span></span><strong className="admin-ticket-number">{numberLabel(item.value, overview.campaign.numberWidth)}</strong><span className="admin-ticket-divider"/><span className="admin-ticket-bottom"><span>{item.reservation?.buyerName || 'Sin asignar'}</span><span>VER →</span></span></button>)}{overview.numbers.length === 0 && <p>No hay números con este filtro.</p>}</div>
       {overview.pageCount > 1 && <div className="admin-detail-pages"><button disabled={page <= 1} onClick={() => setPage(page - 1)}>Anterior</button><span>{page} / {overview.pageCount}</span><button disabled={page >= overview.pageCount} onClick={() => setPage(page + 1)}>Siguiente</button></div>}
-      {selectedWinner && <div className="admin-winner-confirm" role="group" aria-label="Confirmar ganador"><div><strong>¿Publicar el número {numberLabel(selectedWinner.value, overview.campaign.numberWidth)} como ganador?</strong><span>{selectedWinner.reservation?.buyerName} · Esta acción cierra la rifa.</span></div><button type="button" disabled={busy} onClick={() => setSelectedWinner(null)}>Cancelar</button><button type="button" disabled={busy} onClick={() => void publishWinner()}>{busy ? 'Publicando...' : 'Sí, publicar ganador'}</button></div>}
     </>}
     <div className="admin-history"><h3>Personas y participaciones</h3><p>Abrí una tarjeta para ver todas las rifas y números de esa persona.</p><div className="admin-history-grid">{history?.reservations.map(item => <article className="admin-history-card" key={item.id}><button type="button" onClick={() => setParticipantReservationId(item.id)}><span className="admin-history-card-top"><strong>{item.buyerName}</strong><span>{item.status === 'CONFIRMED' ? 'Vendido' : item.status === 'PENDING_REVIEW' ? 'En revisión' : item.status === 'ACTIVE' ? 'Apartado' : item.status === 'EXPIRED' ? 'Vencido' : 'Cancelado'}</span></span><span className="admin-history-card-count">{item.selectedValues.length} <small>{item.selectedValues.length === 1 ? 'boleto' : 'boletos'}</small></span><span className="admin-history-card-bottom"><span>{new Date(item.createdAt).toLocaleDateString('es-CR')} · {currency(item.totalCrc)}</span><span>ABRIR →</span></span></button>{['ACTIVE', 'PENDING_REVIEW'].includes(item.status) && <button className="admin-history-review" type="button" disabled={busy} onClick={() => onReview(item.id)}>Revisar pago</button>}</article>)}{history?.reservations.length === 0 && <p>No hay movimientos todavía.</p>}</div>{history && history.pageCount > 1 && <div className="admin-detail-pages"><button disabled={historyPage <= 1} onClick={() => setHistoryPage(historyPage - 1)}>Anterior</button><span>{historyPage} / {history.pageCount}</span><button disabled={historyPage >= history.pageCount} onClick={() => setHistoryPage(historyPage + 1)}>Siguiente</button></div>}</div>
     {selectedTicket && !participantReservationId && overview && <div className="participant-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setSelectedTicket(null); }}><section className="participant-panel participant-available" role="dialog" aria-modal="true" aria-label="Detalle del boleto"><button className="participant-close" type="button" onClick={() => setSelectedTicket(null)} aria-label="Cerrar">×</button><span className="eyebrow">CIFRAYA / BOLETO</span><strong>{numberLabel(selectedTicket.value, overview.campaign.numberWidth)}</strong><p>Este número está disponible. Aún no tiene una persona asignada.</p></section></div>}
-    {participantReservationId && <AdminParticipantDetail reservationId={participantReservationId} token={token} onClose={() => { setParticipantReservationId(null); setSelectedTicket(null); }} onReview={reservationId => { setParticipantReservationId(null); setSelectedTicket(null); onReview(reservationId); }} onChooseWinner={selectedTicket?.status === 'SOLD' && !overview?.campaign.winner ? () => { setSelectedWinner(selectedTicket); setParticipantReservationId(null); setSelectedTicket(null); } : undefined} />}
+    {participantReservationId && <AdminParticipantDetail reservationId={participantReservationId} token={token} onClose={() => { setParticipantReservationId(null); setSelectedTicket(null); }} onReview={reservationId => { setParticipantReservationId(null); setSelectedTicket(null); onReview(reservationId); }} onChooseWinner={selectedTicket?.status === 'SOLD' && !overview?.campaign.winner ? () => { setWinnerError(''); setSelectedWinner(selectedTicket); setParticipantReservationId(null); setSelectedTicket(null); } : undefined} />}
+    {selectedWinner && overview && <div className="winner-modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget && !busy) setSelectedWinner(null); }}><section className="winner-modal" role="dialog" aria-modal="true" aria-labelledby="winner-modal-title"><span className="eyebrow">PUBLICAR RESULTADO</span><h2 id="winner-modal-title">¿Confirmás el ganador?</h2><div className="winner-modal-ticket"><span>CIFRAYA / BOLETO GANADOR</span><strong>{numberLabel(selectedWinner.value, overview.campaign.numberWidth)}</strong><span>{selectedWinner.reservation?.buyerName}</span></div><p>Al publicar este resultado, la rifa se cierra y el ganador aparece en la página pública.</p>{winnerError && <p className="admin-detail-error" role="alert">{winnerError}</p>}<div className="winner-modal-actions"><button ref={winnerCancelRef} type="button" disabled={busy} onClick={() => setSelectedWinner(null)}>Cancelar</button><button type="button" disabled={busy} onClick={() => void publishWinner()}>{busy ? 'Publicando...' : 'Publicar ganador'}</button></div></section></div>}
   </section>;
 }
