@@ -170,19 +170,32 @@ a { color: inherit; text-decoration: none; }
 .photo-thumbnails button { flex: 0 0 74px; height: 74px; overflow: hidden; padding: 0; border: 2px solid #aaa; border-radius: 9px; background: #eee; }
 .photo-thumbnails button.active { border-color: #111; box-shadow: 0 0 0 2px #fff inset; }
 .photo-thumbnails img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.photo-hint { color: #aaa; font-size: 11px; font-weight: 500; }
-.admin-raffle-item { display: block; }
-.admin-raffle-heading { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
-.admin-raffle-heading > div { display: flex; flex-direction: column; gap: 6px; }
-.admin-raffle-heading > div:last-child { align-items: end; }
-.admin-photo-list { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 13px; }
+.photo-field { display: grid; gap: 8px; }
+.photo-field > span { color: #e8e8e8; font-size: 12px; font-weight: 800; }
+.photo-picker { position: relative; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 14px; min-height: 70px; padding: 13px 16px; border: 1px dashed #838383; border-radius: 10px; background: #292929; cursor: pointer; }
+.photo-picker:hover { border-color: #fff; background: #333; }
+.photo-picker:focus-within { outline: 2px solid #fff; outline-offset: 2px; }
+.admin-page .form-grid .photo-picker input, .photo-picker input { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; padding: 0; border: 0; opacity: 0; cursor: pointer; }
+.photo-picker-title { display: inline-flex; align-items: center; gap: 8px; color: #fff; font-size: 12px; font-weight: 800; }
+.photo-picker-hint { color: #bbb; font-size: 11px; font-weight: 500; }
+.photo-picker.compact { min-height: 40px; padding: 9px 12px; border-style: solid; white-space: nowrap; }
+.photo-picker.disabled { opacity: .5; cursor: not-allowed; }
+.admin-raffle-card { display: grid; gap: 14px; padding: 19px 0; border-top: 1px solid #555; }
+.admin-raffle-heading { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 18px; }
+.admin-raffle-info, .admin-raffle-actions { display: flex; flex-direction: column; gap: 7px; }
+.admin-raffle-info strong { font-size: 15px; line-height: 1.3; }
+.admin-raffle-info span { color: #aaa; font-size: 11px; }
+.admin-raffle-actions { align-items: flex-end; }
+.admin-action-button { min-width: 100px; padding: 8px 11px; border: 1px solid #aaa; border-radius: 7px; background: transparent; color: #fff; font-size: 11px; font-weight: 800; }
+.admin-action-button:hover:not(:disabled) { background: #fff; color: #111; }
+.admin-action-button:disabled { opacity: .5; }
+.admin-photo-section { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 12px; border: 1px solid #444; border-radius: 10px; background: #242424; }
+.admin-photo-list { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-height: 40px; }
 .admin-photo-list > span { color: #aaa; font-size: 11px; }
 .admin-photo { position: relative; width: 66px; height: 66px; overflow: hidden; border: 1px solid #777; border-radius: 7px; }
 .admin-photo img { width: 100%; height: 100%; object-fit: cover; }
 .admin-photo-loading { display: grid; place-items: center; width: 100%; height: 100%; font-size: 10px; color: #aaa; }
 .admin-photo button { position: absolute; top: 2px; right: 2px; display: grid; place-items: center; width: 22px; height: 22px; padding: 0; border: 0; border-radius: 50%; background: #111; color: #fff; }
-.admin-photo-upload { display: inline-flex; flex-direction: column; gap: 5px; margin-top: 12px; color: #fff; font-size: 11px; font-weight: 800; }
-.admin-photo-upload input { max-width: 250px; font-size: 10px; color: #aaa; }
 .publish-feedback { margin: 12px 0 0; color: #fff; font-size: 12px; line-height: 1.5; }
 .publish-feedback.error { color: #fff; border-left: 3px solid #fff; padding-left: 10px; }
 .site-footer { justify-content: flex-start; padding: 15px max(5vw, 24px); background: #000; }
@@ -393,3 +406,9 @@ a { color: inherit; text-decoration: none; }
 .admin-card, .admin-login, .admin-stats > div { background: #1d1d1d; }
 .ticket-main { background: #fff; }
 .ticket-stub { background: #f2f2f2; }
+@media (max-width: 700px) {
+  .admin-raffle-heading { grid-template-columns: 1fr; gap: 12px; }
+  .admin-raffle-actions { flex-direction: row; align-items: center; justify-content: space-between; }
+  .admin-photo-section { align-items: stretch; }
+  .admin-photo-section .photo-picker { width: 100%; justify-content: center; }
+}
