@@ -24,7 +24,7 @@ El panel de prueba pide el valor de `ADMIN_TOKEN`. No se guarda en el navegador.
 El archivo `render.yaml` prepara **un solo Web Service Free** de Render para la web y la API. La base de datos de prueba puede ser un proyecto **Free** de Supabase. No añadir tarjeta ni activar planes o complementos pagos. Esta configuración es solo para pruebas: Render puede dormir el servicio tras 15 minutos sin visitas y Supabase puede pausar proyectos inactivos. No se deben usar datos personales reales ni cobrar participaciones.
 
 1. Crear un proyecto Free en Supabase con una cuenta propia. En **Connect**, copiar la cadena **Session pooler** (puerto `5432`); sustituir `[YOUR-PASSWORD]` por la contraseña de la base, codificando caracteres especiales si hace falta. Guardarla solo en Render como `DATABASE_URL`.
-2. En Render, conectar el repositorio privado `Coghi77/cifraya` y crear un **Blueprint** desde `render.yaml`. Comprobar que el único servicio tenga plan **Free**. Render solicitará `DATABASE_URL` durante la creación y generará `ADMIN_TOKEN`.
+2. En Render, conectar el repositorio `Coghi77/cifraya` y crear un **Blueprint** desde `render.yaml`. Comprobar que el único servicio tenga plan **Free**. Render solicitará `DATABASE_URL` durante la creación y generará `ADMIN_TOKEN`.
 3. El comando de arranque aplica las migraciones existentes y luego inicia la web y la API. Abrir la URL `onrender.com` que asigne Render y comprobar `/api/health`.
 4. Para crear campañas de prueba, consultar `ADMIN_TOKEN` en el panel de variables de Render y pegarlo en el panel de la demo. No compartirlo ni ponerlo en GitHub.
 
