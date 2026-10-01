@@ -23,7 +23,7 @@ Requisitos: Node.js 20+, pnpm 9+ y Docker Desktop.
 5. Ejecutar `pnpm dev`.
 6. Abrir `http://127.0.0.1:4173`. La API escucha solo en `127.0.0.1:4100`.
 
-El panel pide `ADMIN_PIN` y entrega una sesión temporal de ocho horas. El PIN no se guarda en el navegador. Tras cinco intentos fallidos desde una dirección IP se bloquea el acceso durante 15 minutos. La ruta directa solo facilita el acceso al dueño; no es una medida de seguridad por sí misma. Antes de usar el sistema con participantes reales, conviene sustituir el PIN por cuentas con permisos y autenticación más fuerte.
+El panel pide `ADMIN_PIN` y entrega una sesión firmada de ocho horas con `ADMIN_TOKEN`, que sigue siendo válida si el servidor se reinicia. El PIN no se guarda en el navegador. Si la sesión vence mientras se prepara una rifa, el panel vuelve a pedirlo y conserva el borrador en la pestaña. Tras cinco intentos fallidos desde una dirección IP se bloquea el acceso durante 15 minutos. La ruta directa solo facilita el acceso al dueño; no es una medida de seguridad por sí misma. Antes de usar el sistema con participantes reales, conviene sustituir el PIN por cuentas con permisos y autenticación más fuerte.
 
 ## Entorno en línea gratuito
 

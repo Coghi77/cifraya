@@ -6,6 +6,7 @@ import cors from '@fastify/cors';
 import fastifyStatic from '@fastify/static';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { z } from 'zod';
+import { issueAdminSession, verifyAdminSession } from './adminSession.js';
 
 const db = new PrismaClient();
 const app = Fastify({ logger: true });
@@ -84,19 +85,10 @@ function validPhoto(data: Buffer, mimeType: string) {
   return data.subarray(0, 4).toString() === 'RIFF' && data.subarray(8, 12).toString() === 'WEBP';
 }
 
-const adminSessions = new Map<string, number>();
 const failedLogins = new Map<string, { count: number; resetAt: number }>();
 
 function adminAuthorized(header: string | undefined) {
-  if (!header?.startsWith('Bearer ')) return false;
-  const token = header.slice(7);
-  const expiresAt = adminSessions.get(token);
-  if (expiresAt) {
-    if (expiresAt > Date.now()) return true;
-    adminSessions.delete(token);
-  }
-  const expected = process.env.ADMIN_TOKEN;
-  return Boolean(expected && expected.length >= 24 && token === expected);
+  return Boolean(header?.startsWith('Bearer ') && verifyAdminSession(header.slice(7), process.env.ADMIN_TOKEN));
 }
 
 app.post('/api/admin/login', async (request, reply) => {
@@ -116,9 +108,10 @@ app.post('/api/admin/login', async (request, reply) => {
     return reply.code(401).send({ error: 'PIN incorrecto o no configurado.' });
   }
   failedLogins.delete(key);
-  const token = randomBytes(32).toString('hex');
-  adminSessions.set(token, now + 8 * 60 * 60_000);
-  return { token };
+  if (!process.env.ADMIN_TOKEN || process.env.ADMIN_TOKEN.length < 24) {
+    return reply.code(503).send({ error: 'La configuración del panel está incompleta.' });
+  }
+  return { token: issueAdminSession(process.env.ADMIN_TOKEN, now) };
 });
 
 async function expireReservations() {

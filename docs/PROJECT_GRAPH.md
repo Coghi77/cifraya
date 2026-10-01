@@ -41,6 +41,7 @@ stateDiagram-v2
 - Fotos del premio: hasta cinco; comprobantes: hasta tres. Cada imagen guardada pesa como máximo 2 MB. **Ambos tipos se guardan hoy en PostgreSQL**, no en Supabase Storage. El administrador debe cotejar SINPE con el dinero realmente recibido; la foto sola no verifica el pago.
 - La ficha mini CRM relaciona reservas por correo electrónico sin distinguir mayúsculas, con historial paginado. Es una agrupación práctica, no una identidad verificada.
 - Los cambios se propagan por SSE y las vistas activas consultan de respaldo cada 20 segundos. El servicio gratuito de Render puede dormir; SSE no equivale a disponibilidad garantizada 24/7.
+- El PIN admin crea una sesión HMAC de ocho horas firmada con `ADMIN_TOKEN` (`apps/api/src/adminSession.ts`); sobrevive reinicios del proceso. Si vence, el formulario de borrador permanece en estado de la pestaña mientras se vuelve a ingresar el PIN.
 
 ## Reglas de trabajo
 

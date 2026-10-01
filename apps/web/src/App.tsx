@@ -89,12 +89,16 @@ async function preparePhoto(file: File) {
   throw new Error('Esta foto es demasiado grande incluso después de comprimirla.');
 }
 
+class ApiError extends Error {
+  constructor(message: string, readonly status: number) { super(message); }
+}
+
 async function api<T>(url: string, options?: RequestInit): Promise<T> {
   const headers = new Headers(options?.headers);
   if (options?.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
   const response = await fetch(url, { ...options, headers });
   const payload = await response.json();
-  if (!response.ok) throw new Error(payload.error || 'Ocurrió un error');
+  if (!response.ok) throw new ApiError(payload.error || 'Ocurrió un error', response.status);
   return payload as T;
 }
 
@@ -409,9 +413,18 @@ export default function App() {
       ]);
       setAdminRaffles(list); setAdminReservations(holds); setAdminUnlocked(true);
     } catch (cause) {
-      if ((cause as Error).message === 'Acceso no autorizado') { setAdminUnlocked(false); setAdminRaffles([]); setAdminReservations([]); setAdminToken(''); setError('La sesión venció. Ingresá el PIN de nuevo.'); }
+      if (cause instanceof ApiError && cause.status === 401) expireAdminSession();
       else if (!silent) setError((cause as Error).message);
     } finally { if (!silent) setBusy(false); }
+  }
+
+  function expireAdminSession() {
+    setAdminUnlocked(false);
+    setAdminRaffles([]);
+    setAdminReservations([]);
+    setAdminToken('');
+    setReviewReservationId(null);
+    setError('La sesión venció. Ingresá el PIN de nuevo; tu borrador sigue guardado en esta pestaña.');
   }
 
   async function unlockAdmin(event: FormEvent) {
@@ -457,8 +470,13 @@ export default function App() {
       }
       await loadAdmin();
     } catch (cause) {
-      if (created) await loadAdmin();
-      setError((created ? 'La rifa se creó, pero faltó cargar alguna foto. Podés agregarla en Tus rifas. ' : '') + (cause as Error).message);
+      if (cause instanceof ApiError && cause.status === 401) {
+        expireAdminSession();
+        if (created) setError('La rifa se creó, pero la sesión venció al cargar una foto. Ingresá el PIN de nuevo y agregala en Tus rifas.');
+      } else {
+        if (created) await loadAdmin();
+        setError((created ? 'La rifa se creó, pero faltó cargar alguna foto. Podés agregarla en Tus rifas. ' : '') + (cause as Error).message);
+      }
     }
     finally { setBusy(false); }
   }
@@ -472,7 +490,7 @@ export default function App() {
         await api(`/api/admin/campaigns/${id}/photos`, { method: 'POST', headers: { Authorization: 'Bearer ' + adminToken }, body: JSON.stringify(photo) });
       }
       await Promise.all([loadAdmin(), loadRaffles()]);
-    } catch (cause) { await loadAdmin(); setError((cause as Error).message); }
+    } catch (cause) { if (cause instanceof ApiError && cause.status === 401) expireAdminSession(); else { await loadAdmin(); setError((cause as Error).message); } }
     finally { setBusy(false); }
   }
 
@@ -481,7 +499,7 @@ export default function App() {
     try {
       await api(`/api/admin/campaign-photos/${id}`, { method: 'DELETE', headers: { Authorization: 'Bearer ' + adminToken } });
       await Promise.all([loadAdmin(), loadRaffles()]);
-    } catch (cause) { setError((cause as Error).message); }
+    } catch (cause) { if (cause instanceof ApiError && cause.status === 401) expireAdminSession(); else setError((cause as Error).message); }
     finally { setBusy(false); }
   }
 
@@ -493,7 +511,8 @@ export default function App() {
       setPublishFeedback({ id, text: 'Rifa publicada. Ya está visible en Inicio.', error: false });
       void loadRaffles();
     } catch (cause) {
-      setPublishFeedback({ id, text: (cause as Error).message || 'No se pudo publicar la rifa.', error: true });
+      if (cause instanceof ApiError && cause.status === 401) expireAdminSession();
+      else setPublishFeedback({ id, text: (cause as Error).message || 'No se pudo publicar la rifa.', error: true });
     } finally { setPublishingId(null); }
   }
 
