@@ -121,6 +121,7 @@ app.post('/api/reservations', async (request, reply) => {
           buyerName: input.buyerName,
           buyerEmail: input.buyerEmail,
           buyerPhone: input.buyerPhone,
+          selectedValues: uniqueValues,
           expiresAt: new Date(Date.now() + 30 * 60_000),
         },
       });
@@ -158,7 +159,33 @@ app.get<{ Params: { token: string } }>('/api/reservations/:token', async (reques
   return {
     status: reservation.status,
     expiresAt: reservation.expiresAt,
-    values: reservation.numbers.map(number => number.value),
+    buyerName: reservation.buyerName,
+    values: reservation.selectedValues.length ? reservation.selectedValues : reservation.numbers.map(number => number.value),
+    campaign: reservation.campaign,
+  };
+});
+
+app.post('/api/reservations/lookup', async (request, reply) => {
+  const parsed = z.object({ token: z.string().regex(/^[a-f0-9]{48}$/i) }).safeParse(request.body);
+  if (!parsed.success) return reply.code(404).send({ error: 'No encontramos una reserva con ese código.' });
+  await expireReservations();
+  const reservation = await db.reservation.findUnique({
+    where: { lookupToken: parsed.data.token },
+    select: {
+      buyerName: true,
+      status: true,
+      expiresAt: true,
+      selectedValues: true,
+      numbers: { select: { value: true } },
+      campaign: { select: { title: true, numberWidth: true, priceCrc: true } },
+    },
+  });
+  if (!reservation) return reply.code(404).send({ error: 'No encontramos una reserva con ese código.' });
+  return {
+    buyerName: reservation.buyerName,
+    status: reservation.status,
+    expiresAt: reservation.expiresAt,
+    values: reservation.selectedValues.length ? reservation.selectedValues : reservation.numbers.map(number => number.value),
     campaign: reservation.campaign,
   };
 });
@@ -181,14 +208,15 @@ app.get('/api/admin/reservations', async (request, reply) => {
       status: true,
       createdAt: true,
       expiresAt: true,
+      selectedValues: true,
       campaign: { select: { title: true, numberWidth: true } },
       numbers: { select: { value: true }, orderBy: { value: 'asc' } },
     },
   });
-  return reservations.map(({ numbers, ...reservation }) => ({
+  return reservations.map(({ numbers, selectedValues, ...reservation }) => ({
     ...reservation,
-    ticketCount: numbers.length,
-    values: numbers.map(number => number.value),
+    ticketCount: selectedValues.length || numbers.length,
+    values: selectedValues.length ? selectedValues : numbers.map(number => number.value),
   }));
 });
 

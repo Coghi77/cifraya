@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { ArrowRight, Check, ChevronLeft, ChevronRight, Clock3, Copy, LockKeyhole, Plus, ShieldCheck, Sparkles, Ticket, X } from 'lucide-react';
+import { ArrowRight, Check, ChevronLeft, ChevronRight, Clock3, Copy, LockKeyhole, Plus, Search, ShieldCheck, Sparkles, Ticket, Trophy, X } from 'lucide-react';
 
 type Raffle = {
   id: string;
@@ -16,6 +16,13 @@ type Raffle = {
 };
 type EntryNumber = { value: number; status: 'AVAILABLE' | 'RESERVED' | 'SOLD' };
 type Reservation = { token: string; expiresAt: string; values: number[]; totalCrc: number };
+type LookupResult = {
+  buyerName: string;
+  status: 'ACTIVE' | 'EXPIRED' | 'CANCELLED';
+  expiresAt: string;
+  values: number[];
+  campaign: { title: string; numberWidth: number; priceCrc: number };
+};
 type AdminReservation = {
   id: string;
   buyerName: string;
@@ -26,9 +33,16 @@ type AdminReservation = {
   values: number[];
   campaign: { title: string; numberWidth: number };
 };
-type View = 'home' | 'raffle' | 'admin';
+type View = 'home' | 'raffle' | 'lookup' | 'winners' | 'admin';
 
 const ADMIN_PATH = '/estudio-cifraya';
+function viewFromPath(path: string): View {
+  if (path === ADMIN_PATH) return 'admin';
+  if (path === '/buscar-boletos') return 'lookup';
+  if (path === '/ganadores') return 'winners';
+  if (path.startsWith('/rifa/')) return 'raffle';
+  return 'home';
+}
 const money = (amount: number) => new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC', maximumFractionDigits: 0 }).format(amount);
 const formatNumber = (value: number, width: number) => String(value).padStart(width, '0');
 
@@ -70,7 +84,7 @@ function TicketPass({ name, title, values, width, count, status, timer }: {
 }
 
 export default function App() {
-  const [view, setView] = useState<View>(() => window.location.pathname === ADMIN_PATH ? 'admin' : window.location.pathname.startsWith('/rifa/') ? 'raffle' : 'home');
+  const [view, setView] = useState<View>(() => viewFromPath(window.location.pathname));
   const [raffles, setRaffles] = useState<Raffle[]>([]);
   const [raffle, setRaffle] = useState<Raffle | null>(null);
   const [numbers, setNumbers] = useState<EntryNumber[]>([]);
@@ -79,6 +93,8 @@ export default function App() {
   const [selected, setSelected] = useState<number[]>([]);
   const [buyer, setBuyer] = useState({ buyerName: '', buyerEmail: '', buyerPhone: '' });
   const [reservation, setReservation] = useState<Reservation | null>(null);
+  const [lookupCode, setLookupCode] = useState('');
+  const [lookupResult, setLookupResult] = useState<LookupResult | null>(null);
   const [showCheckout, setShowCheckout] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -88,6 +104,7 @@ export default function App() {
   const [adminReservations, setAdminReservations] = useState<AdminReservation[]>([]);
   const [draft, setDraft] = useState({ title: '', slug: '', prize: '', description: '', priceCrc: '', numberCount: '' });
   const countdown = useCountdown(reservation?.expiresAt);
+  const lookupCountdown = useCountdown(lookupResult?.status === 'ACTIVE' ? lookupResult.expiresAt : undefined);
 
   async function loadRaffles() {
     try { setRaffles(await api<Raffle[]>('/api/campaigns')); }
@@ -106,11 +123,15 @@ export default function App() {
     finally { setBusy(false); }
   }
 
-  function goHome() {
-    window.history.pushState({}, '', '/');
-    setView('home'); setError(''); setShowCheckout(false); setAdminToken(''); setAdminUnlocked(false);
-    void loadRaffles(); window.scrollTo(0, 0);
+  function goPublic(next: 'home' | 'lookup' | 'winners') {
+    const path = next === 'home' ? '/' : next === 'lookup' ? '/buscar-boletos' : '/ganadores';
+    window.history.pushState({}, '', path);
+    setView(next); setError(''); setShowCheckout(false); setAdminToken(''); setAdminUnlocked(false);
+    if (next === 'home') void loadRaffles();
+    window.scrollTo(0, 0);
   }
+
+  function goHome() { goPublic('home'); }
 
   useEffect(() => {
     void loadRaffles();
@@ -118,9 +139,8 @@ export default function App() {
     if (pathname.startsWith('/rifa/')) void openRaffle(decodeURIComponent(pathname.slice(6)), false);
     function onPopState() {
       const path = window.location.pathname;
-      if (path === ADMIN_PATH) setView('admin');
-      else if (path.startsWith('/rifa/')) void openRaffle(decodeURIComponent(path.slice(6)), false);
-      else setView('home');
+      if (path.startsWith('/rifa/')) void openRaffle(decodeURIComponent(path.slice(6)), false);
+      else setView(viewFromPath(path));
     }
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
@@ -151,6 +171,17 @@ export default function App() {
       setReservation(result); setShowCheckout(false);
       const list = await api<{ numbers: EntryNumber[]; pageCount: number }>('/api/campaigns/' + raffle.slug + '/numbers?page=' + page);
       setNumbers(list.numbers);
+    } catch (cause) { setError((cause as Error).message); }
+    finally { setBusy(false); }
+  }
+
+  async function lookupTickets(event: FormEvent) {
+    event.preventDefault(); setBusy(true); setError(''); setLookupResult(null);
+    try {
+      const result = await api<LookupResult>('/api/reservations/lookup', {
+        method: 'POST', body: JSON.stringify({ token: lookupCode.trim() }),
+      });
+      setLookupResult(result);
     } catch (cause) { setError((cause as Error).message); }
     finally { setBusy(false); }
   }
@@ -206,12 +237,17 @@ export default function App() {
   const width = raffle?.numberWidth ?? 3;
   const activeHolds = adminReservations.filter(item => item.status === 'ACTIVE');
   const heldTickets = activeHolds.reduce((sum, item) => sum + item.ticketCount, 0);
+  const featured = raffles[0];
 
   return <div className={'app-shell ' + (view === 'admin' ? 'admin-shell' : '')}>
     <header className="site-header">
       <button className="brand" onClick={goHome} aria-label="Ir al inicio"><span className="brand-mark"><Sparkles size={19} /></span><span>CIFRA<span className="brand-light">YA</span></span></button>
       <nav aria-label="Navegación principal">
-        {view === 'admin' ? <button onClick={goHome}>Volver al sitio <ArrowRight size={15} /></button> : <button onClick={goHome}>Rifas <ArrowRight size={15} /></button>}
+        {view === 'admin' ? <button onClick={goHome}>Volver al sitio <ArrowRight size={15} /></button> : <>
+          <button className={view === 'home' || view === 'raffle' ? 'nav-active' : ''} onClick={goHome}>Inicio</button>
+          <button className={view === 'lookup' ? 'nav-active' : ''} onClick={() => goPublic('lookup')}>Buscar boletos</button>
+          <button className={view === 'winners' ? 'nav-active' : ''} onClick={() => goPublic('winners')}>Ganadores</button>
+        </>}
       </nav>
       <span className="local-pill"><span /> DEMO / SIN PAGOS</span>
     </header>
@@ -221,18 +257,19 @@ export default function App() {
     {view === 'home' && <main>
       <section className="hero">
         <div className="hero-copy">
-          <div className="eyebrow"><span className="eyebrow-line" /> UNA NUEVA FORMA DE ELEGIR</div>
-          <h1>La suerte<br />tiene <em>tu número.</em></h1>
-          <p>Entrá a la rifa, elegí los boletos que te gustan y mirá su disponibilidad al instante. Esta es una experiencia de prueba, sin pagos.</p>
-          <a href="#rifas" className="button primary">Explorar rifas <ArrowRight size={18} /></a>
+          <div className="eyebrow"><span className="eyebrow-line" /> {featured ? 'RIFA DESTACADA' : 'UNA NUEVA FORMA DE ELEGIR'}</div>
+          <h1>{featured ? featured.title : <>La suerte<br />tiene <em>tu número.</em></>}</h1>
+          <p>{featured ? (featured.description || `Participá por ${featured.prize}. Elegí tus números y consultá su disponibilidad.`) : 'Entrá a la rifa, elegí los boletos que te gustan y mirá su disponibilidad al instante. Esta es una experiencia de prueba, sin pagos.'}</p>
+          {featured ? <button className="button primary" onClick={() => void openRaffle(featured.slug)}>Ver rifa <ArrowRight size={18} /></button> : <a href="#rifas" className="button primary">Explorar rifas <ArrowRight size={18} /></a>}
+          {featured && <div className="featured-facts"><span>PREMIO <strong>{featured.prize}</strong></span><span>POR BOLETO <strong>{money(featured.priceCrc)}</strong></span></div>}
           <div className="hero-note"><ShieldCheck size={17} /> Apartado exclusivo por 30 minutos</div>
         </div>
         <div className="hero-art" aria-hidden="true">
           <div className="hero-ring ring-one" /><div className="hero-ring ring-two" />
-          <div className="hero-mini">NUEVA<br />ENERGÍA<br />PARA JUGAR</div>
+          <div className="hero-mini">{featured ? <>RIFA<br />ABIERTA<br />AHORA</> : <>NUEVA<br />ENERGÍA<br />PARA JUGAR</>}</div>
           <div className="ticket-art">
             <span className="ticket-art-top">CIFRAYA <span>✳</span> EDICIÓN 001</span>
-            <div className="ticket-art-center"><span>BOLETO</span><strong>08</strong><em>Tu momento empieza aquí.</em></div>
+            <div className="ticket-art-center"><span>{featured ? 'RIFA ABIERTA' : 'BOLETO'}</span><strong>{featured ? '✳' : '08'}</strong><em>{featured ? featured.prize : 'Tu momento empieza aquí.'}</em></div>
             <span className="ticket-art-bottom">ABRÍ · ELEGÍ · APARTÁ <ArrowRight size={24}/></span>
           </div>
         </div>
@@ -250,6 +287,14 @@ export default function App() {
       <section className="how-section"><div className="how-inner"><div className="eyebrow">ASÍ DE SIMPLE</div><h2>Un número.<br /><em>Una posibilidad.</em></h2><div className="how-grid"><div><span>01</span><h3>Entrá a una rifa</h3><p>Descubrí el premio y el valor de cada boleto.</p></div><div><span>02</span><h3>Elegí tus boletos</h3><p>Los disponibles se ven al instante. Podés seleccionar hasta 20.</p></div><div><span>03</span><h3>Revisá tu pase</h3><p>La reserva de prueba muestra tu nombre, tus números y su vencimiento.</p></div></div></div></section>
     </main>}
 
+    {view === 'lookup' && <main className="public-page">
+      <div className="public-intro"><div className="eyebrow">CIFRAYA / TUS BOLETOS</div><h1>Encontrá tus <em>números.</em></h1><p>Ingresá el código que recibiste al apartar tus números para consultar tu pase de prueba y su estado.</p></div>
+      <div className="lookup-layout"><section className="lookup-card"><div className="public-icon"><Search size={27}/></div><h2>Buscar boletos</h2><p>El código es privado. Lo podés copiar desde el pase que aparece al hacer la reserva.</p><form onSubmit={event => void lookupTickets(event)} className="form-grid"><label>Código de consulta<input value={lookupCode} onChange={event => setLookupCode(event.target.value)} placeholder="Pegá aquí tu código" autoComplete="off" spellCheck={false} required maxLength={48}/></label><button className="button dark full" disabled={busy || lookupCode.trim().length !== 48}>Consultar mi pase <ArrowRight size={17}/></button></form><span className="lookup-help"><LockKeyhole size={15}/> Solo quien tenga el código puede ver este pase.</span></section>
+      <section className="lookup-result">{lookupResult ? <><TicketPass name={lookupResult.buyerName} title={lookupResult.campaign.title} values={lookupResult.values} width={lookupResult.campaign.numberWidth} count={lookupResult.values.length} status={lookupResult.status === 'ACTIVE' ? 'APARTADO · DEMO' : lookupResult.status === 'EXPIRED' ? 'RESERVA VENCIDA' : 'RESERVA CANCELADA'} timer={lookupResult.status === 'ACTIVE' ? lookupCountdown : undefined}/><p>{lookupResult.status === 'ACTIVE' ? 'Este pase es una reserva de prueba; todavía no representa una compra confirmada.' : 'Esta reserva ya no está vigente. Sus números pueden volver a estar disponibles.'}</p></> : <div className="lookup-placeholder"><Ticket size={42} strokeWidth={1.3}/><span>EL PASE APARECERÁ AQUÍ</span><p>Nombre, cantidad de boletos, números y estado en un solo lugar.</p></div>}</section></div>
+    </main>}
+
+    {view === 'winners' && <main className="public-page winners-page"><div className="public-intro"><div className="eyebrow">CIFRAYA / RESULTADOS</div><h1>Historias que <em>ganan.</em></h1><p>Este espacio mostrará los resultados de las rifas una vez que se realicen los sorteos.</p></div><section className="winners-empty"><div className="winner-symbol"><Trophy size={68} strokeWidth={1.2}/></div><div><span className="eyebrow">PRÓXIMAMENTE</span><h2>Aún no hay ganadores publicados.</h2><p>Estamos en fase de prueba. Cuando haya un sorteo validado, su resultado aparecerá aquí con los datos necesarios para verificarlo.</p><button className="button dark" onClick={goHome}>Ver rifas <ArrowRight size={17}/></button></div></section></main>}
+
     {view === 'raffle' && raffle && <main className="section detail-page">
       <button className="text-button" onClick={goHome}><ChevronLeft size={17}/> Todas las rifas</button>
       <div className="detail-heading"><span className="eyebrow">RIFA ABIERTA / DEMO</span><h1>{raffle.title}</h1><p>Elegí tu boleto. El momento es tuyo.</p></div>
@@ -265,6 +310,7 @@ export default function App() {
             <TicketPass name={buyer.buyerName} title={raffle.title} values={reservation.values} width={width} count={reservation.values.length} status="APARTADO · DEMO" timer={countdown} />
             <p>Este pase muestra una <strong>reserva de prueba</strong>, no una compra. Los números se liberan al vencer el plazo.</p>
             <button className="copy-token" onClick={() => void navigator.clipboard.writeText(reservation.token)}><Copy size={15}/> Copiar código de consulta</button>
+            <button className="copy-token" onClick={() => { setLookupCode(reservation.token); goPublic('lookup'); }}>Ver en Buscar boletos <ArrowRight size={15}/></button>
           </div> : <div className="selection-footer"><div className="selection-summary"><span>{selected.length} {selected.length === 1 ? 'boleto elegido' : 'boletos elegidos'}</span><strong>{money(selected.length * raffle.priceCrc)}</strong></div><button className="button primary full" disabled={selected.length === 0 || busy} onClick={() => setShowCheckout(true)}>Continuar con {selected.length || 'tus'} {selected.length === 1 ? 'boleto' : 'boletos'} <ArrowRight size={17}/></button><p className="phase-note">Demostración sin pagos ni boletos confirmados.</p></div>}
         </div>
       </div>

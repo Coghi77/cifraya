@@ -65,6 +65,7 @@ model Reservation {
   buyerName      String
   buyerEmail     String
   buyerPhone     String
+  selectedValues Int[]             @default([])
   status         ReservationStatus @default(ACTIVE)
   expiresAt      DateTime
   createdAt      DateTime          @default(now())

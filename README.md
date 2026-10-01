@@ -4,7 +4,7 @@ Proyecto independiente de Alessandro Kogi. Esta carpeta no pertenece a Autoids, 
 
 ## Estado
 
-**Fase 1 para pruebas:** rifa de prueba, panel para crear y publicar rifas, inventario de números y reservas de 30 minutos. El panel tiene una ruta directa fuera de la navegación pública y sigue exigiendo `ADMIN_TOKEN`. Muestra nombre, cantidad de boletos y números de cada reserva de prueba. **No se reciben pagos ni comprobantes ni se muestran compras confirmadas.**
+**Fase 1 para pruebas:** el inicio muestra la rifa activa; la navegación pública ofrece Inicio, Buscar boletos y Ganadores. Buscar boletos consulta una reserva mediante el código privado entregado al apartar números. Ganadores muestra un estado vacío hasta que existan sorteos verificados. El panel para crear y publicar rifas, revisar números y reservas de 30 minutos tiene una ruta directa fuera de la navegación pública y sigue exigiendo `ADMIN_TOKEN`. **No se reciben pagos ni comprobantes ni se muestran compras confirmadas.**
 
 ## Arranque local
 
