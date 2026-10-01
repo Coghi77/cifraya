@@ -249,40 +249,23 @@ export default function App() {
           <button className={view === 'winners' ? 'nav-active' : ''} onClick={() => goPublic('winners')}>Ganadores</button>
         </>}
       </nav>
-      <span className="local-pill"><span /> DEMO / SIN PAGOS</span>
     </header>
 
     {error && <div className="alert" role="alert"><span>{error}</span><button onClick={() => setError('')} aria-label="Cerrar aviso"><X size={17} /></button></div>}
 
     {view === 'home' && <main>
-      <section className="hero">
-        <div className="hero-copy">
-          <div className="eyebrow"><span className="eyebrow-line" /> {featured ? 'RIFA DESTACADA' : 'UNA NUEVA FORMA DE ELEGIR'}</div>
-          <h1>{featured ? featured.title : <>La suerte<br />tiene <em>tu número.</em></>}</h1>
-          <p>{featured ? (featured.description || `Participá por ${featured.prize}. Elegí tus números y consultá su disponibilidad.`) : 'Entrá a la rifa, elegí los boletos que te gustan y mirá su disponibilidad al instante. Esta es una experiencia de prueba, sin pagos.'}</p>
-          {featured ? <button className="button primary" onClick={() => void openRaffle(featured.slug)}>Ver rifa <ArrowRight size={18} /></button> : <a href="#rifas" className="button primary">Explorar rifas <ArrowRight size={18} /></a>}
-          {featured && <div className="featured-facts"><span>PREMIO <strong>{featured.prize}</strong></span><span>POR BOLETO <strong>{money(featured.priceCrc)}</strong></span></div>}
-          <div className="hero-note"><ShieldCheck size={17} /> Apartado exclusivo por 30 minutos</div>
-        </div>
-        <div className="hero-art" aria-hidden="true">
-          <div className="hero-ring ring-one" /><div className="hero-ring ring-two" />
-          <div className="hero-mini">{featured ? <>RIFA<br />ABIERTA<br />AHORA</> : <>NUEVA<br />ENERGÍA<br />PARA JUGAR</>}</div>
-          <div className="ticket-art">
-            <span className="ticket-art-top">CIFRAYA <span>✳</span> EDICIÓN 001</span>
-            <div className="ticket-art-center"><span>{featured ? 'RIFA ABIERTA' : 'BOLETO'}</span><strong>{featured ? '✳' : '08'}</strong><em>{featured ? featured.prize : 'Tu momento empieza aquí.'}</em></div>
-            <span className="ticket-art-bottom">ABRÍ · ELEGÍ · APARTÁ <ArrowRight size={24}/></span>
-          </div>
-        </div>
-      </section>
+      {featured ? <section className="current-raffle" aria-label="Rifa actual">
+        <div className="current-raffle-image">{featured.imageUrl ? <img src={featured.imageUrl} alt={featured.prize}/> : <img className="current-logo" src="/cifraya-logo.png" alt=""/>}</div>
+        <div className="current-raffle-content"><span className="current-label">RIFA ACTUAL</span><h1>{featured.title}</h1><div className="current-prize">{featured.prize}</div><div className="current-price">{money(featured.priceCrc)} <span>por número</span></div><button className="button primary" onClick={() => void openRaffle(featured.slug)}>Elegir números <ArrowRight size={18}/></button><p>Reserva de prueba · 30 minutos</p></div>
+      </section> : <section className="current-raffle current-empty"><img src="/cifraya-logo.png" alt=""/><div><span className="current-label">CIFRAYA</span><h1>Próxima rifa</h1><p>Estamos preparando la siguiente rifa.</p></div></section>}
 
-      <section className="section raffles-section" id="rifas">
-        <div className="section-heading"><div><div className="eyebrow">ELEGÍ TU PRÓXIMO MOMENTO</div><h2>Rifas abiertas<span className="heading-star">✳</span></h2></div><span className="count-pill">{raffles.length} {raffles.length === 1 ? 'rifa' : 'rifas'}</span></div>
-        <div className="raffle-grid">{raffles.map((item, index) => <article className="raffle-card" key={item.id}>
+      {raffles.length > 1 && <section className="section raffles-section" id="rifas">
+        <div className="section-heading"><div><h2>Más rifas</h2></div></div>
+        <div className="raffle-grid">{raffles.slice(1).map((item, index) => <article className="raffle-card" key={item.id}>
           <div className="raffle-cover">{item.imageUrl ? <img src={item.imageUrl} alt="" /> : <div className="cover-placeholder"><span className="cover-index">0{index + 1}</span><Sparkles size={58} strokeWidth={1.2}/><span>ALGO BUENO VIENE</span></div>}<span className="cover-status">RIFA ABIERTA</span></div>
           <div className="raffle-body"><div className="raffle-overline">{item.numberCount.toLocaleString('es-CR')} BOLETOS EN ESTA RIFA</div><h3>{item.title}</h3><p>{item.description || 'Elegí tu boleto favorito y apartalo para esta rifa.'}</p><div className="raffle-facts"><div><small>PREMIO</small><strong>{item.prize}</strong></div><div><small>POR BOLETO</small><strong>{money(item.priceCrc)}</strong></div></div><button className="button dark full" onClick={() => void openRaffle(item.slug)}>Entrar a la rifa <ArrowRight size={17} /></button></div>
         </article>)}</div>
-        {raffles.length === 0 && <div className="empty-state"><Sparkles size={26}/><h3>Pronto habrá algo por descubrir.</h3><p>Estamos preparando la primera rifa de prueba.</p></div>}
-      </section>
+      </section>}
 
       <section className="how-section"><div className="how-inner"><div className="eyebrow">ASÍ DE SIMPLE</div><h2>Un número.<br /><em>Una posibilidad.</em></h2><div className="how-grid"><div><span>01</span><h3>Entrá a una rifa</h3><p>Descubrí el premio y el valor de cada boleto.</p></div><div><span>02</span><h3>Elegí tus boletos</h3><p>Los disponibles se ven al instante. Podés seleccionar hasta 20.</p></div><div><span>03</span><h3>Revisá tu pase</h3><p>La reserva de prueba muestra tu nombre, tus números y su vencimiento.</p></div></div></div></section>
     </main>}
