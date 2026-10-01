@@ -221,19 +221,22 @@ a { color: inherit; text-decoration: none; }
 .site-footer { align-items: center; justify-content: space-between; }
 .footer-socials { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0; padding: 0; list-style: none; }
 .footer-social-item { position: relative; }
-.footer-social-item > a, .footer-social-disabled { position: relative; display: grid; place-items: center; width: 50px; height: 50px; overflow: hidden; border: 1px solid #777; border-radius: 50%; background: #fff; color: #111; transition: color .3s ease, box-shadow .3s ease, border-color .3s ease; }
+.footer-social-item[data-social="whatsapp"] { --social-color: #25d366; --social-fill: #25d366; }
+.footer-social-item[data-social="facebook"] { --social-color: #1877f2; --social-fill: #1877f2; }
+.footer-social-item[data-social="instagram"] { --social-color: #c13584; --social-fill: linear-gradient(45deg, #405de6, #5b51db, #b33ab4, #c135b4, #e1306c, #fd1f1f); }
+.footer-social-item > a, .footer-social-disabled { position: relative; display: grid; place-items: center; width: 50px; height: 50px; overflow: hidden; border: 1px solid #777; border-radius: 50%; background: #fff; color: var(--social-color); transition: color .3s ease, box-shadow .3s ease, border-color .3s ease; }
 .footer-social-item > a { text-decoration: none; }
 .footer-social-disabled { cursor: default; }
-.footer-social-item > a:hover, .footer-social-item > a:focus-visible, .footer-social-disabled:hover, .footer-social-disabled:focus-visible { color: #fff; border-color: #fff; box-shadow: 3px 2px 45px #ffffff24; outline: none; }
-.footer-social-fill, .footer-social-disabled::before { position: absolute; inset: auto 0 0; height: 0; background: #111; transition: height .3s ease; content: ''; }
+.footer-social-item > a:hover, .footer-social-item > a:focus-visible, .footer-social-disabled:hover, .footer-social-disabled:focus-visible { color: #fff; border-color: var(--social-color); box-shadow: 3px 2px 45px #ffffff24; outline: none; }
+.footer-social-fill, .footer-social-disabled::before { position: absolute; inset: auto 0 0; height: 0; background: var(--social-fill); transition: height .3s ease; content: ''; }
 .footer-social-item > a:hover .footer-social-fill, .footer-social-item > a:focus-visible .footer-social-fill, .footer-social-disabled:hover::before, .footer-social-disabled:focus-visible::before { height: 100%; }
 .footer-social-item svg { position: relative; z-index: 1; width: 25px; height: 25px; stroke-width: 2.1; }
 .footer-whatsapp-mark { position: relative; display: grid; place-items: center; width: 30px; height: 30px; }
 .footer-whatsapp-mark svg:first-child { width: 29px; height: 29px; }
 .footer-whatsapp-mark svg:last-child { position: absolute; width: 14px; height: 14px; transform: translate(1px, -1px); stroke-width: 2.3; }
-.footer-social-tooltip { position: absolute; bottom: calc(100% + 11px); left: 50%; z-index: 3; width: max-content; max-width: 170px; padding: 7px 10px; border: 1px solid #777; border-radius: 6px; background: #fff; color: #111; font-size: 12px; font-weight: 800; letter-spacing: 0; opacity: 0; visibility: hidden; transform: translate(-50%, 7px); transition: opacity .25s ease, transform .25s ease, visibility .25s ease; pointer-events: none; }
+.footer-social-tooltip { position: absolute; bottom: calc(100% + 11px); left: 50%; z-index: 3; width: max-content; max-width: 170px; padding: 7px 10px; border: 1px solid transparent; border-radius: 6px; background: var(--social-fill); color: #fff; font-size: 12px; font-weight: 800; letter-spacing: 0; opacity: 0; visibility: hidden; transform: translate(-50%, 7px); transition: opacity .25s ease, transform .25s ease, visibility .25s ease; pointer-events: none; }
 .footer-social-item:hover .footer-social-tooltip, .footer-social-item:focus-within .footer-social-tooltip { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
-.site-footer .footer-social-tooltip { color: #111; }
+.site-footer .footer-social-tooltip { color: #fff; }
 .site-footer .footer-whatsapp-mark { color: inherit; }
 @media (max-width: 700px) {
   .brand { width: 110px; height: 58px; }

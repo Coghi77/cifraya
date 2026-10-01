@@ -14,7 +14,7 @@ const links = [
 
 export default function FooterSocials() {
   return <ul className="footer-socials" aria-label="Redes sociales de Cifraya">
-    {links.map(({ name, href, icon }) => <li className="footer-social-item" key={name}>
+    {links.map(({ name, href, icon }) => <li className="footer-social-item" data-social={name.toLowerCase()} key={name}>
       {href ? <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`Abrir ${name} de Cifraya`}>
         <span className="footer-social-fill" aria-hidden="true"/>{icon}
       </a> : <span className="footer-social-disabled" tabIndex={0} aria-label={`${name} aún no disponible`} role="img">{icon}</span>}
