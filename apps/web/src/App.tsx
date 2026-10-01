@@ -156,6 +156,10 @@ export default function App() {
   }
 
   async function loadAdmin() {
+    if (adminToken.length < 24) {
+      setError('La clave del panel debe tener al menos 24 caracteres. Revisá ADMIN_TOKEN en Render.');
+      return;
+    }
     setBusy(true); setError('');
     try {
       const headers = { Authorization: 'Bearer ' + adminToken };
@@ -166,7 +170,9 @@ export default function App() {
       setAdminRaffles(list); setAdminReservations(holds); setAdminUnlocked(true);
     } catch (cause) {
       setAdminUnlocked(false); setAdminRaffles([]); setAdminReservations([]);
-      setError((cause as Error).message);
+      setError((cause as Error).message === 'Acceso no autorizado'
+        ? 'La clave no coincide con ADMIN_TOKEN de Render. Copiá el valor exacto desde Environment.'
+        : (cause as Error).message);
     } finally { setBusy(false); }
   }
 
