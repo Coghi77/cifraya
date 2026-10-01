@@ -7,9 +7,12 @@ import fastifyStatic from '@fastify/static';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import { issueAdminSession, verifyAdminSession } from './adminSession.js';
+import { createReservationExpirer } from './reservationExpiry.js';
+import { registerSecurityHeaders } from './security.js';
 
 const db = new PrismaClient();
 const app = Fastify({ logger: true });
+registerSecurityHeaders(app, process.env.NODE_ENV === 'production');
 const subscribers = new Set<(event: string) => void>();
 function broadcast(event: string) { for (const subscriber of subscribers) subscriber(event); }
 await app.register(cors, { origin: ['http://127.0.0.1:4173', 'http://localhost:4173'] });
@@ -33,7 +36,7 @@ const campaignInput = z.object({
   prizeCount: z.number().int().min(1).max(3).default(1),
   secondPrize: z.string().min(3).max(200).optional(),
   thirdPrize: z.string().min(3).max(200).optional(),
-  imageUrl: z.string().url().optional(),
+  imageUrl: z.string().url().refine(value => new URL(value).protocol === 'https:', 'La imagen debe usar HTTPS.').optional(),
   priceCrc: z.number().int().positive().max(100_000_000),
   numberCount: z.union([z.literal(100), z.literal(1000), z.literal(10000)]),
   packages: z.array(z.object({ quantity: z.number().int().min(2).max(20), priceCrc: z.number().int().positive().max(100_000_000) })).max(10).default([]),
@@ -107,35 +110,12 @@ app.post('/api/admin/login', async (request, reply) => {
   return { token: issueAdminSession(process.env.ADMIN_TOKEN, now) };
 });
 
-async function expireReservations() {
-  const overdue = await db.reservation.findMany({
-    where: { status: 'ACTIVE', expiresAt: { lte: new Date() } },
-    select: { id: true },
-    take: 100,
-  });
-  let expiredAny = false;
-  for (const { id } of overdue) {
-    const expired = await db.$transaction(async tx => {
-      const changed = await tx.reservation.updateMany({
-        where: { id, status: 'ACTIVE', expiresAt: { lte: new Date() } },
-        data: { status: 'EXPIRED' },
-      });
-      if (changed.count) {
-        await tx.entryNumber.updateMany({
-          where: { reservationId: id, status: 'RESERVED' },
-          data: { status: 'AVAILABLE', reservationId: null },
-        });
-      }
-      return changed.count > 0;
-    });
-    expiredAny ||= expired;
-  }
-  if (expiredAny) broadcast('reservations');
-}
+const expireReservations = createReservationExpirer(db, () => broadcast('reservations'));
 
 app.get('/api/health', async () => ({ ok: true }));
 
 app.get('/api/events', (_request, reply) => {
+  if (subscribers.size >= 200) return reply.code(503).send({ error: 'Demasiadas conexiones activas. Intentá de nuevo.' });
   reply.hijack();
   reply.raw.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', Connection: 'keep-alive', 'X-Accel-Buffering': 'no' });
   reply.raw.write('retry: 3000\n\n');
@@ -409,15 +389,24 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/photos', { bodyLi
   if (!parsed.success) return reply.code(400).send({ error: 'La foto debe ser JPG, PNG o WebP y pesar menos de 2 MB.' });
   const bytes = Buffer.from(parsed.data.base64, 'base64');
   if (!validPhoto(bytes, parsed.data.mimeType)) return reply.code(400).send({ error: 'Archivo de imagen inválido o demasiado grande.' });
-  const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, _count: { select: { photos: true } } } });
-  if (!campaign) return reply.code(404).send({ error: 'Rifa no encontrada' });
-  if (campaign._count.photos >= 5) return reply.code(409).send({ error: 'Cada rifa admite hasta 5 fotos.' });
-  const photo = await db.campaignPhoto.create({
-    data: { campaignId: campaign.id, mimeType: parsed.data.mimeType, data: bytes, sortOrder: campaign._count.photos },
-    select: { id: true },
-  });
-  broadcast('campaigns');
-  return reply.code(201).send({ id: photo.id, url: `/api/campaign-photos/${photo.id}` });
+  try {
+    const photo = await db.$transaction(async tx => {
+      const campaign = await tx.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, _count: { select: { photos: true } } } });
+      if (!campaign) throw new Error('CAMPAIGN_NOT_FOUND');
+      if (campaign._count.photos >= 5) throw new Error('PHOTO_LIMIT');
+      return tx.campaignPhoto.create({
+        data: { campaignId: campaign.id, mimeType: parsed.data.mimeType, data: bytes, sortOrder: campaign._count.photos },
+        select: { id: true },
+      });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    broadcast('campaigns');
+    return reply.code(201).send({ id: photo.id, url: `/api/campaign-photos/${photo.id}` });
+  } catch (error) {
+    if (error instanceof Error && error.message === 'CAMPAIGN_NOT_FOUND') return reply.code(404).send({ error: 'Rifa no encontrada' });
+    if (error instanceof Error && error.message === 'PHOTO_LIMIT') return reply.code(409).send({ error: 'Cada rifa admite hasta 5 fotos.' });
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2034') return reply.code(409).send({ error: 'Las fotos cambiaron. Intentá de nuevo.' });
+    throw error;
+  }
 });
 
 app.delete<{ Params: { id: string } }>('/api/admin/campaign-photos/:id', async (request, reply) => {

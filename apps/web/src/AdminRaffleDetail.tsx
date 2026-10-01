@@ -42,6 +42,7 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange, onRevie
   const [historyPage, setHistoryPage] = useState(1);
   const [status, setStatus] = useState('');
   const [number, setNumber] = useState('');
+  const [searchNumber, setSearchNumber] = useState('');
   const [selectedWinner, setSelectedWinner] = useState<NumberRow | null>(null);
   const [winnerError, setWinnerError] = useState('');
   const [statusOpen, setStatusOpen] = useState(false);
@@ -52,10 +53,15 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange, onRevie
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setSearchNumber(number.trim()), 250);
+    return () => window.clearTimeout(timeout);
+  }, [number]);
+
   const reload = useCallback(async () => {
     const query = new URLSearchParams({ page: String(page) });
     if (status) query.set('status', status);
-    if (number.trim()) query.set('number', number.trim());
+    if (searchNumber) query.set('number', searchNumber);
     try {
       const [inventory, audit] = await Promise.all([
         adminRequest<Overview>(`/api/admin/campaigns/${id}/overview?${query}`, token),
@@ -63,7 +69,7 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange, onRevie
       ]);
       setOverview(inventory); setHistory(audit); setError('');
     } catch (cause) { setError((cause as Error).message); }
-  }, [id, token, page, historyPage, status, number]);
+  }, [id, token, page, historyPage, status, searchNumber]);
   useEffect(() => { void reload(); }, [reload]);
   useEffect(() => {
     const refresh = () => { if (document.visibilityState === 'visible') void reload(); };
