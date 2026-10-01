@@ -41,35 +41,37 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange, onRevie
   const [page, setPage] = useState(1);
   const [historyPage, setHistoryPage] = useState(1);
   const [status, setStatus] = useState('');
-  const [number, setNumber] = useState('');
-  const [searchNumber, setSearchNumber] = useState('');
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedWinner, setSelectedWinner] = useState<NumberRow | null>(null);
   const [winnerError, setWinnerError] = useState('');
   const [statusOpen, setStatusOpen] = useState(false);
   const statusRef = useRef<HTMLDivElement>(null);
   const winnerCancelRef = useRef<HTMLButtonElement>(null);
+  const requestSequence = useRef(0);
   const [selectedTicket, setSelectedTicket] = useState<NumberRow | null>(null);
   const [participantReservationId, setParticipantReservationId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const timeout = window.setTimeout(() => setSearchNumber(number.trim()), 250);
+    const timeout = window.setTimeout(() => setDebouncedSearch(search.trim()), 250);
     return () => window.clearTimeout(timeout);
-  }, [number]);
+  }, [search]);
 
   const reload = useCallback(async () => {
+    const sequence = ++requestSequence.current;
     const query = new URLSearchParams({ page: String(page) });
     if (status) query.set('status', status);
-    if (searchNumber) query.set('number', searchNumber);
+    if (debouncedSearch) query.set('search', debouncedSearch);
     try {
       const [inventory, audit] = await Promise.all([
         adminRequest<Overview>(`/api/admin/campaigns/${id}/overview?${query}`, token),
         adminRequest<History>(`/api/admin/campaigns/${id}/history?page=${historyPage}`, token),
       ]);
-      setOverview(inventory); setHistory(audit); setError('');
-    } catch (cause) { setError((cause as Error).message); }
-  }, [id, token, page, historyPage, status, searchNumber]);
+      if (sequence === requestSequence.current) { setOverview(inventory); setHistory(audit); setError(''); }
+    } catch (cause) { if (sequence === requestSequence.current) setError((cause as Error).message); }
+  }, [id, token, page, historyPage, status, debouncedSearch]);
   useEffect(() => { void reload(); }, [reload]);
   useEffect(() => {
     const refresh = () => { if (document.visibilityState === 'visible') void reload(); };
@@ -110,7 +112,7 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange, onRevie
     {overview && <>
       <div className="admin-detail-stats"><div><strong>{overview.counts.AVAILABLE || 0}</strong><span>Disponibles</span></div><div><strong>{overview.counts.RESERVED || 0}</strong><span>Apartados</span></div><div><strong>{overview.counts.SOLD || 0}</strong><span>Vendidos</span></div></div>
       <div className="admin-winner-banner">{Array.from({ length: overview.campaign.prizeCount }, (_, index) => { const winner = overview.campaign.winners.find(item => item.position === index + 1); const prize = [overview.campaign.prize, overview.campaign.secondPrize, overview.campaign.thirdPrize][index]; return <span key={index}><strong>{index + 1}.º premio · {prize}</strong><span>{winner ? `Ganador ${numberLabel(winner.numberValue, overview.campaign.numberWidth)}` : 'Pendiente'}</span></span>; })}</div>
-      <div className="admin-detail-controls"><label>Buscar número<input inputMode="numeric" value={number} onChange={event => { setPage(1); setNumber(event.target.value.replace(/\D/g, '').slice(0, 5)); }} placeholder={'Ej. ' + '0'.repeat(overview.campaign.numberWidth - 1) + '1'} /></label><div className="admin-status-filter" ref={statusRef}><span>Estado</span><button type="button" className="admin-status-trigger" aria-label={`Estado: ${statusOptions.find(option => option.value === status)?.label}`} aria-expanded={statusOpen} aria-controls="ticket-status-options" onClick={() => setStatusOpen(open => !open)}>{statusOptions.find(option => option.value === status)?.label}<span aria-hidden="true">⌄</span></button>{statusOpen && <div id="ticket-status-options" className="admin-status-options" role="group" aria-label="Filtrar por estado">{statusOptions.map(option => <button key={option.value} type="button" aria-pressed={status === option.value} onClick={() => { setPage(1); setStatus(option.value); setStatusOpen(false); }}>{option.label}{status === option.value && <span aria-hidden="true">✓</span>}</button>)}</div>}</div></div>
+      <div className="admin-detail-controls"><label>Buscar boleto o persona<input type="search" value={search} maxLength={100} onChange={event => { setPage(1); setSearch(event.target.value); }} placeholder="Número, nombre, correo o teléfono" /></label><div className="admin-status-filter" ref={statusRef}><span>Estado</span><button type="button" className="admin-status-trigger" aria-label={`Estado: ${statusOptions.find(option => option.value === status)?.label}`} aria-expanded={statusOpen} aria-controls="ticket-status-options" onClick={() => setStatusOpen(open => !open)}>{statusOptions.find(option => option.value === status)?.label}<span aria-hidden="true">⌄</span></button>{statusOpen && <div id="ticket-status-options" className="admin-status-options" role="group" aria-label="Filtrar por estado">{statusOptions.map(option => <button key={option.value} type="button" aria-pressed={status === option.value} onClick={() => { setPage(1); setStatus(option.value); setStatusOpen(false); }}>{option.label}{status === option.value && <span aria-hidden="true">✓</span>}</button>)}</div>}</div></div>
       <p className="admin-detail-help">Abrí un boleto para ver sus números y el historial del participante.</p>
       <div className="admin-ticket-grid">{overview.numbers.map(item => <button className={'admin-ticket-card ' + item.status.toLowerCase()} type="button" key={item.value} onClick={() => { setSelectedTicket(item); if (item.reservation) setParticipantReservationId(item.reservation.id); }} aria-label={`Boleto ${numberLabel(item.value, overview.campaign.numberWidth)}, ${item.status === 'SOLD' ? 'vendido' : item.status === 'RESERVED' ? 'apartado' : 'disponible'}${item.reservation ? ', ' + item.reservation.buyerName : ''}`}><span className="admin-ticket-top"><span>CIFRAYA / BOLETO</span><span>{item.status === 'SOLD' ? 'VENDIDO' : item.status === 'RESERVED' ? 'APARTADO' : 'DISPONIBLE'}</span></span><strong className="admin-ticket-number">{numberLabel(item.value, overview.campaign.numberWidth)}</strong><span className="admin-ticket-divider"/><span className="admin-ticket-bottom"><span>{item.reservation?.buyerName || 'Sin asignar'}</span><span>VER →</span></span></button>)}{overview.numbers.length === 0 && <p>No hay números con este filtro.</p>}</div>
       {overview.pageCount > 1 && <div className="admin-detail-pages"><button disabled={page <= 1} onClick={() => setPage(page - 1)}>Anterior</button><span>{page} / {overview.pageCount}</span><button disabled={page >= overview.pageCount} onClick={() => setPage(page + 1)}>Siguiente</button></div>}

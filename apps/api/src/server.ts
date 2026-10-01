@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { issueAdminSession, verifyAdminSession } from './adminSession.js';
 import { createReservationExpirer } from './reservationExpiry.js';
 import { registerSecurityHeaders } from './security.js';
+import { ticketSearchWhere } from './ticketSearch.js';
 
 const db = new PrismaClient();
 const app = Fastify({ logger: true });
@@ -567,17 +568,16 @@ app.get('/api/winners', async () => {
   return winners.map(({ reservation, ...winner }) => ({ ...winner, buyerName: reservation.buyerName }));
 });
 
-app.get<{ Params: { id: string }; Querystring: { page?: string; number?: string; status?: string } }>('/api/admin/campaigns/:id/overview', async (request, reply) => {
+app.get<{ Params: { id: string }; Querystring: { page?: string; search?: string; status?: string } }>('/api/admin/campaigns/:id/overview', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   await expireReservations();
   const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, title: true, numberCount: true, numberWidth: true, prizeCount: true, prize: true, secondPrize: true, thirdPrize: true, winners: { select: { position: true, numberValue: true }, orderBy: { position: 'asc' } } } });
   if (!campaign) return reply.code(404).send({ error: 'Rifa no encontrada' });
   const page = Math.max(1, Math.min(1000, Number(request.query.page) || 1));
-  const search = request.query.number?.trim();
-  const number = search && /^\d{1,5}$/.test(search) ? Number(search) : undefined;
-  if (search && (number === undefined || number >= campaign.numberCount)) return reply.code(400).send({ error: 'Número fuera del rango.' });
+  const search = request.query.search?.trim() || '';
+  if (search.length > 100) return reply.code(400).send({ error: 'La búsqueda es demasiado larga.' });
   const status = ['AVAILABLE', 'RESERVED', 'SOLD'].includes(request.query.status || '') ? request.query.status as 'AVAILABLE' | 'RESERVED' | 'SOLD' : undefined;
-  const where = { campaignId: campaign.id, ...(number !== undefined ? { value: number } : {}), ...(status ? { status } : {}) };
+  const where = { campaignId: campaign.id, ...(ticketSearchWhere(search, campaign.numberWidth) || {}), ...(status ? { status } : {}) };
   const [counts, total, numbers] = await Promise.all([
     db.entryNumber.groupBy({ by: ['status'], where: { campaignId: campaign.id }, _count: { _all: true } }),
     db.entryNumber.count({ where }),
