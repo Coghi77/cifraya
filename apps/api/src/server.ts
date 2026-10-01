@@ -41,6 +41,22 @@ const reservationInput = z.object({
   buyerPhone: z.string().min(8).max(25),
 });
 
+const photoInput = z.object({
+  mimeType: z.enum(['image/jpeg', 'image/png', 'image/webp']),
+  base64: z.string().min(1).max(2_800_000).regex(/^[A-Za-z0-9+/]+={0,2}$/),
+});
+
+const photoSelect = { select: { id: true }, orderBy: { sortOrder: 'asc' as const } };
+function imageList(photos: { id: string }[]) {
+  return photos.map(photo => ({ id: photo.id, url: `/api/campaign-photos/${photo.id}` }));
+}
+function validPhoto(data: Buffer, mimeType: string) {
+  if (data.length === 0 || data.length > 2_000_000) return false;
+  if (mimeType === 'image/jpeg') return data[0] === 0xff && data[1] === 0xd8 && data[2] === 0xff;
+  if (mimeType === 'image/png') return data.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+  return data.subarray(0, 4).toString() === 'RIFF' && data.subarray(8, 12).toString() === 'WEBP';
+}
+
 function adminAuthorized(header: string | undefined) {
   const expected = process.env.ADMIN_TOKEN;
   return Boolean(expected && expected.length >= 24 && header === `Bearer ${expected}`);
@@ -75,15 +91,25 @@ app.get('/api/campaigns', async () => {
   const campaigns = await db.campaign.findMany({
     where: { status: 'LIVE' },
     orderBy: { createdAt: 'desc' },
-    include: { _count: { select: { numbers: { where: { status: 'SOLD' } } } } },
+    include: { photos: photoSelect, _count: { select: { numbers: { where: { status: 'SOLD' } } } } },
   });
-  return campaigns.map(({ _count, ...campaign }) => ({ ...campaign, soldCount: _count.numbers }));
+  return campaigns.map(({ _count, photos, ...campaign }) => ({ ...campaign, photos: imageList(photos), soldCount: _count.numbers }));
 });
 
 app.get<{ Params: { slug: string } }>('/api/campaigns/:slug', async (request, reply) => {
-  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug } });
+  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, include: { photos: photoSelect } });
   if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Campaña no disponible' });
-  return campaign;
+  const { photos, ...data } = campaign;
+  return { ...data, photos: imageList(photos) };
+});
+
+app.get<{ Params: { id: string } }>('/api/campaign-photos/:id', async (request, reply) => {
+  const photo = await db.campaignPhoto.findUnique({
+    where: { id: request.params.id },
+    select: { mimeType: true, data: true, campaign: { select: { status: true } } },
+  });
+  if (!photo || photo.campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Foto no disponible' });
+  return reply.type(photo.mimeType).header('Cache-Control', 'public, max-age=3600').send(Buffer.from(photo.data));
 });
 
 app.get<{ Params: { slug: string }; Querystring: { page?: string } }>('/api/campaigns/:slug/numbers', async (request, reply) => {
@@ -192,7 +218,38 @@ app.post('/api/reservations/lookup', async (request, reply) => {
 
 app.get('/api/admin/campaigns', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
-  return db.campaign.findMany({ orderBy: { createdAt: 'desc' } });
+  const campaigns = await db.campaign.findMany({ orderBy: { createdAt: 'desc' }, include: { photos: photoSelect } });
+  return campaigns.map(({ photos, ...campaign }) => ({ ...campaign, photos: imageList(photos) }));
+});
+
+app.get<{ Params: { id: string } }>('/api/admin/campaign-photos/:id', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
+  const photo = await db.campaignPhoto.findUnique({ where: { id: request.params.id }, select: { mimeType: true, data: true } });
+  if (!photo) return reply.code(404).send({ error: 'Foto no encontrada' });
+  return reply.type(photo.mimeType).header('Cache-Control', 'private, no-store').send(Buffer.from(photo.data));
+});
+
+app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/photos', { bodyLimit: 3_000_000 }, async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
+  const parsed = photoInput.safeParse(request.body);
+  if (!parsed.success) return reply.code(400).send({ error: 'La foto debe ser JPG, PNG o WebP y pesar menos de 2 MB.' });
+  const bytes = Buffer.from(parsed.data.base64, 'base64');
+  if (!validPhoto(bytes, parsed.data.mimeType)) return reply.code(400).send({ error: 'Archivo de imagen inválido o demasiado grande.' });
+  const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, _count: { select: { photos: true } } } });
+  if (!campaign) return reply.code(404).send({ error: 'Rifa no encontrada' });
+  if (campaign._count.photos >= 5) return reply.code(409).send({ error: 'Cada rifa admite hasta 5 fotos.' });
+  const photo = await db.campaignPhoto.create({
+    data: { campaignId: campaign.id, mimeType: parsed.data.mimeType, data: bytes, sortOrder: campaign._count.photos },
+    select: { id: true },
+  });
+  return reply.code(201).send({ id: photo.id, url: `/api/campaign-photos/${photo.id}` });
+});
+
+app.delete<{ Params: { id: string } }>('/api/admin/campaign-photos/:id', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
+  const deleted = await db.campaignPhoto.deleteMany({ where: { id: request.params.id } });
+  if (!deleted.count) return reply.code(404).send({ error: 'Foto no encontrada' });
+  return { ok: true };
 });
 
 app.get('/api/admin/reservations', async (request, reply) => {

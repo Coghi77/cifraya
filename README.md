@@ -6,6 +6,8 @@ Proyecto independiente de Alessandro Kogi. Esta carpeta no pertenece a Autoids, 
 
 **Fase 1 para pruebas:** el inicio muestra la rifa activa; la navegación pública ofrece Inicio, Buscar boletos y Ganadores. Buscar boletos consulta una reserva mediante el código privado entregado al apartar números. Ganadores muestra un estado vacío hasta que existan sorteos verificados. El panel para crear y publicar rifas, revisar números y reservas de 30 minutos tiene una ruta directa fuera de la navegación pública y sigue exigiendo `ADMIN_TOKEN`. **No se reciben pagos ni comprobantes ni se muestran compras confirmadas.**
 
+Cada rifa admite hasta cinco fotos del premio. El panel permite cargarlas al crear el borrador o después, y eliminarlas. La primera foto es la portada; las demás aparecen en la galería de la rifa. El navegador reduce cada imagen a un máximo de 1600 píxeles y el servidor limita cada archivo guardado a 2 MB. Se almacenan en PostgreSQL para que no desaparezcan cuando Render reinicie el servicio; conviene vigilar el espacio disponible en el plan gratuito de Supabase.
+
 ## Arranque local
 
 Requisitos: Node.js 20+, pnpm 9+ y Docker Desktop.

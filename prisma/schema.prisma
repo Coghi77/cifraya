@@ -42,6 +42,19 @@ model Campaign {
   updatedAt      DateTime       @updatedAt
   numbers        EntryNumber[]
   reservations   Reservation[]
+  photos         CampaignPhoto[]
+}
+
+model CampaignPhoto {
+  id         String   @id @default(cuid())
+  campaignId String
+  mimeType   String
+  data       Bytes
+  sortOrder  Int
+  createdAt  DateTime @default(now())
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId, sortOrder])
 }
 
 model EntryNumber {
