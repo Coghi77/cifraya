@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
 type Detail = {
@@ -11,6 +12,7 @@ const money = (amount: number) => new Intl.NumberFormat('es-CR', { style: 'curre
 
 function ProofImage({ id, token }: { id: string; token: string }) {
   const [url, setUrl] = useState('');
+  const [expanded, setExpanded] = useState(false);
   useEffect(() => {
     let active = true;
     let objectUrl = '';
@@ -20,7 +22,16 @@ function ProofImage({ id, token }: { id: string; token: string }) {
       .catch(() => {});
     return () => { active = false; if (objectUrl) URL.revokeObjectURL(objectUrl); };
   }, [id, token]);
-  return url ? <a href={url} target="_blank" rel="noreferrer" aria-label="Abrir comprobante en tamaño completo"><img src={url} alt="Comprobante SINPE Móvil" /></a> : <span>Cargando comprobante...</span>;
+  useEffect(() => {
+    if (!expanded) return;
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setExpanded(false); };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [expanded]);
+  return url ? <>
+    <button className="review-proof-thumb" type="button" onClick={() => setExpanded(true)} aria-label="Ampliar comprobante"><img src={url} alt="Comprobante SINPE Móvil" /></button>
+    {expanded && createPortal(<div className="proof-lightbox" onMouseDown={event => { if (event.target === event.currentTarget) setExpanded(false); }}><div className="proof-lightbox-content" role="dialog" aria-modal="true" aria-label="Comprobante ampliado"><button className="proof-lightbox-close" type="button" autoFocus onClick={() => setExpanded(false)} aria-label="Cerrar comprobante"><X size={22}/></button><img src={url} alt="Comprobante SINPE Móvil ampliado" /></div></div>, document.body)}
+  </> : <span>Cargando comprobante...</span>;
 }
 
 export default function AdminReservationReview({ id, token, onClose, onReviewed }: { id: string; token: string; onClose: () => void; onReviewed: () => void }) {
