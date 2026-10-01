@@ -247,6 +247,8 @@ a { color: inherit; text-decoration: none; }
 .number:hover:not(:disabled) { border-color: var(--coral); background: #f3f3f3; }
 .number.selected { border-color: var(--coral); background: var(--coral); color: #191919; }
 .number:disabled { border-color: #e7e7e7; background: #ededed; color: #a8a8a8; }
+.number-legend .sold { background: #111; border-color: #111; }
+.number.sold:disabled { border-color: #111; background: #111; color: #fff; }
 .pagination { display: flex; justify-content: center; align-items: center; gap: 16px; margin: 18px 0 20px; color: var(--muted); font-size: 11px; font-weight: 900; }
 .pagination button { display: grid; place-items: center; padding: 6px; border: 1px solid var(--line); border-radius: 7px; background: white; }
 .pagination button:disabled { opacity: .4; }
@@ -303,12 +305,12 @@ a { color: inherit; text-decoration: none; }
 .muted { color: #aaaaaa; font-size: 12px; line-height: 1.6; }
 .form-grid { display: grid; gap: 15px; margin-top: 20px; }
 .form-grid label { display: grid; gap: 7px; color: inherit; font-size: 12px; font-weight: 800; }
-.form-grid input, .form-grid textarea { width: 100%; padding: 12px 13px; border: 1px solid #d3d3d3; border-radius: 9px; outline: none; background: #fefefe; color: var(--ink); }
-.form-grid input:focus, .form-grid textarea:focus { border-color: var(--coral); box-shadow: 0 0 0 3px #89898938; }
+.form-grid input, .form-grid textarea, .form-grid select { width: 100%; padding: 12px 13px; border: 1px solid #d3d3d3; border-radius: 9px; outline: none; background: #fefefe; color: var(--ink); }
+.form-grid input:focus, .form-grid textarea:focus, .form-grid select:focus { border-color: var(--coral); box-shadow: 0 0 0 3px #89898938; }
 .form-grid input::placeholder, .form-grid textarea::placeholder { color: #8f8f8f; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .admin-page .form-grid label { color: #e8e8e8; }
-.admin-page .form-grid input, .admin-page .form-grid textarea { border-color: #696969; background: #313131; color: white; }
+.admin-page .form-grid input, .admin-page .form-grid textarea, .admin-page .form-grid select { border-color: #696969; background: #313131; color: white; }
 .admin-page .form-grid input::placeholder, .admin-page .form-grid textarea::placeholder { color: #a6a6a6; }
 .admin-list { margin-top: 20px; }
 .admin-item { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 17px 0; border-top: 1px solid #555555; }
@@ -421,3 +423,60 @@ a { color: inherit; text-decoration: none; }
 .pending-photo { position: relative; width: 72px; height: 72px; overflow: hidden; border: 1px solid #777; border-radius: 8px; background: #333; }
 .pending-photo img { width: 100%; height: 100%; object-fit: cover; }
 .pending-photo button { position: absolute; top: 3px; right: 3px; display: grid; place-items: center; width: 22px; height: 22px; padding: 0; border: 0; border-radius: 50%; background: #111; color: #fff; cursor: pointer; }
+
+.public-intro h1 em, .detail-heading p, .hero h1 em, .ticket-art-center em, .cover-index, .how-section h2 em, .how-grid span { font-family: inherit; font-style: normal; }
+.public-intro h1 em { font-weight: inherit; }
+.detail-heading p { font-size: 20px; font-weight: 500; }
+.package-editor { display: grid; gap: 12px; padding: 16px; border: 1px solid #555; border-radius: 12px; }
+.package-editor p { margin: 0; color: #bbb; font-size: 12px; line-height: 1.5; }
+.package-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.package-heading button, .package-row > button { border: 1px solid #aaa; border-radius: 8px; padding: 8px 10px; background: transparent; color: #fff; font-weight: 700; }
+.package-row { display: grid; grid-template-columns: 1fr 1fr auto; align-items: end; gap: 9px; }
+.package-row > button { height: 43px; min-width: 43px; }
+.package-offers { margin: 14px 0; padding: 12px; border: 1px solid #d6d6d6; border-radius: 10px; }
+.package-offers > strong { display: block; margin-bottom: 8px; font-size: 13px; }
+.package-offers > div { display: flex; flex-wrap: wrap; gap: 7px; }
+.package-offers span { padding: 7px 10px; border-radius: 999px; background: #eee; font-size: 12px; font-weight: 700; }
+.winner-list { display: grid; gap: 14px; }
+.winner-card { display: flex; gap: 20px; padding: 24px; border: 1px solid #d6d6d6; border-radius: 16px; }
+.winner-card > div { display: grid; gap: 7px; }
+.winner-card h2 { margin: 0; font-size: 28px; }
+.winner-card small { color: #666; }
+.admin-raffle-detail { display: grid; gap: 20px; margin-top: 26px; }
+.admin-back { justify-self: start; border: 0; background: none; color: #fff; font-weight: 800; }
+.admin-detail-heading, .admin-detail-controls, .admin-detail-stats, .admin-number-row, .admin-history-row, .admin-winner-confirm { display: flex; align-items: center; gap: 16px; }
+.admin-detail-heading { justify-content: space-between; }
+.admin-detail-heading h2 { margin: 8px 0 0; font-size: clamp(28px, 4vw, 46px); }
+.admin-detail-heading button, .admin-number-row button, .admin-detail-pages button, .admin-history-actions button, .admin-winner-confirm button { padding: 9px 13px; border: 1px solid #888; border-radius: 8px; background: #fff; color: #111; font-weight: 800; }
+.admin-detail-heading button:disabled, .admin-detail-pages button:disabled, .admin-history-actions button:disabled { opacity: .45; }
+.admin-detail-stats > div { flex: 1; display: grid; gap: 5px; padding: 17px; border: 1px solid #555; border-radius: 12px; }
+.admin-detail-stats strong { font-size: 26px; }
+.admin-detail-stats span, .admin-detail-help, .admin-history > p { color: #bbb; font-size: 13px; }
+.admin-detail-controls label { display: grid; gap: 7px; font-size: 12px; font-weight: 700; }
+.admin-detail-controls input, .admin-detail-controls select { min-height: 42px; padding: 8px 12px; border: 1px solid #777; border-radius: 8px; background: #292929; color: #fff; }
+.admin-number-list, .admin-history { display: grid; gap: 8px; }
+.admin-number-row, .admin-history-row { justify-content: space-between; min-height: 52px; padding: 10px 14px; border: 1px solid #4a4a4a; border-radius: 10px; background: #242424; }
+.admin-number-row > strong { min-width: 70px; font-size: 18px; }
+.admin-number-status { min-width: 90px; font-size: 12px; }
+.admin-number-buyer { flex: 1; font-size: 13px; }
+.admin-detail-pages { display: flex; align-items: center; justify-content: center; gap: 15px; }
+.admin-winner-confirm, .admin-winner-banner { padding: 16px; border: 1px solid #fff; border-radius: 10px; background: #333; }
+.admin-winner-confirm > div { flex: 1; display: grid; gap: 4px; }
+.admin-winner-confirm > div span { color: #ddd; }
+.admin-history { margin-top: 20px; }
+.admin-history h3 { margin: 0; font-size: 22px; }
+.admin-history-row > div:first-child { display: grid; gap: 4px; min-width: 190px; }
+.admin-history-row span, .admin-history-row small { color: #bbb; font-size: 12px; }
+.admin-history-values { display: flex; flex: 1; flex-wrap: wrap; gap: 5px; }
+.admin-history-values span { padding: 5px 7px; border: 1px solid #666; border-radius: 5px; color: #fff; }
+.admin-history-actions { display: grid; gap: 7px; justify-items: end; }
+.admin-detail-error { color: #fff; border-left: 3px solid #fff; padding-left: 10px; }
+@media (max-width: 700px) {
+  .package-row { grid-template-columns: 1fr 1fr auto; }
+  .admin-detail-stats { gap: 7px; }
+  .admin-detail-stats > div { padding: 10px; }
+  .admin-detail-stats strong { font-size: 20px; }
+  .admin-number-row, .admin-history-row { flex-wrap: wrap; }
+  .admin-number-buyer { flex-basis: 45%; }
+  .admin-detail-controls { flex-wrap: wrap; }
+}

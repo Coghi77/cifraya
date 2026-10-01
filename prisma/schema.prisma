@@ -24,6 +24,7 @@ enum ReservationStatus {
   ACTIVE
   EXPIRED
   CANCELLED
+  CONFIRMED
 }
 
 model Campaign {
@@ -43,6 +44,28 @@ model Campaign {
   numbers        EntryNumber[]
   reservations   Reservation[]
   photos         CampaignPhoto[]
+  packages       PricePackage[]
+  winner         Winner?
+}
+
+model PricePackage {
+  id         String   @id @default(cuid())
+  campaignId String
+  quantity   Int
+  priceCrc   Int
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, quantity])
+}
+
+model Winner {
+  id            String      @id @default(cuid())
+  campaignId    String      @unique
+  reservationId String
+  numberValue   Int
+  publishedAt   DateTime    @default(now())
+  campaign      Campaign    @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  reservation   Reservation @relation(fields: [reservationId], references: [id])
 }
 
 model CampaignPhoto {
@@ -81,9 +104,12 @@ model Reservation {
   selectedValues Int[]             @default([])
   status         ReservationStatus @default(ACTIVE)
   expiresAt      DateTime
+  totalCrc       Int               @default(0)
+  confirmedAt    DateTime?
   createdAt      DateTime          @default(now())
   campaign       Campaign          @relation(fields: [campaignId], references: [id])
   numbers        EntryNumber[]
+  winners        Winner[]
 
   @@index([status, expiresAt])
 }

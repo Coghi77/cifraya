@@ -28,8 +28,9 @@ const campaignInput = z.object({
   description: z.string().max(3000).default(''),
   prize: z.string().min(3).max(200),
   imageUrl: z.string().url().optional(),
-  priceCrc: z.number().int().positive(),
-  numberCount: z.number().int().min(10).max(100000),
+  priceCrc: z.number().int().positive().max(100_000_000),
+  numberCount: z.union([z.literal(100), z.literal(1000), z.literal(10000)]),
+  packages: z.array(z.object({ quantity: z.number().int().min(2).max(20), priceCrc: z.number().int().positive().max(100_000_000) })).max(10).default([]),
   drawDate: z.string().datetime().optional(),
 });
 
@@ -47,6 +48,17 @@ const photoInput = z.object({
 });
 
 const photoSelect = { select: { id: true }, orderBy: { sortOrder: 'asc' as const } };
+const packageSelect = { select: { quantity: true, priceCrc: true }, orderBy: { quantity: 'asc' as const } };
+function priceFor(quantity: number, unitPrice: number, packages: { quantity: number; priceCrc: number }[]) {
+  const totals = Array<number>(quantity + 1).fill(0);
+  for (let count = 1; count <= quantity; count++) {
+    totals[count] = totals[count - 1] + unitPrice;
+    for (const offer of packages) if (offer.quantity <= count) {
+      totals[count] = Math.min(totals[count], totals[count - offer.quantity] + offer.priceCrc);
+    }
+  }
+  return totals[quantity];
+}
 function imageList(photos: { id: string }[]) {
   return photos.map(photo => ({ id: photo.id, url: `/api/campaign-photos/${photo.id}` }));
 }
@@ -123,14 +135,14 @@ app.get('/api/campaigns', async () => {
   const campaigns = await db.campaign.findMany({
     where: { status: 'LIVE' },
     orderBy: { createdAt: 'desc' },
-    include: { photos: photoSelect, _count: { select: { numbers: { where: { status: 'SOLD' } } } } },
+    include: { photos: photoSelect, packages: packageSelect, _count: { select: { numbers: { where: { status: 'SOLD' } } } } },
   });
   return campaigns.map(({ _count, photos, ...campaign }) => ({ ...campaign, photos: imageList(photos), soldCount: _count.numbers }));
 });
 
 app.get<{ Params: { slug: string } }>('/api/campaigns/:slug', async (request, reply) => {
-  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, include: { photos: photoSelect } });
-  if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Campaña no disponible' });
+  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, include: { photos: photoSelect, packages: packageSelect } });
+  if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible' });
   const { photos, ...data } = campaign;
   return { ...data, photos: imageList(photos) };
 });
@@ -147,7 +159,7 @@ app.get<{ Params: { id: string } }>('/api/campaign-photos/:id', async (request, 
 app.get<{ Params: { slug: string }; Querystring: { page?: string } }>('/api/campaigns/:slug/numbers', async (request, reply) => {
   await expireReservations();
   const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug } });
-  if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Campaña no disponible' });
+  if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible' });
   const page = Math.max(1, Math.min(1000, Number(request.query.page) || 1));
   const numbers = await db.entryNumber.findMany({
     where: { campaignId: campaign.id },
@@ -166,8 +178,8 @@ app.post('/api/reservations', async (request, reply) => {
   const input = parsed.data;
   const uniqueValues = [...new Set(input.values)];
   if (uniqueValues.length !== input.values.length) return reply.code(400).send({ error: 'Hay números repetidos en la selección' });
-  const campaign = await db.campaign.findUnique({ where: { id: input.campaignId } });
-  if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Campaña no disponible' });
+  const campaign = await db.campaign.findUnique({ where: { id: input.campaignId }, include: { packages: packageSelect } });
+  if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible' });
   if (uniqueValues.some(value => value >= campaign.numberCount)) return reply.code(400).send({ error: 'Número fuera del rango' });
 
   try {
@@ -180,6 +192,7 @@ app.post('/api/reservations', async (request, reply) => {
           buyerEmail: input.buyerEmail,
           buyerPhone: input.buyerPhone,
           selectedValues: uniqueValues,
+          totalCrc: priceFor(uniqueValues.length, campaign.priceCrc, campaign.packages),
           expiresAt: new Date(Date.now() + 30 * 60_000),
         },
       });
@@ -194,7 +207,7 @@ app.post('/api/reservations', async (request, reply) => {
       token: reservation.lookupToken,
       expiresAt: reservation.expiresAt,
       values: uniqueValues,
-      totalCrc: uniqueValues.length * campaign.priceCrc,
+      totalCrc: reservation.totalCrc,
     });
   } catch (error) {
     if (error instanceof Error && error.message === 'NUMBER_UNAVAILABLE') {
@@ -218,6 +231,7 @@ app.get<{ Params: { token: string } }>('/api/reservations/:token', async (reques
     status: reservation.status,
     expiresAt: reservation.expiresAt,
     buyerName: reservation.buyerName,
+    totalCrc: reservation.totalCrc,
     values: reservation.selectedValues.length ? reservation.selectedValues : reservation.numbers.map(number => number.value),
     campaign: reservation.campaign,
   };
@@ -234,6 +248,7 @@ app.post('/api/reservations/lookup', async (request, reply) => {
       status: true,
       expiresAt: true,
       selectedValues: true,
+      totalCrc: true,
       numbers: { select: { value: true } },
       campaign: { select: { title: true, numberWidth: true, priceCrc: true } },
     },
@@ -242,6 +257,7 @@ app.post('/api/reservations/lookup', async (request, reply) => {
   return {
     buyerName: reservation.buyerName,
     status: reservation.status,
+    totalCrc: reservation.totalCrc,
     expiresAt: reservation.expiresAt,
     values: reservation.selectedValues.length ? reservation.selectedValues : reservation.numbers.map(number => number.value),
     campaign: reservation.campaign,
@@ -250,7 +266,7 @@ app.post('/api/reservations/lookup', async (request, reply) => {
 
 app.get('/api/admin/campaigns', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
-  const campaigns = await db.campaign.findMany({ orderBy: { createdAt: 'desc' }, include: { photos: photoSelect } });
+  const campaigns = await db.campaign.findMany({ orderBy: { createdAt: 'desc' }, include: { photos: photoSelect, packages: packageSelect, winner: { select: { numberValue: true } } } });
   return campaigns.map(({ photos, ...campaign }) => ({ ...campaign, photos: imageList(photos) }));
 });
 
@@ -314,6 +330,9 @@ app.post('/api/admin/campaigns', async (request, reply) => {
   const parsed = campaignInput.safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: 'Datos inválidos', details: parsed.error.flatten() });
   const input = parsed.data;
+  if (new Set(input.packages.map(item => item.quantity)).size !== input.packages.length || input.packages.some(item => item.priceCrc >= item.quantity * input.priceCrc)) {
+    return reply.code(400).send({ error: 'Cada paquete debe tener una cantidad distinta y un precio menor al total individual.' });
+  }
   const campaign = await db.$transaction(async tx => {
     const created = await tx.campaign.create({
       data: {
@@ -326,6 +345,7 @@ app.post('/api/admin/campaigns', async (request, reply) => {
         numberCount: input.numberCount,
         numberWidth: String(input.numberCount - 1).length,
         drawDate: input.drawDate ? new Date(input.drawDate) : undefined,
+        packages: { create: input.packages },
       },
     });
     for (let start = 0; start < input.numberCount; start += 1000) {
@@ -344,9 +364,95 @@ app.post('/api/admin/campaigns', async (request, reply) => {
 app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/publish', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   const campaign = await db.campaign.findUnique({ where: { id: request.params.id } });
-  if (!campaign) return reply.code(404).send({ error: 'Campaña no encontrada' });
-  if (campaign.status !== 'DRAFT') return reply.code(409).send({ error: 'Solo se publican campañas en borrador' });
+  if (!campaign) return reply.code(404).send({ error: 'Rifa no encontrada' });
+  if (campaign.status !== 'DRAFT') return reply.code(409).send({ error: 'Solo se publican rifas en borrador' });
   return db.campaign.update({ where: { id: campaign.id }, data: { status: 'LIVE' } });
+});
+
+app.get('/api/winners', async () => {
+  const winners = await db.winner.findMany({
+    orderBy: { publishedAt: 'desc' },
+    select: { numberValue: true, publishedAt: true, campaign: { select: { title: true, prize: true, numberWidth: true } }, reservation: { select: { buyerName: true } } },
+  });
+  return winners.map(({ reservation, ...winner }) => ({ ...winner, buyerName: reservation.buyerName }));
+});
+
+app.get<{ Params: { id: string }; Querystring: { page?: string; number?: string; status?: string } }>('/api/admin/campaigns/:id/overview', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
+  await expireReservations();
+  const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, title: true, numberCount: true, numberWidth: true, winner: { select: { numberValue: true } } } });
+  if (!campaign) return reply.code(404).send({ error: 'Rifa no encontrada' });
+  const page = Math.max(1, Math.min(1000, Number(request.query.page) || 1));
+  const search = request.query.number?.trim();
+  const number = search && /^\d{1,5}$/.test(search) ? Number(search) : undefined;
+  if (search && (number === undefined || number >= campaign.numberCount)) return reply.code(400).send({ error: 'Número fuera del rango.' });
+  const status = ['AVAILABLE', 'RESERVED', 'SOLD'].includes(request.query.status || '') ? request.query.status as 'AVAILABLE' | 'RESERVED' | 'SOLD' : undefined;
+  const where = { campaignId: campaign.id, ...(number !== undefined ? { value: number } : {}), ...(status ? { status } : {}) };
+  const [counts, total, numbers] = await Promise.all([
+    db.entryNumber.groupBy({ by: ['status'], where: { campaignId: campaign.id }, _count: { _all: true } }),
+    db.entryNumber.count({ where }),
+    db.entryNumber.findMany({ where, orderBy: { value: 'asc' }, skip: (page - 1) * 100, take: 100,
+      select: { value: true, status: true, reservation: { select: { id: true, buyerName: true, buyerEmail: true, buyerPhone: true, createdAt: true, expiresAt: true, confirmedAt: true, totalCrc: true, status: true } } } }),
+  ]);
+  return { campaign, counts: Object.fromEntries(counts.map(item => [item.status, item._count._all])), page, pageCount: Math.ceil(total / 100), numbers };
+});
+
+app.get<{ Params: { id: string }; Querystring: { page?: string } }>('/api/admin/campaigns/:id/history', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
+  await expireReservations();
+  const page = Math.max(1, Math.min(1000, Number(request.query.page) || 1));
+  const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, numberWidth: true } });
+  if (!campaign) return reply.code(404).send({ error: 'Rifa no encontrada' });
+  const [total, reservations] = await Promise.all([
+    db.reservation.count({ where: { campaignId: campaign.id } }),
+    db.reservation.findMany({ where: { campaignId: campaign.id }, orderBy: { createdAt: 'desc' }, skip: (page - 1) * 30, take: 30,
+      select: { id: true, buyerName: true, buyerEmail: true, buyerPhone: true, selectedValues: true, status: true, createdAt: true, expiresAt: true, confirmedAt: true, totalCrc: true } }),
+  ]);
+  return { page, pageCount: Math.ceil(total / 30), reservations };
+});
+
+app.post<{ Params: { id: string } }>('/api/admin/reservations/:id/confirm', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
+  await expireReservations();
+  try {
+    const confirmed = await db.$transaction(async tx => {
+      const reservation = await tx.reservation.findUnique({ where: { id: request.params.id }, select: { selectedValues: true } });
+      if (!reservation) throw new Error('RESERVATION_NOT_ACTIVE');
+      const changed = await tx.reservation.updateMany({ where: { id: request.params.id, status: 'ACTIVE', expiresAt: { gt: new Date() } }, data: { status: 'CONFIRMED', confirmedAt: new Date() } });
+      if (changed.count !== 1) throw new Error('RESERVATION_NOT_ACTIVE');
+      const sold = await tx.entryNumber.updateMany({ where: { reservationId: request.params.id, status: 'RESERVED' }, data: { status: 'SOLD' } });
+      if (sold.count !== reservation.selectedValues.length) throw new Error('RESERVATION_NOT_ACTIVE');
+      return true;
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    return { confirmed };
+  } catch (error) {
+    if (error instanceof Error && error.message === 'RESERVATION_NOT_ACTIVE') return reply.code(409).send({ error: 'La reserva venció o ya fue confirmada. Actualizá la rifa.' });
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2034') return reply.code(409).send({ error: 'La reserva cambió mientras se confirmaba. Intentá de nuevo.' });
+    throw error;
+  }
+});
+
+app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/winner', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
+  const parsed = z.object({ numberValue: z.number().int().nonnegative() }).safeParse(request.body);
+  if (!parsed.success) return reply.code(400).send({ error: 'Número inválido.' });
+  try {
+    const winner = await db.$transaction(async tx => {
+      const campaign = await tx.campaign.findUnique({ where: { id: request.params.id }, select: { status: true, winner: { select: { id: true } } } });
+      if (!campaign || campaign.status !== 'LIVE' || campaign.winner) throw new Error('WINNER_NOT_ALLOWED');
+      const number = await tx.entryNumber.findUnique({ where: { campaignId_value: { campaignId: request.params.id, value: parsed.data.numberValue } }, select: { status: true, reservationId: true } });
+      if (number?.status !== 'SOLD' || !number.reservationId) throw new Error('NUMBER_NOT_SOLD');
+      const winner = await tx.winner.create({ data: { campaignId: request.params.id, reservationId: number.reservationId, numberValue: parsed.data.numberValue } });
+      await tx.campaign.update({ where: { id: request.params.id }, data: { status: 'CLOSED' } });
+      return winner;
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    return reply.code(201).send(winner);
+  } catch (error) {
+    if (error instanceof Error && error.message === 'WINNER_NOT_ALLOWED') return reply.code(409).send({ error: 'La rifa no está abierta o ya tiene ganador.' });
+    if (error instanceof Error && error.message === 'NUMBER_NOT_SOLD') return reply.code(409).send({ error: 'Solo puede ganar un boleto vendido y confirmado.' });
+    if (error instanceof Prisma.PrismaClientKnownRequestError && ['P2002', 'P2034'].includes(error.code)) return reply.code(409).send({ error: 'El resultado cambió. Actualizá la rifa.' });
+    throw error;
+  }
 });
 
 const timer = setInterval(() => expireReservations().catch(error => app.log.error(error)), 60_000);
