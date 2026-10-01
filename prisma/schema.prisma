@@ -34,6 +34,9 @@ model Campaign {
   title          String
   description    String         @default("")
   prize          String
+  prizeCount     Int            @default(1)
+  secondPrize    String?
+  thirdPrize     String?
   imageUrl       String?
   priceCrc       Int
   numberCount    Int
@@ -46,7 +49,7 @@ model Campaign {
   reservations   Reservation[]
   photos         CampaignPhoto[]
   packages       PricePackage[]
-  winner         Winner?
+  winners        Winner[]
   proposals      NumberProposal[]
 }
 
@@ -77,12 +80,16 @@ model PricePackage {
 
 model Winner {
   id            String      @id @default(cuid())
-  campaignId    String      @unique
+  campaignId    String
   reservationId String
   numberValue   Int
+  position      Int         @default(1)
   publishedAt   DateTime    @default(now())
   campaign      Campaign    @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   reservation   Reservation @relation(fields: [reservationId], references: [id])
+
+  @@unique([campaignId, position])
+  @@unique([campaignId, numberValue])
 }
 
 model CampaignPhoto {

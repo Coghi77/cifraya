@@ -30,6 +30,9 @@ const campaignInput = z.object({
   slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(80),
   description: z.string().max(3000).default(''),
   prize: z.string().min(3).max(200),
+  prizeCount: z.number().int().min(1).max(3).default(1),
+  secondPrize: z.string().min(3).max(200).optional(),
+  thirdPrize: z.string().min(3).max(200).optional(),
   imageUrl: z.string().url().optional(),
   priceCrc: z.number().int().positive().max(100_000_000),
   numberCount: z.union([z.literal(100), z.literal(1000), z.literal(10000)]),
@@ -400,7 +403,7 @@ app.post<{ Params: { token: string } }>('/api/reservations/:token/proofs', { bod
 
 app.get('/api/admin/campaigns', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
-  const campaigns = await db.campaign.findMany({ orderBy: { createdAt: 'desc' }, include: { photos: photoSelect, packages: packageSelect, winner: { select: { numberValue: true } } } });
+  const campaigns = await db.campaign.findMany({ orderBy: { createdAt: 'desc' }, include: { photos: photoSelect, packages: packageSelect, winners: { select: { position: true, numberValue: true }, orderBy: { position: 'asc' } } } });
   return campaigns.map(({ photos, ...campaign }) => ({ ...campaign, photos: imageList(photos) }));
 });
 
@@ -490,6 +493,7 @@ app.post('/api/admin/campaigns', async (request, reply) => {
   const parsed = campaignInput.safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: 'Datos inválidos', details: parsed.error.flatten() });
   const input = parsed.data;
+  if ((input.prizeCount >= 2 && !input.secondPrize) || (input.prizeCount === 3 && !input.thirdPrize)) return reply.code(400).send({ error: 'Indicá el premio de cada posición.' });
   if (new Set(input.packages.map(item => item.quantity)).size !== input.packages.length || input.packages.some(item => item.priceCrc >= item.quantity * input.priceCrc)) {
     return reply.code(400).send({ error: 'Cada paquete debe tener una cantidad distinta y un precio menor al total individual.' });
   }
@@ -500,6 +504,9 @@ app.post('/api/admin/campaigns', async (request, reply) => {
         slug: input.slug,
         description: input.description,
         prize: input.prize,
+        prizeCount: input.prizeCount,
+        secondPrize: input.prizeCount >= 2 ? input.secondPrize : null,
+        thirdPrize: input.prizeCount === 3 ? input.thirdPrize : null,
         imageUrl: input.imageUrl,
         priceCrc: input.priceCrc,
         numberCount: input.numberCount,
@@ -535,7 +542,7 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/publish', async (
 app.get('/api/winners', async () => {
   const winners = await db.winner.findMany({
     orderBy: { publishedAt: 'desc' },
-    select: { numberValue: true, publishedAt: true, campaign: { select: { title: true, prize: true, numberWidth: true } }, reservation: { select: { buyerName: true } } },
+    select: { position: true, numberValue: true, publishedAt: true, campaign: { select: { id: true, title: true, prize: true, secondPrize: true, thirdPrize: true, prizeCount: true, numberWidth: true } }, reservation: { select: { buyerName: true } } },
   });
   return winners.map(({ reservation, ...winner }) => ({ ...winner, buyerName: reservation.buyerName }));
 });
@@ -543,7 +550,7 @@ app.get('/api/winners', async () => {
 app.get<{ Params: { id: string }; Querystring: { page?: string; number?: string; status?: string } }>('/api/admin/campaigns/:id/overview', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   await expireReservations();
-  const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, title: true, numberCount: true, numberWidth: true, winner: { select: { numberValue: true } } } });
+  const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, title: true, numberCount: true, numberWidth: true, prizeCount: true, prize: true, secondPrize: true, thirdPrize: true, winners: { select: { position: true, numberValue: true }, orderBy: { position: 'asc' } } } });
   if (!campaign) return reply.code(404).send({ error: 'Rifa no encontrada' });
   const page = Math.max(1, Math.min(1000, Number(request.query.page) || 1));
   const search = request.query.number?.trim();
@@ -638,22 +645,22 @@ app.post<{ Params: { id: string } }>('/api/admin/reservations/:id/reject', async
 
 app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/winner', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
-  const parsed = z.object({ numberValue: z.number().int().nonnegative() }).safeParse(request.body);
+  const parsed = z.object({ numberValue: z.number().int().nonnegative(), position: z.number().int().min(1).max(3) }).safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: 'Número inválido.' });
   try {
     const winner = await db.$transaction(async tx => {
-      const campaign = await tx.campaign.findUnique({ where: { id: request.params.id }, select: { status: true, winner: { select: { id: true } } } });
-      if (!campaign || campaign.status !== 'LIVE' || campaign.winner) throw new Error('WINNER_NOT_ALLOWED');
+      const campaign = await tx.campaign.findUnique({ where: { id: request.params.id }, select: { status: true, prizeCount: true, winners: { select: { position: true, numberValue: true } } } });
+      if (!campaign || campaign.status !== 'LIVE' || parsed.data.position !== campaign.winners.length + 1 || parsed.data.position > campaign.prizeCount || campaign.winners.some(item => item.numberValue === parsed.data.numberValue)) throw new Error('WINNER_NOT_ALLOWED');
       const number = await tx.entryNumber.findUnique({ where: { campaignId_value: { campaignId: request.params.id, value: parsed.data.numberValue } }, select: { status: true, reservationId: true } });
       if (number?.status !== 'SOLD' || !number.reservationId) throw new Error('NUMBER_NOT_SOLD');
-      const winner = await tx.winner.create({ data: { campaignId: request.params.id, reservationId: number.reservationId, numberValue: parsed.data.numberValue } });
-      await tx.campaign.update({ where: { id: request.params.id }, data: { status: 'CLOSED' } });
+      const winner = await tx.winner.create({ data: { campaignId: request.params.id, reservationId: number.reservationId, numberValue: parsed.data.numberValue, position: parsed.data.position } });
+      if (parsed.data.position === campaign.prizeCount) await tx.campaign.update({ where: { id: request.params.id }, data: { status: 'CLOSED' } });
       return winner;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
     broadcast('winners');
     return reply.code(201).send(winner);
   } catch (error) {
-    if (error instanceof Error && error.message === 'WINNER_NOT_ALLOWED') return reply.code(409).send({ error: 'La rifa no está abierta o ya tiene ganador.' });
+    if (error instanceof Error && error.message === 'WINNER_NOT_ALLOWED') return reply.code(409).send({ error: 'La posición no está disponible o este número ya ganó.' });
     if (error instanceof Error && error.message === 'NUMBER_NOT_SOLD') return reply.code(409).send({ error: 'Solo puede ganar un boleto vendido y confirmado.' });
     if (error instanceof Prisma.PrismaClientKnownRequestError && ['P2002', 'P2034'].includes(error.code)) return reply.code(409).send({ error: 'El resultado cambió. Actualizá la rifa.' });
     throw error;

@@ -18,7 +18,7 @@ flowchart LR
 
 | Nodo | Responsabilidad | Fuente |
 |---|---|---|
-| Web pública | Inicio `/`, `/buscar-boletos`, `/ganadores`, `/rifa/:slug`; selección, reserva y comprobantes | `apps/web/src/App.tsx` |
+| Web pública | Inicio `/`, `/buscar-boletos`, `/ganadores`, `/rifa/:slug`; selección, reserva, comprobantes y podio interactivo | `apps/web/src/App.tsx`, `apps/web/src/WinnersPodium.tsx` |
 | Centro de control | `/estudio-cifraya`; rifas, boletos tipo tarjeta, ganador e historial | `apps/web/src/App.tsx`, `AdminRaffleDetail.tsx` |
 | Participantes y pagos | Ficha privada por correo; revisión manual de comprobantes | `AdminParticipantDetail.tsx`, `AdminReservationReview.tsx` |
 | API | Validación, autenticación, reservas atómicas, SSE y vencimientos | `apps/api/src/server.ts` |
@@ -37,6 +37,7 @@ stateDiagram-v2
 ```
 
 - Rifas admiten **100, 1.000 o 10.000 números** (`00–99`, `000–999`, `0000–9999`). Menos de 200: selección manual. Desde 200: propuesta aleatoria del servidor y máximo cinco cambios por selección. Los paquetes ajustan el precio automáticamente.
+- Cada rifa configura de uno a tres premios por posición. `Campaign.prize` es el primer premio para conservar rifas anteriores; `secondPrize` y `thirdPrize` se usan según `prizeCount`. Los ganadores se publican en orden, con números vendidos distintos; la rifa se cierra al publicar el último. La migración asigna primer puesto a ganadores anteriores.
 - La propuesta aleatoria no aparta números. La reserva sí los reclama en transacción serializable; un conflicto debe devolver 409. Un comprobante presentado a tiempo conserva el apartado durante la revisión. Solo `CONFIRMED` puede resultar ganador.
 - Fotos del premio: hasta cinco; comprobantes: hasta tres. Cada imagen guardada pesa como máximo 2 MB. **Ambos tipos se guardan hoy en PostgreSQL**, no en Supabase Storage. El administrador debe cotejar SINPE con el dinero realmente recibido; la foto sola no verifica el pago.
 - La ficha mini CRM relaciona reservas por correo electrónico sin distinguir mayúsculas, con historial paginado. Es una agrupación práctica, no una identidad verificada.

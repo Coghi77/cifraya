@@ -463,7 +463,39 @@ a { color: inherit; text-decoration: none; }
 .admin-status-options button:hover, .admin-status-options button[aria-pressed="true"] { background: #f4f4f4; color: #111; }
 .admin-history { display: grid; gap: 8px; }
 .admin-detail-pages { display: flex; align-items: center; justify-content: center; gap: 15px; }
-.admin-winner-banner { padding: 16px; border: 1px solid #fff; border-radius: 10px; background: #333; }
+.admin-winner-banner { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; padding: 12px; border: 1px solid #fff; border-radius: 10px; background: #222; }
+.admin-winner-banner > span { display: grid; gap: 6px; padding: 12px; border: 1px solid #555; border-radius: 8px; }
+.admin-winner-banner > span > span { color: #bbb; font-size: 13px; }
+.prize-editor { display: grid; gap: 12px; padding: 16px; border: 1px solid #666; border-radius: 12px; }
+.prize-editor > span { font-size: 12px; font-weight: 800; }
+.prize-count { display: flex; gap: 8px; }
+.prize-count button { flex: 1; min-height: 42px; border: 1px solid #777; border-radius: 8px; background: #2a2a2a; color: #fff; font: inherit; cursor: pointer; }
+.prize-count button[aria-pressed="true"] { background: #fff; color: #111; }
+.detail-prize-list { display: grid; gap: 7px; margin: 14px 0; }
+.detail-prize-list span { padding: 9px 12px; border: 1px solid #d2d2d2; border-radius: 8px; font-weight: 700; }
+.podium-groups { display: grid; gap: 38px; }
+.podium-section { padding: clamp(18px, 4vw, 42px); border: 1px solid #d5d5d5; border-radius: 22px; background: #f8f8f8; overflow: hidden; }
+.podium-heading { text-align: center; }
+.podium-heading > span { font-size: 11px; font-weight: 900; letter-spacing: .16em; }
+.podium-heading h2 { margin: 12px 0 5px; font-size: clamp(28px, 4vw, 48px); letter-spacing: -.05em; }
+.podium-heading p { margin: 0; color: #666; }
+.podium-stage { display: flex; align-items: end; justify-content: center; gap: clamp(7px, 1.6vw, 20px); min-height: 365px; margin-top: 32px; }
+.podium-place { display: flex; flex-direction: column; align-items: center; width: min(31%, 260px); min-width: 0; padding: 0; border: 1px solid #111; border-radius: 15px 15px 0 0; background: #fff; color: #111; text-align: center; font: inherit; cursor: pointer; transition: transform .22s ease, box-shadow .22s ease; }
+.podium-place:hover:not(:disabled), .podium-place.selected { transform: translateY(-7px); box-shadow: 0 13px 26px #0002; }
+.podium-place:disabled { cursor: default; opacity: .64; }
+.podium-place.place-1 { min-height: 325px; order: 2; }
+.podium-place.place-2 { min-height: 255px; order: 1; }
+.podium-place.place-3 { min-height: 205px; order: 3; }
+.podium-place-top { display: grid; gap: 5px; padding: 16px 8px 10px; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+.podium-place-top strong { font-size: clamp(30px, 5vw, 62px); letter-spacing: -.08em; line-height: 1; }
+.podium-person { display: block; max-width: 100%; padding: 9px 10px 2px; overflow-wrap: anywhere; font-size: clamp(14px, 2vw, 21px); font-weight: 900; }
+.podium-prize { padding: 3px 10px 12px; color: #555; font-size: clamp(11px, 1.4vw, 14px); overflow-wrap: anywhere; }
+.podium-number { margin-top: auto; padding: 8px 10px 13px; font-size: 13px; font-weight: 800; }
+.podium-base { width: 100%; padding: 10px; border-top: 1px solid #111; background: #111; color: #fff; font-size: 24px; font-weight: 900; }
+.podium-detail { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 9px 18px; margin-top: 20px; padding: 17px; border: 1px solid #111; border-radius: 12px; text-align: center; }
+.podium-detail strong { font-size: 20px; }
+@media (max-width: 600px) { .podium-section { padding: 16px 8px; } .podium-stage { gap: 5px; min-height: 285px; } .podium-place { width: 32%; } .podium-place.place-1 { min-height: 280px; } .podium-place.place-2 { min-height: 220px; } .podium-place.place-3 { min-height: 190px; } .podium-place-top { font-size: 9px; } .podium-number { font-size: 11px; } }
+@media (prefers-reduced-motion: reduce) { .podium-place { transition: none; } }
 .winner-modal-backdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 18px; background: #000d; }
 .winner-modal { display: grid; gap: 18px; width: min(470px, 100%); padding: clamp(22px, 4vw, 32px); border: 1px solid #777; border-radius: 18px; background: #1d1d1d; color: #fff; box-shadow: 0 22px 70px #0009; }
 .winner-modal h2 { margin: 0; font-size: clamp(25px, 4vw, 36px); }
