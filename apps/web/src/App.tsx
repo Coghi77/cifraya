@@ -3,6 +3,7 @@ import { ArrowRight, Check, ChevronLeft, Clock3, Copy, LockKeyhole, Plus, Search
 import AdminRaffleDetail from './AdminRaffleDetail';
 import AdminReservationReview from './AdminReservationReview';
 import EditRaffle from './EditRaffle';
+import FooterSocials from './FooterSocials';
 import WinnersPodium, { type WinnerResult } from './WinnersPodium';
 
 type Raffle = {
@@ -583,6 +584,6 @@ export default function App() {
 
     {showCheckout && raffle && <div className="modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setShowCheckout(false); }}><div className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button className="modal-close" onClick={() => setShowCheckout(false)} aria-label="Cerrar"><X size={20}/></button><div className="eyebrow">TU PASE / PASO FINAL</div><h2 id="modal-title">Dale nombre a tu boleto.</h2><p>La reserva dura 30 minutos. Administración confirmará tus boletos cuando verifique el pago.</p><div className="modal-numbers">{selected.map(value => <span key={value}><Check size={14}/>{formatNumber(value, width)}</span>)}</div><form onSubmit={reserve} className="form-grid"><label>Nombre en el boleto<input required minLength={2} autoComplete="off" value={buyer.buyerName} onChange={event => setBuyer({ ...buyer, buyerName: event.target.value })} /></label><label>Correo electrónico<input required type="email" autoComplete="off" value={buyer.buyerEmail} onChange={event => setBuyer({ ...buyer, buyerEmail: event.target.value })} /></label><label>Teléfono<input required minLength={8} autoComplete="off" value={buyer.buyerPhone} onChange={event => setBuyer({ ...buyer, buyerPhone: event.target.value })} /></label><label className="checkout-proof-field">Comprobante SINPE Móvil (podés adjuntarlo ahora o durante la reserva)<input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={event => { const files = Array.from(event.target.files || []); if (files.length > 3) { setError('Podés adjuntar hasta tres comprobantes.'); event.target.value = ''; return; } setCheckoutProofs(files); }} /><span>{checkoutProofs.length ? `${checkoutProofs.length} foto${checkoutProofs.length === 1 ? '' : 's'} lista${checkoutProofs.length === 1 ? '' : 's'}` : 'Seleccionar hasta 3 fotos'}</span></label><div className="modal-total"><span>Total</span><strong>{money(selectedOffer(raffle, selected.length)?.priceCrc ?? 0)}</strong></div><button className="button primary full" disabled={busy}>{busy ? 'Apartando...' : 'Apartar números'} <ArrowRight size={17}/></button></form></div></div>}
 
-    <footer className="site-footer"><span className="footer-brand"><img src="/cifraya-logo.png" alt="Logo de Cifraya"/></span></footer>
+    <footer className="site-footer"><span className="footer-brand"><img src="/cifraya-logo.png" alt="Logo de Cifraya"/></span><FooterSocials/></footer>
   </div>;
 }

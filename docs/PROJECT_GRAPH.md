@@ -18,7 +18,7 @@ flowchart LR
 
 | Nodo | Responsabilidad | Fuente |
 |---|---|---|
-| Web pública | Inicio `/`, `/buscar-boletos`, `/ganadores`, `/rifa/:slug`; selección, reserva, comprobantes y podio interactivo | `apps/web/src/App.tsx`, `apps/web/src/WinnersPodium.tsx` |
+| Web pública | Inicio `/`, `/buscar-boletos`, `/ganadores`, `/rifa/:slug`; selección, reserva, comprobantes, podio y footer social | `apps/web/src/App.tsx`, `apps/web/src/WinnersPodium.tsx`, `apps/web/src/FooterSocials.tsx` |
 | Centro de control | `/estudio-cifraya`; creación y edición de rifas, boletos tipo tarjeta, ganador e historial | `apps/web/src/App.tsx`, `EditRaffle.tsx`, `AdminRaffleDetail.tsx` |
 | Participantes y pagos | Ficha privada por correo; revisión manual de comprobantes | `AdminParticipantDetail.tsx`, `AdminReservationReview.tsx` |
 | API | Validación, autenticación, reservas atómicas, SSE y vencimientos | `apps/api/src/server.ts` |
@@ -48,5 +48,6 @@ stateDiagram-v2
 ## Reglas de trabajo
 
 - Mantener el diseño blanco y negro y las preguntas dentro de la interfaz. Evitar texto de “prueba” en el producto público.
+- El footer muestra WhatsApp, Facebook e Instagram con tooltip. Sin URL configurada, cada icono queda visible pero inactivo; las URL públicas se añaden como `VITE_CIFRAYA_*_URL` al compilar la web.
 - No publicar credenciales, PIN, comprobantes ni datos personales en este grafo. Las rutas admin requieren sesión; los comprobantes solo se sirven con autorización.
 - Verificar con `pnpm db:generate`, `pnpm build` y `git diff --check` cuando cambien esquema o código. Para actualizar el grafo automático tras cambios de código: `graphify extract . --code-only` y `graphify cluster-only . --no-label`.
