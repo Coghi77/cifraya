@@ -64,6 +64,7 @@ const formatNumber = (value: number, width: number) => String(value).padStart(wi
 const coverOf = (item: Raffle) => item.photos?.[0]?.url || item.imageUrl;
 const offersFor = (raffle: Raffle) => raffle.packages.length ? raffle.packages : [{ quantity: 1, priceCrc: raffle.priceCrc }];
 const selectedOffer = (raffle: Raffle, quantity: number) => offersFor(raffle).find(offer => offer.quantity === quantity);
+function SelectionSpinner() { return <span className="selection-spinner" aria-hidden="true">{Array.from({ length: 10 }, (_, index) => <span key={index}/>)}</span>; }
 
 async function preparePhoto(file: File) {
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 15_000_000) {
@@ -198,6 +199,8 @@ export default function App() {
   const [selected, setSelected] = useState<number[]>([]);
   const [randomQuantity, setRandomQuantity] = useState('');
   const [proposalReady, setProposalReady] = useState(false);
+  const [selectionLoading, setSelectionLoading] = useState<'generating' | 'changing' | null>(null);
+  const [homePackageLoading, setHomePackageLoading] = useState<number | null>(null);
   const [changesRemaining, setChangesRemaining] = useState(5);
   const [buyer, setBuyer] = useState({ buyerName: '', buyerEmail: '', buyerPhone: '' });
   const [checkoutProofs, setCheckoutProofs] = useState<File[]>([]);
@@ -236,15 +239,17 @@ export default function App() {
     catch { setError('No se pudieron cargar los resultados.'); }
   }
 
-  async function openRaffle(slug: string, navigate = true) {
+  async function openRaffle(slug: string, navigate = true, packageQuantity?: number) {
     setBusy(true); setError(''); setSelected([]); setRandomQuantity(''); setProposalReady(false); setChangesRemaining(5); setReservation(null); setCheckoutProofs([]); setCodeCopied(false); setShowCheckout(false); setActivePhotoId(null);
+    if (packageQuantity) setHomePackageLoading(packageQuantity);
     try {
       const result = await api<Raffle>('/api/campaigns/' + encodeURIComponent(slug));
       setRaffle(result); setView('raffle');
       if (navigate) window.history.pushState({}, '', '/rifa/' + encodeURIComponent(slug));
       window.scrollTo(0, 0);
+      if (packageQuantity) await generateNumbers(packageQuantity, result);
     } catch (cause) { setError((cause as Error).message); }
-    finally { setBusy(false); }
+    finally { setBusy(false); setHomePackageLoading(null); }
   }
 
   function goPublic(next: 'home' | 'lookup' | 'winners') {
@@ -285,7 +290,7 @@ export default function App() {
       if (view === 'home') await loadRaffles();
       if (view === 'winners') await loadWinners();
       if (view === 'admin' && adminUnlocked && adminToken) await loadAdmin(adminToken, true);
-      if (view === 'raffle' && raffle && proposalReady && !reservation && !showCheckout && Number(randomQuantity) === selected.length) {
+      if (view === 'raffle' && raffle && proposalReady && !selectionLoading && !reservation && !showCheckout && Number(randomQuantity) === selected.length) {
         try {
           const proposal = await api<NumberProposal>(`/api/campaigns/${encodeURIComponent(raffle.slug)}/proposal`, { method: 'POST', body: JSON.stringify({ quantity: selected.length }) });
           setSelected(current => current.every((value, index) => value === proposal.values[index]) ? current : proposal.values);
@@ -303,26 +308,26 @@ export default function App() {
     document.addEventListener('visibilitychange', refresh);
     window.addEventListener('cifraya:update', refresh);
     return () => { window.clearInterval(interval); document.removeEventListener('visibilitychange', refresh); window.removeEventListener('cifraya:update', refresh); };
-  }, [view, adminUnlocked, adminToken, raffle?.slug, reservation?.token, lookupCode, lookupResult?.status, proposalReady, randomQuantity, selected.length, showCheckout]);
+  }, [view, adminUnlocked, adminToken, raffle?.slug, reservation?.token, lookupCode, lookupResult?.status, proposalReady, selectionLoading, randomQuantity, selected.length, showCheckout]);
 
-  async function generateNumbers(quantity: number) {
-    if (!raffle) return;
-    setBusy(true); setError(''); setRandomQuantity(String(quantity)); setSelected([]); setProposalReady(false);
+  async function generateNumbers(quantity: number, campaign = raffle) {
+    if (!campaign) return;
+    setBusy(true); setError(''); setSelectionLoading('generating'); setRandomQuantity(String(quantity)); setSelected([]); setProposalReady(false);
     try {
-      const proposal = await api<NumberProposal>(`/api/campaigns/${encodeURIComponent(raffle.slug)}/proposal`, { method: 'POST', body: JSON.stringify({ quantity }) });
+      const proposal = await api<NumberProposal>(`/api/campaigns/${encodeURIComponent(campaign.slug)}/proposal`, { method: 'POST', body: JSON.stringify({ quantity }) });
       setSelected(proposal.values); setChangesRemaining(proposal.changesRemaining); setProposalReady(true);
     } catch (cause) { setRandomQuantity(''); setError((cause as Error).message); }
-    finally { setBusy(false); }
+    finally { setBusy(false); setSelectionLoading(null); }
   }
 
   async function changeRandomNumbers() {
     if (!raffle) return;
-    setBusy(true); setError('');
+    setBusy(true); setError(''); setSelectionLoading('changing');
     try {
       const proposal = await api<NumberProposal>(`/api/campaigns/${encodeURIComponent(raffle.slug)}/proposal/change`, { method: 'POST' });
       setSelected(proposal.values); setChangesRemaining(proposal.changesRemaining);
     } catch (cause) { setError((cause as Error).message); }
-    finally { setBusy(false); }
+    finally { setBusy(false); setSelectionLoading(null); }
   }
 
   async function refreshReservation(token: string) {
@@ -520,7 +525,7 @@ export default function App() {
     {view === 'home' && <main>
       {featured ? <section className="current-raffle" aria-label="Rifa actual">
         <div className="current-raffle-image">{coverOf(featured) ? <img src={coverOf(featured)!} alt={featured.prize}/> : <img className="current-logo" src="/cifraya-logo.png" alt=""/>}</div>
-        <div className="current-raffle-content"><span className="current-label">RIFA ACTUAL</span><h1>{featured.title}</h1><div className="current-prize">{featured.prize}</div><div className="current-price">{money(Math.min(...offersFor(featured).map(offer => offer.priceCrc)))} <span>paquetes desde</span></div><button className="button primary" onClick={() => void openRaffle(featured.slug)}>Ver paquetes <ArrowRight size={18}/></button><p>Reserva por 30 minutos</p></div>
+        <div className="current-raffle-content"><span className="current-label">RIFA ACTUAL</span><h1>{featured.title}</h1><div className="current-prize">{featured.prize}</div><div className="home-packages"><span>Elegí tu paquete</span><div>{offersFor(featured).map(offer => <button key={offer.quantity} type="button" disabled={busy} onClick={() => void openRaffle(featured.slug, true, offer.quantity)}><span>{offer.quantity} {offer.quantity === 1 ? 'número' : 'números'}</span><strong>{money(offer.priceCrc)}</strong>{homePackageLoading === offer.quantity ? <SelectionSpinner/> : <ArrowRight size={18} aria-hidden="true"/>}</button>)}</div></div><button className="home-details-link" type="button" disabled={busy} onClick={() => void openRaffle(featured.slug)}>Ver detalles de la rifa <ArrowRight size={16}/></button></div>
       </section> : <section className="current-raffle current-empty"><img src="/cifraya-logo.png" alt=""/><div><span className="current-label">CIFRAYA</span><h1>Próxima rifa</h1><p>Estamos preparando la siguiente rifa.</p></div></section>}
 
       {raffles.length > 1 && <section className="section raffles-section" id="rifas">
@@ -554,7 +559,7 @@ export default function App() {
         <div className="detail-side">
           <div className="detail-side-top"><span className="status-label">RIFA ABIERTA</span><span>Elegí un paquete</span></div>
           <div className="selection-head"><div><h2>Elegí tu paquete</h2><p>Al seleccionarlo, te mostramos sus números disponibles al azar.</p></div></div>
-          {!reservation && <div className="random-picker"><div className="package-offers"><strong>Paquetes disponibles</strong><div>{offersFor(raffle).map(offer => <button key={offer.quantity} type="button" className="package-option" aria-pressed={randomQuantity === String(offer.quantity)} disabled={busy} onClick={() => void generateNumbers(offer.quantity)}><strong>{offer.quantity} {offer.quantity === 1 ? 'número' : 'números'}</strong><span>{money(offer.priceCrc)}</span></button>)}</div></div>{proposalReady && <><div className="random-selection-heading"><strong>Tus {selected.length} {selected.length === 1 ? 'número' : 'números'}</strong><span>{changesRemaining} de 5 cambios disponibles</span></div><div className="random-values">{selected.map(value => <span key={value}>{formatNumber(value, width)}</span>)}</div><button className="button dark full" type="button" disabled={busy || changesRemaining === 0} onClick={() => void changeRandomNumbers()}>Cambiar todos los números</button><p>Cada cambio genera un conjunto nuevo, sin repetir los números que tenés ahora.</p></>}</div>}
+          {!reservation && <div className="random-picker"><div className="package-offers"><strong>Paquetes disponibles</strong><div>{offersFor(raffle).map(offer => <button key={offer.quantity} type="button" className="package-option" aria-pressed={randomQuantity === String(offer.quantity)} disabled={busy} onClick={() => void generateNumbers(offer.quantity)}><strong>{offer.quantity} {offer.quantity === 1 ? 'número' : 'números'}</strong><span>{money(offer.priceCrc)}</span></button>)}</div></div>{(proposalReady || selectionLoading) && <div className="selection-result" aria-busy={Boolean(selectionLoading)}>{proposalReady && <><div className="random-selection-heading"><strong>Tus {selected.length} {selected.length === 1 ? 'número' : 'números'}</strong><span>{changesRemaining} de 5 cambios disponibles</span></div><div className="random-values">{selected.map(value => <span key={value}>{formatNumber(value, width)}</span>)}</div><button className="button dark full" type="button" disabled={busy || changesRemaining === 0} onClick={() => void changeRandomNumbers()}>Cambiar todos los números</button><p>Cada cambio genera un conjunto nuevo, sin repetir los números que tenés ahora.</p></>}{selectionLoading && <div className="selection-loader" role="status" aria-live="polite"><SelectionSpinner/><span>{selectionLoading === 'changing' ? 'Buscando otros números disponibles…' : 'Generando tus números…'}</span></div>}</div>}</div>}
           {reservation ? <div className="reservation-result">
             <TicketPass name={buyer.buyerName} title={raffle.title} values={reservation.values} width={width} count={reservation.values.length} status={reservation.status === 'CONFIRMED' ? 'COMPRA CONFIRMADA' : reservation.status === 'PENDING_REVIEW' ? 'PAGO EN REVISIÓN' : reservation.status === 'EXPIRED' ? 'RESERVA VENCIDA' : reservation.status === 'CANCELLED' ? 'RESERVA RECHAZADA' : 'APARTADO'} timer={!reservation.status || reservation.status === 'ACTIVE' ? countdown : undefined} />
             <strong>Total de la reserva: {money(reservation.totalCrc)}</strong>

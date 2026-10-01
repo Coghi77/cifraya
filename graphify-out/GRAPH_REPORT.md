@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 242 nodes · 311 edges · 20 communities (13 shown, 5 thin omitted)
+- 243 nodes · 312 edges · 21 communities (14 shown, 5 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2bdb5af0`
+- Built from commit: `b1a962b4`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -31,7 +31,8 @@
 - Community 14
 - Community 15
 - Community 16
-- Community 19
+- Community 17
+- Community 20
 
 ## God Nodes (most connected - your core abstractions)
 1. `App()` - 30 edges
@@ -60,27 +61,27 @@
 ## Import Cycles
 - None detected.
 
-## Communities (20 total, 5 thin omitted)
+## Communities (21 total, 5 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.07
 Nodes (30): devDependencies, tsx, typescript, name, private, type, version, issueAdminSession() (+22 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.08
-Nodes (21): AdminReservationReview(), Detail, money(), AdminReservation, formatNumber(), LookupResult, NumberProposal, Raffle (+13 more)
+Cohesion: 0.09
+Nodes (19): AdminReservation, ApiError, formatNumber(), LookupResult, NumberProposal, offersFor(), ProofUploader(), Raffle (+11 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.11
-Nodes (28): api(), ApiError, App(), addPhotos(), createRaffle(), expireAdminSession(), goHome(), goPublic() (+20 more)
+Cohesion: 0.15
+Nodes (25): api(), App(), addPhotos(), createRaffle(), expireAdminSession(), generateNumbers(), goHome(), goPublic() (+17 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.08
 Nodes (24): dependencies, lucide-react, react, react-dom, devDependencies, @types/react, @types/react-dom, typescript (+16 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.17
-Nodes (15): AdminParticipantDetail(), money(), numberLabel(), ParticipantResponse, Reservation, statusLabel(), AdminRaffleDetail(), publishWinner() (+7 more)
+Cohesion: 0.14
+Nodes (11): AdminParticipantDetail(), money(), numberLabel(), ParticipantResponse, Reservation, statusLabel(), AdminReservationReview(), Detail (+3 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.12
@@ -95,28 +96,32 @@ Cohesion: 0.26
 Nodes (8): "Campaign", "EntryNumber", "Reservation", "CampaignPhoto", "PricePackage", "Winner", "NumberProposal", "PaymentProof"
 
 ### Community 8 - "Community 8"
+Cohesion: 0.29
+Nodes (9): AdminRaffleDetail(), publishWinner(), adminRequest(), currency(), History, numberLabel(), NumberRow, Overview (+1 more)
+
+### Community 9 - "Community 9"
 Cohesion: 0.20
 Nodes (10): scripts, build, db:deploy, db:generate, db:migrate, db:seed, dev, dev:api (+2 more)
 
-### Community 9 - "Community 9"
+### Community 10 - "Community 10"
 Cohesion: 0.22
 Nodes (8): compilerOptions, esModuleInterop, module, moduleResolution, resolveJsonModule, skipLibCheck, strict, target
 
-### Community 10 - "Community 10"
+### Community 11 - "Community 11"
 Cohesion: 0.29
 Nodes (6): compilerOptions, outDir, rootDir, extends, include, ../../tsconfig.json
 
-### Community 11 - "Community 11"
+### Community 12 - "Community 12"
 Cohesion: 0.33
 Nodes (6): dependencies, fastify, @fastify/cors, @fastify/static, @prisma/client, zod
 
-### Community 12 - "Community 12"
+### Community 13 - "Community 13"
 Cohesion: 0.33
 Nodes (6): scripts, build, dev, start, test, typecheck
 
 ## Knowledge Gaps
-- **115 isolated node(s):** `EditableRaffle`, `Detail`, `AdminReservation`, `LookupResult`, `NumberProposal` (+110 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 141 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **115 isolated node(s):** `EditableRaffle`, `AdminReservation`, `LookupResult`, `NumberProposal`, `Raffle` (+110 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 142 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -124,15 +129,15 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `typescript` connect `Community 6` to `Community 0`, `Community 3`?**
   _High betweenness centrality (0.304) - this node is a cross-community bridge._
-- **Why does `react` connect `Community 1` to `Community 3`, `Community 4`?**
-  _High betweenness centrality (0.195) - this node is a cross-community bridge._
-- **Why does `lucide-react` connect `Community 1` to `Community 3`, `Community 4`?**
-  _High betweenness centrality (0.111) - this node is a cross-community bridge._
-- **What connects `EditableRaffle`, `Detail`, `AdminReservation` to the rest of the system?**
+- **Why does `react` connect `Community 1` to `Community 8`, `Community 3`, `Community 4`?**
+  _High betweenness centrality (0.194) - this node is a cross-community bridge._
+- **Why does `lucide-react` connect `Community 4` to `Community 1`, `Community 3`?**
+  _High betweenness centrality (0.113) - this node is a cross-community bridge._
+- **What connects `EditableRaffle`, `AdminReservation`, `LookupResult` to the rest of the system?**
   _115 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.06606606606606606 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.0784313725490196 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08620689655172414 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.1140819964349376 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.14532019704433496 - nodes in this community are weakly interconnected._
