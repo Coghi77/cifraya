@@ -147,6 +147,7 @@ export default function App() {
   const [selected, setSelected] = useState<number[]>([]);
   const [buyer, setBuyer] = useState({ buyerName: '', buyerEmail: '', buyerPhone: '' });
   const [reservation, setReservation] = useState<Reservation | null>(null);
+  const [codeCopied, setCodeCopied] = useState(false);
   const [lookupCode, setLookupCode] = useState('');
   const [lookupResult, setLookupResult] = useState<LookupResult | null>(null);
   const [showCheckout, setShowCheckout] = useState(false);
@@ -171,7 +172,7 @@ export default function App() {
   }
 
   async function openRaffle(slug: string, navigate = true) {
-    setBusy(true); setError(''); setSelected([]); setReservation(null); setShowCheckout(false); setPage(1); setActivePhotoId(null);
+    setBusy(true); setError(''); setSelected([]); setReservation(null); setCodeCopied(false); setShowCheckout(false); setPage(1); setActivePhotoId(null);
     try {
       const result = await api<Raffle>('/api/campaigns/' + encodeURIComponent(slug));
       const list = await api<{ numbers: EntryNumber[]; pageCount: number }>('/api/campaigns/' + encodeURIComponent(slug) + '/numbers?page=1');
@@ -228,6 +229,7 @@ export default function App() {
         method: 'POST', body: JSON.stringify({ campaignId: raffle.id, values: selected, ...buyer }),
       });
       setReservation(result); setShowCheckout(false);
+      setCodeCopied(false);
       const list = await api<{ numbers: EntryNumber[]; pageCount: number }>('/api/campaigns/' + raffle.slug + '/numbers?page=' + page);
       setNumbers(list.numbers);
     } catch (cause) { setError((cause as Error).message); }
@@ -397,8 +399,10 @@ export default function App() {
           {reservation ? <div className="reservation-result">
             <TicketPass name={buyer.buyerName} title={raffle.title} values={reservation.values} width={width} count={reservation.values.length} status="APARTADO · DEMO" timer={countdown} />
             <p>Este pase muestra una <strong>reserva de prueba</strong>, no una compra. Los números se liberan al vencer el plazo.</p>
-            <button className="copy-token" onClick={() => void navigator.clipboard.writeText(reservation.token)}><Copy size={15}/> Copiar código de consulta</button>
-            <button className="copy-token" onClick={() => { setLookupCode(reservation.token); goPublic('lookup'); }}>Ver en Buscar boletos <ArrowRight size={15}/></button>
+            <div className="reservation-actions">
+              <button className="reservation-action primary" onClick={async () => { try { await navigator.clipboard.writeText(reservation.token); setCodeCopied(true); } catch { setError('No se pudo copiar el código. Intentá de nuevo.'); } }}><Copy size={16}/>{codeCopied ? 'Código copiado' : 'Copiar código de consulta'}</button>
+              <button className="reservation-action secondary" onClick={() => { setLookupCode(reservation.token); goPublic('lookup'); }}>Buscar mis boletos <ArrowRight size={16}/></button>
+            </div>
           </div> : <div className="selection-footer"><div className="selection-summary"><span>{selected.length} {selected.length === 1 ? 'boleto elegido' : 'boletos elegidos'}</span><strong>{money(selected.length * raffle.priceCrc)}</strong></div><button className="button primary full" disabled={selected.length === 0 || busy} onClick={() => setShowCheckout(true)}>Continuar con {selected.length || 'tus'} {selected.length === 1 ? 'boleto' : 'boletos'} <ArrowRight size={17}/></button><p className="phase-note">Demostración sin pagos ni boletos confirmados.</p></div>}
         </div>
       </div>

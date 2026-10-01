@@ -254,8 +254,12 @@ a { color: inherit; text-decoration: none; }
 .selection-summary, .modal-total { display: flex; justify-content: space-between; align-items: center; gap: 15px; padding: 16px 0; color: var(--muted); font-size: 12px; }
 .selection-summary strong, .modal-total strong { color: var(--ink); font-size: 19px; }
 .phase-note { margin: 12px 0 0; color: #898491; font-size: 11px; text-align: center; }
-.reservation-result > p { margin: 16px 0 7px; color: var(--muted); font-size: 12px; line-height: 1.6; }
-.copy-token { display: inline-flex; align-items: center; gap: 6px; padding: 6px 0; border: 0; background: none; color: #514a94; font-size: 11px; font-weight: 900; }
+.reservation-result > p { margin: 18px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.reservation-actions { display: grid; gap: 9px; margin-top: 17px; }
+.reservation-action { display: inline-flex; align-items: center; justify-content: center; gap: 9px; width: 100%; min-height: 44px; padding: 10px 13px; border: 1px solid #111; border-radius: 8px; font-size: 12px; font-weight: 800; line-height: 1.3; text-align: center; }
+.reservation-action.primary { background: #111; color: #fff; }
+.reservation-action.secondary { background: #fff; color: #111; }
+.reservation-action:hover { opacity: .82; }
 .ticket-pass { overflow: hidden; border: 1px solid var(--ink); border-radius: 17px; background: #f7f0df; box-shadow: 0 16px 30px #17172b1c; }
 .ticket-main { position: relative; min-height: 230px; display: flex; flex-direction: column; justify-content: space-between; padding: 18px 20px; background: var(--lime); }
 .ticket-meta { display: flex; justify-content: space-between; gap: 8px; font-size: 10px; font-weight: 900; letter-spacing: .08em; }
