@@ -241,7 +241,7 @@ export default function App() {
 
   return <div className={'app-shell ' + (view === 'admin' ? 'admin-shell' : '')}>
     <header className="site-header">
-      <button className="brand" onClick={goHome} aria-label="Ir al inicio"><span className="brand-mark"><Sparkles size={19} /></span><span>CIFRA<span className="brand-light">YA</span></span></button>
+      <button className="brand" onClick={goHome} aria-label="Cifraya, ir al inicio"><img src="/cifraya-logo.png" alt="" className="brand-logo"/><span>CIFRAYA</span></button>
       <nav aria-label="Navegación principal">
         {view === 'admin' ? <button onClick={goHome}>Volver al sitio <ArrowRight size={15} /></button> : <>
           <button className={view === 'home' || view === 'raffle' ? 'nav-active' : ''} onClick={goHome}>Inicio</button>
@@ -328,6 +328,6 @@ export default function App() {
 
     {showCheckout && raffle && <div className="modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setShowCheckout(false); }}><div className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button className="modal-close" onClick={() => setShowCheckout(false)} aria-label="Cerrar"><X size={20}/></button><div className="eyebrow">TU PASE / PASO FINAL</div><h2 id="modal-title">Dale nombre a tu boleto.</h2><p>Demostración: usá datos ficticios. La reserva dura 30 minutos y no implica un pago.</p><div className="modal-numbers">{selected.map(value => <span key={value}><Check size={14}/>{formatNumber(value, width)}</span>)}</div><form onSubmit={reserve} className="form-grid"><label>Nombre en el boleto<input required minLength={2} autoComplete="off" value={buyer.buyerName} onChange={event => setBuyer({ ...buyer, buyerName: event.target.value })} /></label><label>Correo de prueba<input required type="email" autoComplete="off" value={buyer.buyerEmail} onChange={event => setBuyer({ ...buyer, buyerEmail: event.target.value })} /></label><label>Teléfono de prueba<input required minLength={8} autoComplete="off" value={buyer.buyerPhone} onChange={event => setBuyer({ ...buyer, buyerPhone: event.target.value })} /></label><div className="modal-total"><span>Total de referencia</span><strong>{money(selected.length * raffle.priceCrc)}</strong></div><button className="button primary full" disabled={busy}>{busy ? 'Apartando...' : 'Crear reserva de prueba'} <ArrowRight size={17}/></button></form></div></div>}
 
-    <footer className="site-footer"><span>CIFRAYA ✳</span><span>DEMO / SIN PAGOS HABILITADOS</span></footer>
+    <footer className="site-footer"><span className="footer-brand"><img src="/cifraya-logo.png" alt="Logo de Cifraya"/> CIFRAYA</span><span>DEMO / SIN PAGOS HABILITADOS</span></footer>
   </div>;
 }
