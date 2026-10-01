@@ -562,7 +562,7 @@ app.get<{ Params: { id: string }; Querystring: { page?: string; number?: string;
     db.entryNumber.groupBy({ by: ['status'], where: { campaignId: campaign.id }, _count: { _all: true } }),
     db.entryNumber.count({ where }),
     db.entryNumber.findMany({ where, orderBy: { value: 'asc' }, skip: (page - 1) * 100, take: 100,
-      select: { value: true, status: true, reservation: { select: { id: true, buyerName: true, buyerEmail: true, buyerPhone: true, createdAt: true, expiresAt: true, confirmedAt: true, totalCrc: true, status: true } } } }),
+      select: { value: true, status: true, reservation: { select: { id: true, buyerName: true } } } }),
   ]);
   return { campaign, counts: Object.fromEntries(counts.map(item => [item.status, item._count._all])), page, pageCount: Math.ceil(total / 100), numbers };
 });
@@ -576,9 +576,30 @@ app.get<{ Params: { id: string }; Querystring: { page?: string } }>('/api/admin/
   const [total, reservations] = await Promise.all([
     db.reservation.count({ where: { campaignId: campaign.id } }),
     db.reservation.findMany({ where: { campaignId: campaign.id }, orderBy: { createdAt: 'desc' }, skip: (page - 1) * 30, take: 30,
-      select: { id: true, buyerName: true, buyerEmail: true, buyerPhone: true, selectedValues: true, status: true, createdAt: true, expiresAt: true, confirmedAt: true, totalCrc: true } }),
+      select: { id: true, buyerName: true, selectedValues: true, status: true, createdAt: true, expiresAt: true, confirmedAt: true, totalCrc: true } }),
   ]);
   return { page, pageCount: Math.ceil(total / 30), reservations };
+});
+
+app.get<{ Params: { id: string }; Querystring: { page?: string } }>('/api/admin/participants/by-reservation/:id', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
+  await expireReservations();
+  const source = await db.reservation.findUnique({ where: { id: request.params.id }, select: {
+    id: true, campaignId: true, buyerName: true, buyerEmail: true, buyerPhone: true, selectedValues: true,
+    status: true, createdAt: true, expiresAt: true, totalCrc: true,
+    campaign: { select: { title: true, numberWidth: true } },
+  } });
+  if (!source) return reply.code(404).send({ error: 'Participante no encontrado.' });
+  const page = Math.max(1, Math.min(1000, Number(request.query.page) || 1));
+  const where = { buyerEmail: { equals: source.buyerEmail, mode: 'insensitive' as const } };
+  const [total, reservations] = await Promise.all([
+    db.reservation.count({ where }),
+    db.reservation.findMany({ where, orderBy: { createdAt: 'desc' }, skip: (page - 1) * 30, take: 30,
+      select: { id: true, buyerName: true, selectedValues: true, status: true, createdAt: true, totalCrc: true,
+        campaign: { select: { title: true, numberWidth: true } } } }),
+  ]);
+  return { participant: { name: source.buyerName, email: source.buyerEmail, phone: source.buyerPhone }, source,
+    page, pageCount: Math.ceil(total / 30), total, reservations };
 });
 
 app.post<{ Params: { id: string } }>('/api/admin/reservations/:id/confirm', async (request, reply) => {
