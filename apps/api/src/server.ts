@@ -1,4 +1,4 @@
-import { randomBytes, randomInt, timingSafeEqual } from 'node:crypto';
+import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Fastify from 'fastify';
@@ -7,6 +7,7 @@ import fastifyStatic from '@fastify/static';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import { issueAdminSession, verifyAdminSession } from './adminSession.js';
+import { chooseBaseNumbers, invertedValues, reverseNumber } from './invertedNumbers.js';
 import { createReservationExpirer } from './reservationExpiry.js';
 import { registerSecurityHeaders } from './security.js';
 import { ticketSearchWhere } from './ticketSearch.js';
@@ -40,6 +41,8 @@ const campaignInput = z.object({
   imageUrl: z.string().url().refine(value => new URL(value).protocol === 'https:', 'La imagen debe usar HTTPS.').optional(),
   priceCrc: z.number().int().positive().max(100_000_000),
   numberCount: z.union([z.literal(100), z.literal(1000), z.literal(10000)]),
+  invertedEnabled: z.boolean().default(false),
+  invertedPrizeEnabled: z.boolean().default(false),
   packages: z.array(z.object({ quantity: z.number().int().min(2).max(20), priceCrc: z.number().int().positive().max(100_000_000) })).max(10).default([]),
   drawDate: z.string().datetime().optional(),
 });
@@ -47,6 +50,7 @@ const campaignInput = z.object({
 const reservationInput = z.object({
   campaignId: z.string(),
   values: z.array(z.number().int().nonnegative()).min(1).max(20),
+  includeInverted: z.boolean().default(false),
   buyerName: z.string().min(2).max(120),
   buyerEmail: z.string().email().max(200),
   buyerPhone: z.string().min(8).max(25),
@@ -56,15 +60,6 @@ const proposalInput = z.object({ quantity: z.number().int().min(1).max(20) });
 function sessionKey(cookie: string | undefined) {
   return cookie?.match(/(?:^|;\s*)cifraya_selection=([a-f0-9]{48})(?:;|$)/)?.[1];
 }
-function pickRandom(values: number[], count: number) {
-  const pool = [...values];
-  for (let index = 0; index < count; index++) {
-    const chosen = randomInt(index, pool.length);
-    [pool[index], pool[chosen]] = [pool[chosen], pool[index]];
-  }
-  return pool.slice(0, count);
-}
-
 const photoInput = z.object({
   mimeType: z.enum(['image/jpeg', 'image/png', 'image/webp']),
   base64: z.string().min(1).max(2_800_000).regex(/^[A-Za-z0-9+/]+={0,2}$/),
@@ -74,6 +69,13 @@ const photoSelect = { select: { id: true }, orderBy: { sortOrder: 'asc' as const
 const packageSelect = { select: { quantity: true, priceCrc: true }, orderBy: { quantity: 'asc' as const } };
 function imageList(photos: { id: string }[]) {
   return photos.map(photo => ({ id: photo.id, url: `/api/campaign-photos/${photo.id}` }));
+}
+async function availableInvertedValues(campaignId: string, values: number[], width: number, enabled: boolean) {
+  if (!enabled) return null;
+  const reversed = invertedValues(values, width, new Set(values.map(value => reverseNumber(value, width))));
+  if (!reversed) return null;
+  const count = await db.entryNumber.count({ where: { campaignId, value: { in: reversed }, status: 'AVAILABLE' } });
+  return count === reversed.length ? reversed : null;
 }
 function validPhoto(data: Buffer, mimeType: string) {
   if (data.length === 0 || data.length > 2_000_000) return false;
@@ -137,10 +139,10 @@ app.get('/api/campaigns', async () => {
 });
 
 app.get<{ Params: { slug: string } }>('/api/campaigns/:slug', async (request, reply) => {
-  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, include: { photos: photoSelect, packages: packageSelect } });
+  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, include: { photos: photoSelect, packages: packageSelect, _count: { select: { numbers: { where: { status: 'SOLD' } } } } } });
   if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible' });
-  const { photos, ...data } = campaign;
-  return { ...data, photos: imageList(photos) };
+  const { photos, _count, ...data } = campaign;
+  return { ...data, photos: imageList(photos), soldCount: _count.numbers };
 });
 
 app.get<{ Params: { id: string } }>('/api/campaign-photos/:id', async (request, reply) => {
@@ -171,7 +173,7 @@ app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal', async (r
   await expireReservations();
   const parsed = proposalInput.safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: 'Seleccioná un paquete válido.' });
-  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, select: { id: true, status: true, packages: { select: { quantity: true } } } });
+  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, select: { id: true, status: true, numberWidth: true, invertedEnabled: true, packages: { select: { quantity: true } } } });
   if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible.' });
   const offeredQuantities = campaign.packages.length ? campaign.packages.map(item => item.quantity) : [1];
   if (!offeredQuantities.includes(parsed.data.quantity)) return reply.code(400).send({ error: 'Ese paquete no está disponible.' });
@@ -188,14 +190,15 @@ app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal', async (r
       if (valid && existing.values.length === parsed.data.quantity && currentAvailable === existing.values.length) return existing;
       const available = await tx.entryNumber.findMany({ where: { campaignId: campaign.id, status: 'AVAILABLE' }, select: { value: true } });
       if (available.length < parsed.data.quantity) throw new Error('NOT_ENOUGH_NUMBERS');
-      const values = pickRandom(available.map(item => item.value), parsed.data.quantity);
+      const values = chooseBaseNumbers(available.map(item => item.value), parsed.data.quantity, campaign.numberWidth, campaign.invertedEnabled);
+      if (!values) throw new Error('NOT_ENOUGH_NUMBERS');
       return tx.numberProposal.upsert({
         where: { campaignId_sessionKey: { campaignId: campaign.id, sessionKey: key } },
         create: { campaignId: campaign.id, sessionKey: key, values, expiresAt: new Date(Date.now() + 15 * 60_000) },
         update: { values, changesUsed: valid && existing.values.length === parsed.data.quantity ? existing.changesUsed : 0, expiresAt: new Date(Date.now() + 15 * 60_000), consumedAt: null },
       });
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
-    return { values: proposal.values, changesRemaining: 5 - proposal.changesUsed };
+    return { values: proposal.values, changesRemaining: 5 - proposal.changesUsed, invertedValues: await availableInvertedValues(campaign.id, proposal.values, campaign.numberWidth, campaign.invertedEnabled) };
   } catch (error) {
     if (error instanceof Error && error.message === 'NO_CHANGES_LEFT') return reply.code(409).send({ error: 'Ya usaste los cinco cambios disponibles.' });
     if (error instanceof Error && error.message === 'NOT_ENOUGH_NUMBERS') return reply.code(409).send({ error: 'No quedan suficientes números disponibles.' });
@@ -208,7 +211,7 @@ app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal/change', a
   await expireReservations();
   const key = sessionKey(request.headers.cookie);
   if (!key) return reply.code(400).send({ error: 'Primero seleccioná un paquete.' });
-  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, select: { id: true, status: true } });
+  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, select: { id: true, status: true, numberWidth: true, invertedEnabled: true } });
   if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible.' });
   try {
     const proposal = await db.$transaction(async tx => {
@@ -217,10 +220,11 @@ app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal/change', a
       if (existing.changesUsed >= 5) throw new Error('NO_CHANGES_LEFT');
       const available = await tx.entryNumber.findMany({ where: { campaignId: campaign.id, status: 'AVAILABLE', value: { notIn: existing.values } }, select: { value: true } });
       if (available.length < existing.values.length) throw new Error('NOT_ENOUGH_NUMBERS');
-      const values = pickRandom(available.map(item => item.value), existing.values.length);
+      const values = chooseBaseNumbers(available.map(item => item.value), existing.values.length, campaign.numberWidth, campaign.invertedEnabled);
+      if (!values) throw new Error('NOT_ENOUGH_NUMBERS');
       return tx.numberProposal.update({ where: { id: existing.id }, data: { values, changesUsed: { increment: 1 }, expiresAt: new Date(Date.now() + 15 * 60_000) } });
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
-    return { values: proposal.values, changesRemaining: 5 - proposal.changesUsed };
+    return { values: proposal.values, changesRemaining: 5 - proposal.changesUsed, invertedValues: await availableInvertedValues(campaign.id, proposal.values, campaign.numberWidth, campaign.invertedEnabled) };
   } catch (error) {
     if (error instanceof Error && error.message === 'PROPOSAL_EXPIRED') return reply.code(409).send({ error: 'La selección venció. Generá otra.' });
     if (error instanceof Error && error.message === 'NO_CHANGES_LEFT') return reply.code(409).send({ error: 'Ya usaste los cinco cambios disponibles.' });
@@ -242,9 +246,15 @@ app.post('/api/reservations', async (request, reply) => {
   if (uniqueValues.some(value => value >= campaign.numberCount)) return reply.code(400).send({ error: 'Número fuera del rango' });
   const selectedPackage = campaign.packages.length ? campaign.packages.find(item => item.quantity === uniqueValues.length) : uniqueValues.length === 1 ? { priceCrc: campaign.priceCrc } : undefined;
   if (!selectedPackage) return reply.code(400).send({ error: 'Seleccioná uno de los paquetes disponibles.' });
+  if (input.includeInverted && !campaign.invertedEnabled) return reply.code(400).send({ error: 'Esta rifa no ofrece números invertidos.' });
+  const extraValues = input.includeInverted ? invertedValues(uniqueValues, campaign.numberWidth, new Set(uniqueValues.map(value => reverseNumber(value, campaign.numberWidth)))) : [];
+  if (input.includeInverted && !extraValues) return reply.code(400).send({ error: 'Estos números no admiten un conjunto invertido distinto.' });
+  const allValues = [...uniqueValues, ...(extraValues || [])];
 
   try {
     const reservation = await db.$transaction(async tx => {
+      const liveCampaign = await tx.campaign.findUnique({ where: { id: campaign.id }, select: { status: true } });
+      if (liveCampaign?.status !== 'LIVE') throw new Error('CAMPAIGN_CLOSED');
       const key = sessionKey(request.headers.cookie);
       if (!key) throw new Error('PROPOSAL_REQUIRED');
       const proposal = await tx.numberProposal.findUnique({ where: { campaignId_sessionKey: { campaignId: campaign.id, sessionKey: key } } });
@@ -258,26 +268,31 @@ app.post('/api/reservations', async (request, reply) => {
           buyerName: input.buyerName,
           buyerEmail: input.buyerEmail,
           buyerPhone: input.buyerPhone,
-          selectedValues: uniqueValues,
-          totalCrc: selectedPackage.priceCrc,
+          selectedValues: allValues,
+          baseValues: uniqueValues,
+          includesInverted: input.includeInverted,
+          totalCrc: selectedPackage.priceCrc * (input.includeInverted ? 2 : 1),
           expiresAt: new Date(Date.now() + 30 * 60_000),
         },
       });
       const claimed = await tx.entryNumber.updateMany({
-        where: { campaignId: campaign.id, value: { in: uniqueValues }, status: 'AVAILABLE' },
+        where: { campaignId: campaign.id, value: { in: allValues }, status: 'AVAILABLE' },
         data: { status: 'RESERVED', reservationId: created.id },
       });
-      if (claimed.count !== uniqueValues.length) throw new Error('NUMBER_UNAVAILABLE');
+      if (claimed.count !== allValues.length) throw new Error('NUMBER_UNAVAILABLE');
       return created;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
     broadcast('reservations');
     return reply.code(201).send({
       token: reservation.lookupToken,
       expiresAt: reservation.expiresAt,
-      values: uniqueValues,
+      values: allValues,
+      baseValues: uniqueValues,
+      includesInverted: input.includeInverted,
       totalCrc: reservation.totalCrc,
     });
   } catch (error) {
+    if (error instanceof Error && error.message === 'CAMPAIGN_CLOSED') return reply.code(409).send({ error: 'Esta rifa ya no está disponible.' });
     if (error instanceof Error && error.message === 'PROPOSAL_REQUIRED') return reply.code(409).send({ error: 'Generá tus números desde esta página antes de apartarlos.' });
     if (error instanceof Error && error.message === 'NUMBER_UNAVAILABLE') {
       return reply.code(409).send({ error: 'Uno de los números acaba de ser apartado. Actualizá la selección.' });
@@ -305,6 +320,8 @@ app.get<{ Params: { token: string } }>('/api/reservations/:token', async (reques
     proofSubmittedAt: reservation.proofSubmittedAt,
     reviewNote: reservation.reviewNote,
     values: reservation.selectedValues.length ? reservation.selectedValues : reservation.numbers.map(number => number.value),
+    baseValues: reservation.baseValues.length ? reservation.baseValues : reservation.selectedValues,
+    includesInverted: reservation.includesInverted,
     campaign: reservation.campaign,
   };
 });
@@ -320,6 +337,8 @@ app.post('/api/reservations/lookup', async (request, reply) => {
       status: true,
       expiresAt: true,
       selectedValues: true,
+      baseValues: true,
+      includesInverted: true,
       totalCrc: true,
       proofSubmittedAt: true,
       reviewNote: true,
@@ -338,6 +357,8 @@ app.post('/api/reservations/lookup', async (request, reply) => {
     reviewNote: reservation.reviewNote,
     expiresAt: reservation.expiresAt,
     values: reservation.selectedValues.length ? reservation.selectedValues : reservation.numbers.map(number => number.value),
+    baseValues: reservation.baseValues.length ? reservation.baseValues : reservation.selectedValues,
+    includesInverted: reservation.includesInverted,
     campaign: reservation.campaign,
   };
 });
@@ -473,6 +494,7 @@ app.post('/api/admin/campaigns', async (request, reply) => {
   if (!parsed.success) return reply.code(400).send({ error: 'Datos inválidos', details: parsed.error.flatten() });
   const input = parsed.data;
   if ((input.prizeCount >= 2 && !input.secondPrize) || (input.prizeCount === 3 && !input.thirdPrize)) return reply.code(400).send({ error: 'Indicá el premio de cada posición.' });
+  if (input.invertedPrizeEnabled && !input.invertedEnabled) return reply.code(400).send({ error: 'Activá los invertidos antes de darles premio.' });
   if (new Set(input.packages.map(item => item.quantity)).size !== input.packages.length || input.packages.some(item => item.priceCrc >= item.quantity * input.priceCrc)) {
     return reply.code(400).send({ error: 'Cada paquete debe tener una cantidad distinta y un precio menor al total individual.' });
   }
@@ -490,6 +512,8 @@ app.post('/api/admin/campaigns', async (request, reply) => {
         priceCrc: input.priceCrc,
         numberCount: input.numberCount,
         numberWidth: String(input.numberCount - 1).length,
+        invertedEnabled: input.invertedEnabled,
+        invertedPrizeEnabled: input.invertedPrizeEnabled,
         drawDate: input.drawDate ? new Date(input.drawDate) : undefined,
         packages: { create: input.packages },
       },
@@ -522,6 +546,7 @@ app.patch<{ Params: { id: string } }>('/api/admin/campaigns/:id', async (request
       const input = parsed.data as z.infer<typeof campaignInput>;
       if (campaign._count.reservations || campaign._count.winners) throw new Error('CAMPAIGN_CHANGED');
       if ((input.prizeCount >= 2 && !input.secondPrize) || (input.prizeCount === 3 && !input.thirdPrize)) throw new Error('INVALID_PRIZES');
+      if (input.invertedPrizeEnabled && !input.invertedEnabled) throw new Error('INVALID_INVERTED');
       if (new Set(input.packages.map(item => item.quantity)).size !== input.packages.length || input.packages.some(item => item.priceCrc >= item.quantity * input.priceCrc)) throw new Error('INVALID_PACKAGES');
       if (input.numberCount !== campaign.numberCount) {
         await tx.entryNumber.deleteMany({ where: { campaignId: request.params.id } });
@@ -535,6 +560,7 @@ app.patch<{ Params: { id: string } }>('/api/admin/campaigns/:id', async (request
         prizeCount: input.prizeCount, secondPrize: input.prizeCount >= 2 ? input.secondPrize : null,
         thirdPrize: input.prizeCount === 3 ? input.thirdPrize : null, priceCrc: input.priceCrc,
         numberCount: input.numberCount, numberWidth: String(input.numberCount - 1).length,
+        invertedEnabled: input.invertedEnabled, invertedPrizeEnabled: input.invertedPrizeEnabled,
         packages: { create: input.packages },
       } });
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, timeout: 60_000 });
@@ -543,6 +569,7 @@ app.patch<{ Params: { id: string } }>('/api/admin/campaigns/:id', async (request
   } catch (error) {
     if (error instanceof Error && error.message === 'CAMPAIGN_CHANGED') return reply.code(409).send({ error: 'La rifa cambió. Actualizá el panel antes de editarla.' });
     if (error instanceof Error && error.message === 'INVALID_PRIZES') return reply.code(400).send({ error: 'Indicá el premio de cada posición.' });
+    if (error instanceof Error && error.message === 'INVALID_INVERTED') return reply.code(400).send({ error: 'Activá los invertidos antes de darles premio.' });
     if (error instanceof Error && error.message === 'INVALID_PACKAGES') return reply.code(400).send({ error: 'Revisá cantidad y precio de los paquetes.' });
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') return reply.code(409).send({ error: 'Ese identificador URL ya existe.' });
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2034') return reply.code(409).send({ error: 'La rifa cambió. Intentá de nuevo.' });
@@ -571,7 +598,7 @@ app.get('/api/winners', async () => {
 app.get<{ Params: { id: string }; Querystring: { page?: string; search?: string; status?: string } }>('/api/admin/campaigns/:id/overview', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   await expireReservations();
-  const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, title: true, numberCount: true, numberWidth: true, prizeCount: true, prize: true, secondPrize: true, thirdPrize: true, winners: { select: { position: true, numberValue: true }, orderBy: { position: 'asc' } } } });
+  const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, title: true, numberCount: true, numberWidth: true, prizeCount: true, prize: true, secondPrize: true, thirdPrize: true, invertedPrizeEnabled: true, winners: { select: { position: true, numberValue: true }, orderBy: { position: 'asc' } } } });
   if (!campaign) return reply.code(404).send({ error: 'Rifa no encontrada' });
   const page = Math.max(1, Math.min(1000, Number(request.query.page) || 1));
   const search = request.query.search?.trim() || '';
@@ -582,9 +609,9 @@ app.get<{ Params: { id: string }; Querystring: { page?: string; search?: string;
     db.entryNumber.groupBy({ by: ['status'], where: { campaignId: campaign.id }, _count: { _all: true } }),
     db.entryNumber.count({ where }),
     db.entryNumber.findMany({ where, orderBy: { value: 'asc' }, skip: (page - 1) * 100, take: 100,
-      select: { value: true, status: true, reservation: { select: { id: true, buyerName: true } } } }),
+      select: { value: true, status: true, reservation: { select: { id: true, buyerName: true, includesInverted: true, baseValues: true } } } }),
   ]);
-  return { campaign, counts: Object.fromEntries(counts.map(item => [item.status, item._count._all])), page, pageCount: Math.ceil(total / 100), numbers };
+  return { campaign, counts: Object.fromEntries(counts.map(item => [item.status, item._count._all])), page, pageCount: Math.ceil(total / 100), numbers: numbers.map(item => ({ value: item.value, status: item.status, reservation: item.reservation ? { id: item.reservation.id, buyerName: item.reservation.buyerName } : null, prizeEligible: campaign.invertedPrizeEnabled || !item.reservation?.includesInverted || item.reservation.baseValues.includes(item.value) })) };
 });
 
 app.get<{ Params: { id: string }; Querystring: { page?: string } }>('/api/admin/campaigns/:id/history', async (request, reply) => {
@@ -669,10 +696,14 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/winner', async (r
   if (!parsed.success) return reply.code(400).send({ error: 'Número inválido.' });
   try {
     const winner = await db.$transaction(async tx => {
-      const campaign = await tx.campaign.findUnique({ where: { id: request.params.id }, select: { status: true, prizeCount: true, winners: { select: { position: true, numberValue: true } } } });
+      const campaign = await tx.campaign.findUnique({ where: { id: request.params.id }, select: { status: true, prizeCount: true, invertedPrizeEnabled: true, winners: { select: { position: true, numberValue: true } } } });
       if (!campaign || campaign.status !== 'LIVE' || parsed.data.position !== campaign.winners.length + 1 || parsed.data.position > campaign.prizeCount || campaign.winners.some(item => item.numberValue === parsed.data.numberValue)) throw new Error('WINNER_NOT_ALLOWED');
       const number = await tx.entryNumber.findUnique({ where: { campaignId_value: { campaignId: request.params.id, value: parsed.data.numberValue } }, select: { status: true, reservationId: true } });
       if (number?.status !== 'SOLD' || !number.reservationId) throw new Error('NUMBER_NOT_SOLD');
+      if (!campaign.invertedPrizeEnabled) {
+        const reservation = await tx.reservation.findUnique({ where: { id: number.reservationId }, select: { includesInverted: true, baseValues: true } });
+        if (reservation?.includesInverted && !reservation.baseValues.includes(parsed.data.numberValue)) throw new Error('INVERTED_NOT_ELIGIBLE');
+      }
       const winner = await tx.winner.create({ data: { campaignId: request.params.id, reservationId: number.reservationId, numberValue: parsed.data.numberValue, position: parsed.data.position } });
       if (parsed.data.position === campaign.prizeCount) await tx.campaign.update({ where: { id: request.params.id }, data: { status: 'CLOSED' } });
       return winner;
@@ -682,6 +713,7 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/winner', async (r
   } catch (error) {
     if (error instanceof Error && error.message === 'WINNER_NOT_ALLOWED') return reply.code(409).send({ error: 'La posición no está disponible o este número ya ganó.' });
     if (error instanceof Error && error.message === 'NUMBER_NOT_SOLD') return reply.code(409).send({ error: 'Solo puede ganar un boleto vendido y confirmado.' });
+    if (error instanceof Error && error.message === 'INVERTED_NOT_ELIGIBLE') return reply.code(409).send({ error: 'En esta rifa el número invertido no participa por premios.' });
     if (error instanceof Prisma.PrismaClientKnownRequestError && ['P2002', 'P2034'].includes(error.code)) return reply.code(409).send({ error: 'El resultado cambió. Actualizá la rifa.' });
     throw error;
   }

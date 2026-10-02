@@ -41,6 +41,8 @@ model Campaign {
   priceCrc       Int
   numberCount    Int
   numberWidth    Int
+  invertedEnabled Boolean        @default(false)
+  invertedPrizeEnabled Boolean   @default(false)
   status         CampaignStatus @default(DRAFT)
   drawDate       DateTime?
   createdAt      DateTime       @default(now())
@@ -126,6 +128,8 @@ model Reservation {
   buyerEmail     String
   buyerPhone     String
   selectedValues Int[]             @default([])
+  baseValues     Int[]             @default([])
+  includesInverted Boolean         @default(false)
   status         ReservationStatus @default(ACTIVE)
   expiresAt      DateTime
   totalCrc       Int               @default(0)

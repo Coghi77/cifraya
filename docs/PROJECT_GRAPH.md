@@ -25,6 +25,7 @@ flowchart LR
 | Vencimientos | Liberación transaccional de apartados y coordinación de consultas simultáneas | `apps/api/src/reservationExpiry.ts` |
 | Seguridad HTTP | Cabeceras CSP, bloqueo de marcos y caché privada | `apps/api/src/security.ts` |
 | Búsqueda privada de boletos | Prefijos según el ancho del número y coincidencias por comprador | `apps/api/src/ticketSearch.ts`, `apps/web/src/AdminRaffleDetail.tsx` |
+| Números invertidos | Inversión con ancho fijo, selección de pares disponibles y rechazo de duplicados | `apps/api/src/invertedNumbers.ts` |
 | Datos | Modelos e índices; migraciones aplicadas al arrancar Render | `prisma/schema.prisma`, `prisma/migrations/` |
 | Despliegue | Una web/API Node en Render; PostgreSQL externo en Supabase | `render.yaml` |
 
@@ -40,6 +41,8 @@ stateDiagram-v2
 ```
 
 - Rifas admiten **100, 1.000 o 10.000 números** (`00–99`, `000–999`, `0000–9999`). La compra se hace escogiendo un paquete; el servidor asigna esa cantidad de números disponibles al azar y permite cinco regeneraciones del conjunto completo. El precio de la reserva es el precio exacto del paquete. Sin paquetes configurados, se ofrece un boleto individual como compatibilidad.
+- El administrador puede habilitar invertidos en un borrador y decidir si esos boletos participan por premios. Se invierte el número con su ancho fijo: `1200 → 0021`. Si el comprador agrega los invertidos, recibe exactamente un número inverso distinto por cada número base y paga **dos veces** el precio del paquete. Se ofrecen solo si todos están disponibles y no se repiten ni coinciden con números base. El servidor vuelve a validarlos y reclama el conjunto completo de forma atómica al reservar. `Reservation.baseValues` distingue los números originales de los invertidos; si el premio invertido está deshabilitado, el administrador no puede publicar uno como ganador. Configuración inmutable tras publicar.
+- El progreso público usa exclusivamente números con estado `SOLD` dividido entre la cantidad total de la rifa; los apartados no cuentan. La página abierta lo actualiza por eventos y con consulta de respaldo cada 20 segundos. El porcentaje se redondea hacia abajo para evitar mostrar 100% antes de la venta total.
 - Cada rifa configura de uno a tres premios por posición. `Campaign.prize` es el primer premio para conservar rifas anteriores; `secondPrize` y `thirdPrize` se usan según `prizeCount`. Los ganadores se publican en orden, con números vendidos distintos; la rifa se cierra al publicar el último. La migración asigna primer puesto a ganadores anteriores.
 - Edición: un borrador permite cambiar URL, precio, cantidad de números, paquetes y premios; al cambiar la cantidad se reconstruye el inventario dentro de una transacción, siempre sin reservas. Una rifa publicada o cerrada solo permite corregir título y descripción; fotos se administran por separado.
 - La propuesta aleatoria no aparta números. La reserva sí los reclama en transacción serializable; un conflicto debe devolver 409. Un comprobante presentado a tiempo conserva el apartado durante la revisión. Solo `CONFIRMED` puede resultar ganador.
