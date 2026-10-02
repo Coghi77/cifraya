@@ -1,8 +1,9 @@
+import PrizeEditor from './PrizeEditor';
 import { useEffect, useState, type FormEvent } from 'react';
 
 export type EditableRaffle = {
   id: string; status: string; title: string; slug: string; description: string;
-  prize: string; prizeCount: number; secondPrize: string | null; thirdPrize: string | null;
+  prize: string; prizes: string[]; prizeCount: number; secondPrize: string | null; thirdPrize: string | null;
   priceCrc: number; numberCount: number; invertedEnabled: boolean; invertedPrizeEnabled: boolean; packages: { quantity: number; priceCrc: number }[];
 };
 
@@ -11,7 +12,7 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
 }) {
   const [form, setForm] = useState({
     title: raffle.title, slug: raffle.slug, description: raffle.description, prize: raffle.prize,
-    prizeCount: raffle.prizeCount, secondPrize: raffle.secondPrize || '', thirdPrize: raffle.thirdPrize || '',
+    prizes: raffle.prizes,
     priceCrc: String(raffle.priceCrc), numberCount: String(raffle.numberCount),
     invertedEnabled: raffle.invertedEnabled, invertedPrizeEnabled: raffle.invertedPrizeEnabled,
   });
@@ -28,10 +29,9 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
 
   async function save(event: FormEvent) {
     event.preventDefault();
+    if (isDraft && (form.prizes.length > Number(form.numberCount) || form.prizes.some(prize => prize.trim().length < 3))) { setError('Completá cada premio y verificá que no haya más premios que números.'); return; }
     const payload = isDraft ? {
       ...form, priceCrc: Number(form.priceCrc), numberCount: Number(form.numberCount),
-      secondPrize: form.prizeCount >= 2 ? form.secondPrize.trim() : undefined,
-      thirdPrize: form.prizeCount === 3 ? form.thirdPrize.trim() : undefined,
       packages: packages.map(item => ({ quantity: Number(item.quantity), priceCrc: Number(item.priceCrc) })),
     } : { title: form.title, description: form.description };
     setBusy(true); setError('');
@@ -56,11 +56,7 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
         {isDraft && <label>Identificador URL<input required pattern="[a-z0-9]+(-[a-z0-9]+)*" maxLength={80} value={form.slug} onChange={event => setForm({ ...form, slug: event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}/></label>}
         <label>Descripción<textarea maxLength={3000} rows={4} value={form.description} onChange={event => setForm({ ...form, description: event.target.value })}/></label>
         {isDraft && <>
-          <div className="prize-editor"><span>Cantidad de premios</span><div className="prize-count" role="group" aria-label="Cantidad de premios">{[1, 2, 3].map(count => <button key={count} type="button" aria-pressed={form.prizeCount === count} onClick={() => setForm({ ...form, prizeCount: count })}>{count} {count === 1 ? 'premio' : 'premios'}</button>)}</div>
-            <label>Primer premio<input required minLength={3} maxLength={200} value={form.prize} onChange={event => setForm({ ...form, prize: event.target.value })}/></label>
-            {form.prizeCount >= 2 && <label>Segundo premio<input required minLength={3} maxLength={200} value={form.secondPrize} onChange={event => setForm({ ...form, secondPrize: event.target.value })}/></label>}
-            {form.prizeCount === 3 && <label>Tercer premio<input required minLength={3} maxLength={200} value={form.thirdPrize} onChange={event => setForm({ ...form, thirdPrize: event.target.value })}/></label>}
-          </div>
+          <PrizeEditor prizes={form.prizes} onChange={prizes => setForm({ ...form, prizes })}/>
           <div className="form-row"><label>Precio por boleto (₡)<input required inputMode="numeric" pattern="[0-9]+" value={form.priceCrc} onChange={event => setForm({ ...form, priceCrc: event.target.value.replace(/\D/g, '') })}/></label><label>Cantidad de números<select required value={form.numberCount} onChange={event => setForm({ ...form, numberCount: event.target.value })}><option value="100">100 · 00 al 99</option><option value="1000">1 000 · 000 al 999</option><option value="10000">10 000 · 0000 al 9999</option></select></label></div>
           <div className="inverted-settings"><label><input type="checkbox" checked={form.invertedEnabled} onChange={event => setForm({ ...form, invertedEnabled: event.target.checked, invertedPrizeEnabled: event.target.checked && form.invertedPrizeEnabled })}/> Ofrecer paquete con números invertidos por el doble del precio</label><label><input type="checkbox" checked={form.invertedPrizeEnabled} disabled={!form.invertedEnabled} onChange={event => setForm({ ...form, invertedPrizeEnabled: event.target.checked })}/> Los invertidos también pueden ganar premios</label></div>
           <div className="package-editor"><div className="package-heading"><strong>Paquetes de números</strong><button type="button" disabled={packages.length >= 10} onClick={() => setPackages(current => [...current, { quantity: '', priceCrc: '' }])}>+ Agregar paquete</button></div>{packages.map((item, index) => <div className="package-row" key={index}><label>Cantidad<input required inputMode="numeric" pattern="[0-9]+" value={item.quantity} onChange={event => setPackages(current => current.map((entry, position) => position === index ? { ...entry, quantity: event.target.value.replace(/\D/g, '') } : entry))}/></label><label>Precio del paquete (₡)<input required inputMode="numeric" pattern="[0-9]+" value={item.priceCrc} onChange={event => setPackages(current => current.map((entry, position) => position === index ? { ...entry, priceCrc: event.target.value.replace(/\D/g, '') } : entry))}/></label><button type="button" aria-label="Quitar paquete" onClick={() => setPackages(current => current.filter((_, position) => position !== index))}>×</button></div>)}</div>

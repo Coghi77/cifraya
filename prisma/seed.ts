@@ -11,6 +11,7 @@ async function main() {
       title: 'Campaña de demostración',
       description: 'Una vista de prueba para definir el diseño y el recorrido de compra. No se reciben pagos.',
       prize: 'Premio por definir',
+      prizes: ['Premio por definir'],
       priceCrc: 1000,
       numberCount: 100,
       numberWidth: 3,

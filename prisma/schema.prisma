@@ -35,6 +35,7 @@ model Campaign {
   description    String         @default("")
   prize          String
   prizeCount     Int            @default(1)
+  prizes         String[]       @default([])
   secondPrize    String?
   thirdPrize     String?
   imageUrl       String?

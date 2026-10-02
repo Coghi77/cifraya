@@ -5,11 +5,19 @@ export type WinnerResult = {
   numberValue: number;
   publishedAt: string;
   buyerName: string;
-  campaign: { id: string; title: string; prize: string; secondPrize: string | null; thirdPrize: string | null; prizeCount: number; numberWidth: number };
+  prize: string;
+  campaign: { id: string; title: string; prize: string; prizes: string[]; prizeCount: number; numberWidth: number };
 };
 
 const positionName = ['Primer premio', 'Segundo premio', 'Tercer premio'];
-const prizeFor = (item: WinnerResult, position: number) => [item.campaign.prize, item.campaign.secondPrize, item.campaign.thirdPrize][position - 1];
+const prizeFor = (item: WinnerResult, position: number) => item.position === position ? item.prize : item.campaign.prizes[position - 1];
+
+function MoreWinners({ results, onSelect }: { results: WinnerResult[]; onSelect: (key: string) => void }) {
+  const [page, setPage] = useState(0);
+  const additional = results.filter(item => item.position > 3).sort((a, b) => a.position - b.position);
+  if (!additional.length) return null;
+  return <div><h3>Más premios</h3><div className="additional-winners">{additional.slice(page * 12, page * 12 + 12).map(item => <button key={item.position} type="button" onClick={() => onSelect(`${item.campaign.id}:${item.position}`)}><strong>{item.position}.º premio</strong><span>{prizeFor(item, item.position)}</span><strong>{item.buyerName}</strong><span>N.º {String(item.numberValue).padStart(item.campaign.numberWidth, '0')}</span></button>)}</div>{additional.length > 12 && <div className="prize-pages"><button type="button" disabled={page === 0} onClick={() => setPage(page - 1)}>Anterior</button><span>{page + 1} / {Math.ceil(additional.length / 12)}</span><button type="button" disabled={(page + 1) * 12 >= additional.length} onClick={() => setPage(page + 1)}>Siguiente</button></div>}</div>;
+}
 
 export default function WinnersPodium({ winners }: { winners: WinnerResult[] }) {
   const [selected, setSelected] = useState<string | null>(null);
@@ -30,7 +38,8 @@ export default function WinnersPodium({ winners }: { winners: WinnerResult[] }) 
           <span className="podium-base">{position}</span>
         </button>;
       })}</div>
-      {active && <div className="podium-detail" role="status"><span>{positionName[active.position]} · {prizeFor(active, active.position)}</span><strong>{active.buyerName}</strong><span>Número ganador {String(active.numberValue).padStart(campaign.numberWidth, '0')} · {new Date(active.publishedAt).toLocaleDateString('es-CR')}</span></div>}
+      <MoreWinners results={results} onSelect={setSelected}/>
+      {active && <div className="podium-detail" role="status"><span>{active.position}.º premio · {prizeFor(active, active.position)}</span><strong>{active.buyerName}</strong><span>Número ganador {String(active.numberValue).padStart(campaign.numberWidth, '0')} · {new Date(active.publishedAt).toLocaleDateString('es-CR')}</span></div>}
     </section>;
   })}</div>;
 }
