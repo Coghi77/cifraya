@@ -10,7 +10,7 @@ import { issueAdminSession, verifyAdminSession } from './adminSession.js';
 import { chooseBaseNumbers, invertedValues, reverseNumber } from './invertedNumbers.js';
 import { createReservationExpirer } from './reservationExpiry.js';
 import { registerSecurityHeaders } from './security.js';
-import { normalizePrizeInput, prizeList } from './prizes.js';
+import { normalizePrizeInput, prizeList, validPrizeSources, inversePrizeNumber } from './prizes.js';
 import { ticketSearchWhere } from './ticketSearch.js';
 
 const db = new PrismaClient();
@@ -36,6 +36,7 @@ const campaignInput = z.preprocess(normalizePrizeInput, z.object({
   slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(80),
   description: z.string().max(3000).default(''),
   prizes: prizeList,
+  prizeSources: z.array(z.number().int().min(0).max(10_000)).max(10_000),
   imageUrl: z.string().url().refine(value => new URL(value).protocol === 'https:', 'La imagen debe usar HTTPS.').optional(),
   priceCrc: z.number().int().positive().max(100_000_000),
   numberCount: z.union([z.literal(100), z.literal(1000), z.literal(10000)]),
@@ -43,7 +44,7 @@ const campaignInput = z.preprocess(normalizePrizeInput, z.object({
   invertedPrizeEnabled: z.boolean().default(false),
   packages: z.array(z.object({ quantity: z.number().int().min(2).max(20), priceCrc: z.number().int().positive().max(100_000_000) })).max(10).default([]),
   drawDate: z.string().datetime().optional(),
-}).refine(data => data.prizes.length <= data.numberCount, { message: 'No puede haber más premios que números.', path: ['prizes'] }).transform(data => ({ ...data, prize: data.prizes[0], prizeCount: data.prizes.length, secondPrize: data.prizes[1], thirdPrize: data.prizes[2] })));
+}).refine(data => validPrizeSources(data.prizes, data.prizeSources), { message: 'Cada premio inverso debe apuntar a un premio directo anterior.', path: ['prizeSources'] }).refine(data => data.prizes.length <= data.numberCount, { message: 'No puede haber más premios que números.', path: ['prizes'] }).transform(data => ({ ...data, invertedPrizeEnabled: data.prizeSources.some(source => source > 0), prize: data.prizes[0], prizeCount: data.prizes.length, secondPrize: data.prizes[1], thirdPrize: data.prizes[2] })));
 
 const reservationInput = z.object({
   campaignId: z.string(),
@@ -392,7 +393,7 @@ app.post<{ Params: { token: string } }>('/api/reservations/:token/proofs', { bod
 
 app.get('/api/admin/campaigns', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
-  const campaigns = await db.campaign.findMany({ orderBy: { createdAt: 'desc' }, include: { photos: photoSelect, packages: packageSelect, winners: { select: { position: true, numberValue: true }, orderBy: { position: 'asc' } } } });
+  const campaigns = await db.campaign.findMany({ orderBy: { createdAt: 'desc' }, include: { photos: photoSelect, packages: packageSelect, winners: { select: { position: true, numberValue: true, reservationId: true }, orderBy: { position: 'asc' } } } });
   return campaigns.map(({ photos, ...campaign }) => ({ ...campaign, photos: imageList(photos) }));
 });
 
@@ -491,7 +492,6 @@ app.post('/api/admin/campaigns', async (request, reply) => {
   const parsed = campaignInput.safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: 'Datos inválidos', details: parsed.error.flatten() });
   const input = parsed.data;
-  if (input.invertedPrizeEnabled && !input.invertedEnabled) return reply.code(400).send({ error: 'Activá los invertidos antes de darles premio.' });
   if (new Set(input.packages.map(item => item.quantity)).size !== input.packages.length || input.packages.some(item => item.priceCrc >= item.quantity * input.priceCrc)) {
     return reply.code(400).send({ error: 'Cada paquete debe tener una cantidad distinta y un precio menor al total individual.' });
   }
@@ -502,7 +502,7 @@ app.post('/api/admin/campaigns', async (request, reply) => {
         slug: input.slug,
         description: input.description,
         prize: input.prize,
-        prizes: input.prizes, prizeCount: input.prizeCount,
+        prizes: input.prizes, prizeSources: input.prizeSources, prizeCount: input.prizeCount,
         secondPrize: input.prizeCount >= 2 ? input.secondPrize : null,
         thirdPrize: input.prizes[2] ?? null,
         imageUrl: input.imageUrl,
@@ -542,7 +542,6 @@ app.patch<{ Params: { id: string } }>('/api/admin/campaigns/:id', async (request
       if (campaign.status !== 'DRAFT') return tx.campaign.update({ where: { id: request.params.id }, data: { title: parsed.data.title, description: parsed.data.description } });
       const input = parsed.data as z.infer<typeof campaignInput>;
       if (campaign._count.reservations || campaign._count.winners) throw new Error('CAMPAIGN_CHANGED');
-      if (input.invertedPrizeEnabled && !input.invertedEnabled) throw new Error('INVALID_INVERTED');
       if (new Set(input.packages.map(item => item.quantity)).size !== input.packages.length || input.packages.some(item => item.priceCrc >= item.quantity * input.priceCrc)) throw new Error('INVALID_PACKAGES');
       if (input.numberCount !== campaign.numberCount) {
         await tx.entryNumber.deleteMany({ where: { campaignId: request.params.id } });
@@ -553,7 +552,7 @@ app.patch<{ Params: { id: string } }>('/api/admin/campaigns/:id', async (request
       await tx.pricePackage.deleteMany({ where: { campaignId: request.params.id } });
       return tx.campaign.update({ where: { id: request.params.id }, data: {
         title: input.title, slug: input.slug, description: input.description, prize: input.prize,
-        prizes: input.prizes, prizeCount: input.prizeCount, secondPrize: input.prizeCount >= 2 ? input.secondPrize : null,
+        prizes: input.prizes, prizeSources: input.prizeSources, prizeCount: input.prizeCount, secondPrize: input.prizeCount >= 2 ? input.secondPrize : null,
         thirdPrize: input.prizes[2] ?? null, priceCrc: input.priceCrc,
         numberCount: input.numberCount, numberWidth: String(input.numberCount - 1).length,
         invertedEnabled: input.invertedEnabled, invertedPrizeEnabled: input.invertedPrizeEnabled,
@@ -586,19 +585,19 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/publish', async (
 app.get('/api/winners', async () => {
   const campaigns = await db.campaign.findMany({
     where: { winners: { some: {} } },
-    select: { id: true, title: true, prize: true, prizeCount: true, prizes: true, numberWidth: true,
+    select: { id: true, title: true, prize: true, prizeCount: true, prizes: true, prizeSources: true, numberWidth: true,
       winners: { select: { position: true, numberValue: true, publishedAt: true, reservation: { select: { buyerName: true } } } } },
   });
-  return campaigns.flatMap(({ winners, prizes, ...campaign }) => winners.map(({ reservation, ...winner }) => ({
-    ...winner, prize: prizes[winner.position - 1], buyerName: reservation.buyerName,
-    campaign: { ...campaign, prizes: prizes.slice(0, 3), secondPrize: prizes[1] ?? null, thirdPrize: prizes[2] ?? null },
+  return campaigns.flatMap(({ winners, prizes, prizeSources, ...campaign }) => winners.map(({ reservation, ...winner }) => ({
+    ...winner, prize: prizes[winner.position - 1], inverseOf: prizeSources[winner.position - 1] || 0, awarded: Boolean(reservation), buyerName: reservation?.buyerName ?? 'Sin boleto vendido',
+    campaign: { ...campaign, prizes: prizes.slice(0, 3), prizeSources: prizeSources.slice(0, 3), secondPrize: prizes[1] ?? null, thirdPrize: prizes[2] ?? null },
   }))).sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
 });
 
 app.get<{ Params: { id: string }; Querystring: { page?: string; search?: string; status?: string } }>('/api/admin/campaigns/:id/overview', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   await expireReservations();
-  const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, title: true, numberCount: true, numberWidth: true, prizeCount: true, prizes: true, prize: true, secondPrize: true, thirdPrize: true, invertedPrizeEnabled: true, winners: { select: { position: true, numberValue: true }, orderBy: { position: 'asc' } } } });
+  const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, title: true, numberCount: true, numberWidth: true, prizeCount: true, prizes: true, prizeSources: true, prize: true, secondPrize: true, thirdPrize: true, invertedPrizeEnabled: true, winners: { select: { position: true, numberValue: true, reservationId: true }, orderBy: { position: 'asc' } } } });
   if (!campaign) return reply.code(404).send({ error: 'Rifa no encontrada' });
   const page = Math.max(1, Math.min(1000, Number(request.query.page) || 1));
   const search = request.query.search?.trim() || '';
@@ -611,7 +610,10 @@ app.get<{ Params: { id: string }; Querystring: { page?: string; search?: string;
     db.entryNumber.findMany({ where, orderBy: { value: 'asc' }, skip: (page - 1) * 100, take: 100,
       select: { value: true, status: true, reservation: { select: { id: true, buyerName: true, includesInverted: true, baseValues: true } } } }),
   ]);
-  return { campaign, counts: Object.fromEntries(counts.map(item => [item.status, item._count._all])), page, pageCount: Math.ceil(total / 100), numbers: numbers.map(item => ({ value: item.value, status: item.status, reservation: item.reservation ? { id: item.reservation.id, buyerName: item.reservation.buyerName } : null, prizeEligible: campaign.invertedPrizeEnabled || !item.reservation?.includesInverted || item.reservation.baseValues.includes(item.value) })) };
+  const inverseValue = inversePrizeNumber(campaign.prizeSources, campaign.winners.length + 1, campaign.numberWidth, campaign.winners);
+  const inverseTicket = inverseValue === null ? null : await db.entryNumber.findUnique({ where: { campaignId_value: { campaignId: campaign.id, value: inverseValue } }, select: { status: true, reservation: { select: { buyerName: true } } } });
+  const nextInverse = inverseValue === null ? null : { value: inverseValue, buyerName: inverseTicket?.status === 'SOLD' ? inverseTicket.reservation?.buyerName : null, sold: inverseTicket?.status === 'SOLD' };
+  return { campaign, nextInverse, counts: Object.fromEntries(counts.map(item => [item.status, item._count._all])), page, pageCount: Math.ceil(total / 100), numbers: numbers.map(item => ({ value: item.value, status: item.status, reservation: item.reservation ? { id: item.reservation.id, buyerName: item.reservation.buyerName } : null, prizeEligible: nextInverse === null })) };
 });
 
 app.get<{ Params: { id: string }; Querystring: { page?: string } }>('/api/admin/campaigns/:id/history', async (request, reply) => {
@@ -692,19 +694,20 @@ app.post<{ Params: { id: string } }>('/api/admin/reservations/:id/reject', async
 
 app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/winner', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
-  const parsed = z.object({ numberValue: z.number().int().nonnegative(), position: z.number().int().min(1).max(10_000) }).safeParse(request.body);
+  const parsed = z.object({ numberValue: z.number().int().nonnegative().optional(), position: z.number().int().min(1).max(10_000), expectedSold: z.boolean().optional() }).safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: 'Número inválido.' });
   try {
     const winner = await db.$transaction(async tx => {
-      const campaign = await tx.campaign.findUnique({ where: { id: request.params.id }, select: { status: true, prizeCount: true, invertedPrizeEnabled: true, winners: { select: { position: true, numberValue: true } } } });
-      if (!campaign || campaign.status !== 'LIVE' || parsed.data.position !== campaign.winners.length + 1 || parsed.data.position > campaign.prizeCount || campaign.winners.some(item => item.numberValue === parsed.data.numberValue)) throw new Error('WINNER_NOT_ALLOWED');
-      const number = await tx.entryNumber.findUnique({ where: { campaignId_value: { campaignId: request.params.id, value: parsed.data.numberValue } }, select: { status: true, reservationId: true } });
-      if (number?.status !== 'SOLD' || !number.reservationId) throw new Error('NUMBER_NOT_SOLD');
-      if (!campaign.invertedPrizeEnabled) {
-        const reservation = await tx.reservation.findUnique({ where: { id: number.reservationId }, select: { includesInverted: true, baseValues: true } });
-        if (reservation?.includesInverted && !reservation.baseValues.includes(parsed.data.numberValue)) throw new Error('INVERTED_NOT_ELIGIBLE');
-      }
-      const winner = await tx.winner.create({ data: { campaignId: request.params.id, reservationId: number.reservationId, numberValue: parsed.data.numberValue, position: parsed.data.position } });
+      const campaign = await tx.campaign.findUnique({ where: { id: request.params.id }, select: { status: true, prizeCount: true, numberWidth: true, prizeSources: true, winners: { select: { position: true, numberValue: true, reservationId: true } } } });
+      if (!campaign || campaign.status !== 'LIVE' || parsed.data.position !== campaign.winners.length + 1 || parsed.data.position > campaign.prizeCount) throw new Error('WINNER_NOT_ALLOWED');
+      const inverseValue = inversePrizeNumber(campaign.prizeSources, parsed.data.position, campaign.numberWidth, campaign.winners);
+      const value = inverseValue ?? parsed.data.numberValue;
+      if (value === undefined || (inverseValue !== null && parsed.data.numberValue !== undefined && parsed.data.numberValue !== inverseValue)) throw new Error('INVERSE_MISMATCH');
+      if (inverseValue === null && campaign.winners.some(item => !campaign.prizeSources[item.position - 1] && item.numberValue === value)) throw new Error('WINNER_NOT_ALLOWED');
+      const number = await tx.entryNumber.findUnique({ where: { campaignId_value: { campaignId: request.params.id, value } }, select: { status: true, reservationId: true } });
+      if (inverseValue !== null && parsed.data.expectedSold !== undefined && parsed.data.expectedSold !== (number?.status === 'SOLD')) throw new Error('INVERSE_CHANGED');
+      if (inverseValue === null && (number?.status !== 'SOLD' || !number.reservationId)) throw new Error('NUMBER_NOT_SOLD');
+      const winner = await tx.winner.create({ data: { campaignId: request.params.id, reservationId: number?.status === 'SOLD' ? number.reservationId : null, numberValue: value, position: parsed.data.position } });
       if (parsed.data.position === campaign.prizeCount) await tx.campaign.update({ where: { id: request.params.id }, data: { status: 'CLOSED' } });
       return winner;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
@@ -713,7 +716,8 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/winner', async (r
   } catch (error) {
     if (error instanceof Error && error.message === 'WINNER_NOT_ALLOWED') return reply.code(409).send({ error: 'La posición no está disponible o este número ya ganó.' });
     if (error instanceof Error && error.message === 'NUMBER_NOT_SOLD') return reply.code(409).send({ error: 'Solo puede ganar un boleto vendido y confirmado.' });
-    if (error instanceof Error && error.message === 'INVERTED_NOT_ELIGIBLE') return reply.code(409).send({ error: 'En esta rifa el número invertido no participa por premios.' });
+    if (error instanceof Error && error.message === 'INVERSE_CHANGED') return reply.code(409).send({ error: 'El estado del boleto cambió. Actualizá el resultado antes de publicarlo.' });
+    if (error instanceof Error && ['INVERSE_MISMATCH', 'DIRECT_RESULT_REQUIRED'].includes(error.message)) return reply.code(409).send({ error: 'El inverso debe corresponder al resultado directo publicado.' });
     if (error instanceof Prisma.PrismaClientKnownRequestError && ['P2002', 'P2034'].includes(error.code)) return reply.code(409).send({ error: 'El resultado cambió. Actualizá la rifa.' });
     throw error;
   }

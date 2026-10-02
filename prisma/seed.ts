@@ -12,6 +12,7 @@ async function main() {
       description: 'Una vista de prueba para definir el diseño y el recorrido de compra. No se reciben pagos.',
       prize: 'Premio por definir',
       prizes: ['Premio por definir'],
+      prizeSources: [0],
       priceCrc: 1000,
       numberCount: 100,
       numberWidth: 3,

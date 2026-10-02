@@ -183,7 +183,7 @@
       "file_type": "code",
       "norm_label": "history",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L17"
+      "source_location": "L18"
     },
     {
       "id": "apps_web_src_adminraffledetail_numberrow",
@@ -272,6 +272,18 @@
       "source_location": "L3"
     },
     {
+      "id": "apps_api_src_prizes_inverseprizenumber",
+      "label": "inversePrizeNumber()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "file_type": "code",
+      "norm_label": "inverseprizenumber()",
+      "source_file": "apps/api/src/prizes.ts",
+      "source_location": "L12"
+    },
+    {
       "id": "apps_api_src_prizes_normalizeprizeinput",
       "label": "normalizePrizeInput()",
       "_callable": true,
@@ -281,7 +293,19 @@
       "file_type": "code",
       "norm_label": "normalizeprizeinput()",
       "source_file": "apps/api/src/prizes.ts",
-      "source_location": "L6"
+      "source_location": "L20"
+    },
+    {
+      "id": "apps_api_src_prizes_validprizesources",
+      "label": "validPrizeSources()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "file_type": "code",
+      "norm_label": "validprizesources()",
+      "source_file": "apps/api/src/prizes.ts",
+      "source_location": "L7"
     },
     {
       "id": "apps_api_src_reservationexpiry_createreservationexpirer",
@@ -329,7 +353,7 @@
       "file_type": "code",
       "norm_label": "adminauthorized()",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L87"
+      "source_location": "L88"
     },
     {
       "id": "apps_api_src_server_availableinvertedvalues",
@@ -341,7 +365,7 @@
       "file_type": "code",
       "norm_label": "availableinvertedvalues()",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L71"
+      "source_location": "L72"
     },
     {
       "id": "apps_api_src_server_broadcast",
@@ -365,7 +389,7 @@
       "file_type": "code",
       "norm_label": "imagelist()",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L68"
+      "source_location": "L69"
     },
     {
       "id": "apps_api_src_server_sessionkey",
@@ -377,7 +401,7 @@
       "file_type": "code",
       "norm_label": "sessionkey()",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L58"
+      "source_location": "L59"
     },
     {
       "id": "apps_api_src_server_validphoto",
@@ -389,7 +413,7 @@
       "file_type": "code",
       "norm_label": "validphoto()",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L78"
+      "source_location": "L79"
     },
     {
       "id": "apps_api_src_ticketsearch_ticketprefixrange",
@@ -653,7 +677,7 @@
       "file_type": "code",
       "norm_label": "morewinners()",
       "source_file": "apps/web/src/WinnersPodium.tsx",
-      "source_location": "L15"
+      "source_location": "L17"
     },
     {
       "id": "apps_web_src_winnerspodium_prizefor",
@@ -665,7 +689,7 @@
       "file_type": "code",
       "norm_label": "prizefor()",
       "source_file": "apps/web/src/WinnersPodium.tsx",
-      "source_location": "L13"
+      "source_location": "L15"
     },
     {
       "id": "apps_web_src_winnerspodium_winnerspodium",
@@ -677,7 +701,7 @@
       "file_type": "code",
       "norm_label": "winnerspodium()",
       "source_file": "apps/web/src/WinnersPodium.tsx",
-      "source_location": "L22"
+      "source_location": "L24"
     },
     {
       "id": "apps_web_src_footersocials_brandicon",
@@ -1145,7 +1169,7 @@
       "file_type": "code",
       "norm_label": "adminraffledetail()",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L39"
+      "source_location": "L40"
     },
     {
       "id": "apps_web_src_adminraffledetail_adminraffledetail_publishwinner",
@@ -1157,7 +1181,7 @@
       "file_type": "code",
       "norm_label": "publishwinner()",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L99"
+      "source_location": "L100"
     },
     {
       "id": "apps_web_src_adminraffledetail_adminrequest",
@@ -1169,7 +1193,7 @@
       "file_type": "code",
       "norm_label": "adminrequest()",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L23"
+      "source_location": "L24"
     },
     {
       "id": "apps_web_src_adminraffledetail_currency",
@@ -1181,7 +1205,7 @@
       "file_type": "code",
       "norm_label": "currency()",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L31"
+      "source_location": "L32"
     },
     {
       "id": "apps_web_src_adminraffledetail_numberlabel",
@@ -1193,7 +1217,7 @@
       "file_type": "code",
       "norm_label": "numberlabel()",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L30"
+      "source_location": "L31"
     },
     {
       "id": "apps_api_src_adminsession",
@@ -1237,7 +1261,7 @@
       "file_type": "code",
       "norm_label": "prizelist",
       "source_file": "apps/api/src/prizes.ts",
-      "source_location": "L4"
+      "source_location": "L5"
     },
     {
       "id": "apps_api_src_reservationexpiry",
@@ -1325,7 +1349,7 @@
       "file_type": "code",
       "norm_label": "expirereservations",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L114"
+      "source_location": "L115"
     },
     {
       "id": "apps_api_src_server_failedlogins",
@@ -1336,7 +1360,7 @@
       "file_type": "code",
       "norm_label": "failedlogins",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L85"
+      "source_location": "L86"
     },
     {
       "id": "apps_api_src_server_packageselect",
@@ -1347,7 +1371,7 @@
       "file_type": "code",
       "norm_label": "packageselect",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L67"
+      "source_location": "L68"
     },
     {
       "id": "apps_api_src_server_photoinput",
@@ -1358,7 +1382,7 @@
       "file_type": "code",
       "norm_label": "photoinput",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L61"
+      "source_location": "L62"
     },
     {
       "id": "apps_api_src_server_photoselect",
@@ -1369,7 +1393,7 @@
       "file_type": "code",
       "norm_label": "photoselect",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L66"
+      "source_location": "L67"
     },
     {
       "id": "apps_api_src_server_port",
@@ -1380,7 +1404,7 @@
       "file_type": "code",
       "norm_label": "port",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L730"
+      "source_location": "L734"
     },
     {
       "id": "apps_api_src_server_proposalcleanup",
@@ -1391,7 +1415,7 @@
       "file_type": "code",
       "norm_label": "proposalcleanup",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L724"
+      "source_location": "L728"
     },
     {
       "id": "apps_api_src_server_proposalinput",
@@ -1402,7 +1426,7 @@
       "file_type": "code",
       "norm_label": "proposalinput",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L57"
+      "source_location": "L58"
     },
     {
       "id": "apps_api_src_server_reservationinput",
@@ -1413,7 +1437,7 @@
       "file_type": "code",
       "norm_label": "reservationinput",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L48"
+      "source_location": "L49"
     },
     {
       "id": "apps_api_src_server_subscribers",
@@ -1435,7 +1459,7 @@
       "file_type": "code",
       "norm_label": "timer",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L722"
+      "source_location": "L726"
     },
     {
       "id": "apps_api_src_ticketsearch",
@@ -1600,7 +1624,7 @@
       "file_type": "code",
       "norm_label": "positionname",
       "source_file": "apps/web/src/WinnersPodium.tsx",
-      "source_location": "L12"
+      "source_location": "L14"
     },
     {
       "id": "ref_react",
@@ -1988,11 +2012,22 @@
       "source_location": null
     },
     {
-      "id": "winner",
-      "label": "\"Winner\"",
+      "id": "prisma_migrations_20261005000000_inverse_prize_rules_migration",
+      "label": "20261005000000_inverse_prize_rules/migration.sql",
       "_origin": "ast",
       "community": 24,
       "community_name": "Community 24",
+      "file_type": "code",
+      "norm_label": "20261005000000_inverse_prize_rules/migration.sql",
+      "source_file": "prisma/migrations/20261005000000_inverse_prize_rules/migration.sql",
+      "source_location": null
+    },
+    {
+      "id": "winner",
+      "label": "\"Winner\"",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "Community 25",
       "file_type": "code",
       "norm_label": "\"winner\"",
       "source_file": "",
@@ -3206,7 +3241,7 @@
       "file_type": "code",
       "norm_label": "statusoptions",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L32"
+      "source_location": "L33"
     }
   ],
   "links": [
@@ -3235,6 +3270,18 @@
       "weight": 1.0
     },
     {
+      "source": "apps_api_src_prizes_inverseprizenumber",
+      "target": "apps_api_src_invertednumbers_reversenumber",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "apps/api/src/prizes.ts",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
       "source": "apps_api_src_server_adminauthorized",
       "target": "apps_api_src_adminsession_verifyadminsession",
       "relation": "calls",
@@ -3243,7 +3290,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L88",
+      "source_location": "L89",
       "weight": 1.0
     },
     {
@@ -3255,7 +3302,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L73",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -3267,7 +3314,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L73",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server_campaigninput",
+      "target": "apps_api_src_prizes_validprizesources",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
@@ -3279,7 +3338,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L114",
+      "source_location": "L115",
       "weight": 1.0
     },
     {
@@ -3291,7 +3350,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L722",
+      "source_location": "L726",
       "weight": 1.0
     },
     {
@@ -3351,7 +3410,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L115",
+      "source_location": "L116",
       "weight": 1.0
     },
     {
@@ -3363,7 +3422,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L121",
+      "source_location": "L123",
       "weight": 1.0
     },
     {
@@ -3375,7 +3434,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L70",
+      "source_location": "L71",
       "weight": 1.0
     },
     {
@@ -3387,7 +3446,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L103",
+      "source_location": "L104",
       "weight": 1.0
     },
     {
@@ -3987,7 +4046,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/WinnersPodium.tsx",
-      "source_location": "L19",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -3999,7 +4058,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/WinnersPodium.tsx",
-      "source_location": "L32",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
@@ -4023,7 +4082,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L99",
+      "source_location": "L100",
       "weight": 1.0
     },
     {
@@ -4315,6 +4374,18 @@
       "weight": 1.0
     },
     {
+      "source": "apps_api_src_prizes",
+      "target": "apps_api_src_invertednumbers_reversenumber",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/prizes.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
       "source": "apps_api_src_server",
       "target": "apps_api_src_invertednumbers_choosebasenumbers",
       "relation": "imports",
@@ -4376,7 +4447,31 @@
     },
     {
       "source": "apps_api_src_server",
+      "target": "apps_api_src_prizes_inverseprizenumber",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
       "target": "apps_api_src_prizes_prizelist",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_prizes_validprizesources",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -4660,6 +4755,18 @@
       "context": "import",
       "source_file": "apps/api/src/prizes.ts",
       "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_prizes",
+      "target": "apps_api_src_invertednumbers",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/prizes.ts",
+      "source_location": "L2",
       "weight": 1.0
     },
     {
@@ -5411,13 +5518,13 @@
     },
     {
       "source": "apps_api_src_prizes",
-      "target": "apps_api_src_prizes_prizelist",
+      "target": "apps_api_src_prizes_inverseprizenumber",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/prizes.ts",
-      "source_location": "L4",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -5428,7 +5535,29 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/prizes.ts",
-      "source_location": "L6",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_prizes",
+      "target": "apps_api_src_prizes_prizelist",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/prizes.ts",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_prizes",
+      "target": "apps_api_src_prizes_validprizesources",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/prizes.ts",
+      "source_location": "L7",
       "weight": 1.0
     },
     {
@@ -5472,7 +5601,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L114",
+      "source_location": "L115",
       "weight": 1.0
     },
     {
@@ -5538,7 +5667,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L48",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -5549,7 +5678,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L57",
+      "source_location": "L58",
       "weight": 1.0
     },
     {
@@ -5560,7 +5689,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L58",
+      "source_location": "L59",
       "weight": 1.0
     },
     {
@@ -5571,7 +5700,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L61",
+      "source_location": "L62",
       "weight": 1.0
     },
     {
@@ -5582,7 +5711,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L66",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -5593,7 +5722,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L67",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -5604,7 +5733,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L68",
+      "source_location": "L69",
       "weight": 1.0
     },
     {
@@ -5615,7 +5744,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L71",
+      "source_location": "L72",
       "weight": 1.0
     },
     {
@@ -5626,7 +5755,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L722",
+      "source_location": "L726",
       "weight": 1.0
     },
     {
@@ -5637,7 +5766,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L724",
+      "source_location": "L728",
       "weight": 1.0
     },
     {
@@ -5648,7 +5777,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L730",
+      "source_location": "L734",
       "weight": 1.0
     },
     {
@@ -5659,7 +5788,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L78",
+      "source_location": "L79",
       "weight": 1.0
     },
     {
@@ -5670,7 +5799,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L85",
+      "source_location": "L86",
       "weight": 1.0
     },
     {
@@ -5681,7 +5810,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L87",
+      "source_location": "L88",
       "weight": 1.0
     },
     {
@@ -6110,7 +6239,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -6121,7 +6250,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -6132,7 +6261,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L30",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -6143,7 +6272,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -6154,18 +6283,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L32",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_adminraffledetail",
-      "target": "apps_web_src_adminraffledetail_adminraffledetail",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L39",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -6177,6 +6295,17 @@
       "confidence_score": 1.0,
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
       "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_adminraffledetail",
+      "target": "apps_web_src_adminraffledetail_adminraffledetail",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/web/src/AdminRaffleDetail.tsx",
+      "source_location": "L40",
       "weight": 1.0
     },
     {
@@ -6671,7 +6800,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/WinnersPodium.tsx",
-      "source_location": "L12",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -6682,7 +6811,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/WinnersPodium.tsx",
-      "source_location": "L13",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -6693,7 +6822,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/WinnersPodium.tsx",
-      "source_location": "L15",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -6704,7 +6833,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/WinnersPodium.tsx",
-      "source_location": "L22",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -7493,5 +7622,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "c4ff0cc1e2578390718a8de558bd39b0bc03bd28"
+  "built_at_commit": "fc1fd0ea90360de7fc4c8e12e12cd619268ad2ea"
 }

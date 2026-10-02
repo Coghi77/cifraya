@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 281 nodes · 374 edges · 25 communities (13 shown, 5 thin omitted)
+- 284 nodes · 382 edges · 26 communities (13 shown, 5 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 3 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c4ff0cc1`
+- Built from commit: `fc1fd0ea`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -31,7 +31,7 @@
 - Community 14
 - Community 15
 - Community 19
-- Community 24
+- Community 25
 
 ## God Nodes (most connected - your core abstractions)
 1. `App()` - 30 edges
@@ -41,9 +41,9 @@
 5. `api()` - 8 edges
 6. `loadAdmin()` - 8 edges
 7. `compilerOptions` - 8 edges
-8. `"Campaign"` - 7 edges
-9. `addPhotos()` - 6 edges
-10. `expireAdminSession()` - 6 edges
+8. `reverseNumber()` - 7 edges
+9. `"Campaign"` - 7 edges
+10. `addPhotos()` - 6 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `"CampaignPhoto"` --references--> `"Campaign"`  [EXTRACTED]
@@ -60,11 +60,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (25 total, 5 thin omitted)
+## Communities (26 total, 5 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.06
-Nodes (34): issueAdminSession(), verifyAdminSession(), chooseBaseNumbers(), invertedValues(), reverseNumber(), normalizePrizeInput(), prizeList, createReservationExpirer() (+26 more)
+Nodes (36): issueAdminSession(), verifyAdminSession(), chooseBaseNumbers(), invertedValues(), reverseNumber(), inversePrizeNumber(), normalizePrizeInput(), prizeList (+28 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.08
@@ -115,7 +115,7 @@ Cohesion: 0.50
 Nodes (3): inventory, inventorySet, times
 
 ## Knowledge Gaps
-- **120 isolated node(s):** `AdminReservation`, `LookupResult`, `NumberProposal`, `Raffle`, `Reservation` (+115 more)
+- **119 isolated node(s):** `AdminReservation`, `LookupResult`, `NumberProposal`, `Raffle`, `Reservation` (+114 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 154 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -123,15 +123,15 @@ Nodes (3): inventory, inventorySet, times
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `App()` connect `Community 2` to `Community 1`?**
-  _High betweenness centrality (0.049) - this node is a cross-community bridge._
+  _High betweenness centrality (0.048) - this node is a cross-community bridge._
 - **Why does `react` connect `Community 1` to `Community 9`, `Community 4`, `Community 7`?**
-  _High betweenness centrality (0.046) - this node is a cross-community bridge._
+  _High betweenness centrality (0.045) - this node is a cross-community bridge._
 - **Why does `@prisma/client` connect `Community 0` to `Community 3`?**
-  _High betweenness centrality (0.038) - this node is a cross-community bridge._
+  _High betweenness centrality (0.039) - this node is a cross-community bridge._
 - **What connects `AdminReservation`, `LookupResult`, `NumberProposal` to the rest of the system?**
-  _120 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _119 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.06037414965986394 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06196078431372549 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.08412698412698413 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
