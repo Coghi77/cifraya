@@ -12,12 +12,15 @@ import { createReservationExpirer } from './reservationExpiry.js';
 import { registerSecurityHeaders } from './security.js';
 import { normalizePrizeInput, prizeList, validPrizeSources, inversePrizeNumber } from './prizes.js';
 import { ticketSearchWhere } from './ticketSearch.js';
+import { createPublicCache } from './publicCache.js';
 
 const db = new PrismaClient();
-const app = Fastify({ logger: true });
+const app = Fastify({ logger: { redact: ['req.headers.authorization', 'req.headers.cookie'], serializers: { req: request => ({ method: request.method, url: request.url?.split('?')[0].replace(/(\/api\/reservations\/)[a-f0-9]{48}/g, '$1[redacted]') }) } } });
+const publicCache = createPublicCache();
 registerSecurityHeaders(app, process.env.NODE_ENV === 'production');
 const subscribers = new Set<(event: string) => void>();
-function broadcast(event: string) { for (const subscriber of subscribers) subscriber(event); }
+const closeStreams = new Set<() => void>();
+function broadcast(event: string) { publicCache.clear(); for (const subscriber of subscribers) subscriber(event); }
 await app.register(cors, { origin: ['http://127.0.0.1:4173', 'http://localhost:4173'] });
 
 if (process.env.NODE_ENV === 'production') {
@@ -93,6 +96,7 @@ app.post('/api/admin/login', async (request, reply) => {
   const key = request.ip;
   const now = Date.now();
   const attempts = failedLogins.get(key);
+  if (!attempts && failedLogins.size >= 10_000) return reply.code(429).send({ error: 'Demasiados intentos. Intentá más tarde.' });
   if (attempts && attempts.resetAt > now && attempts.count >= 5) {
     return reply.code(429).send({ error: 'Demasiados intentos. Volvé a intentar en 15 minutos.' });
   }
@@ -115,26 +119,36 @@ app.post('/api/admin/login', async (request, reply) => {
 const expireReservations = createReservationExpirer(db, () => broadcast('reservations'));
 
 app.get('/api/health', async () => ({ ok: true }));
+app.get('/api/ready', async (_request, reply) => {
+  try {
+    await publicCache.get('readiness', async () => { await db.$queryRaw`SELECT 1`; return true; });
+    return { ok: true };
+  } catch { return reply.code(503).send({ ok: false }); }
+});
 
 app.get('/api/events', (_request, reply) => {
   if (subscribers.size >= 200) return reply.code(503).send({ error: 'Demasiadas conexiones activas. Intentá de nuevo.' });
   reply.hijack();
   reply.raw.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', Connection: 'keep-alive', 'X-Accel-Buffering': 'no' });
   reply.raw.write('retry: 3000\n\n');
-  const send = (event: string) => { if (!reply.raw.destroyed) reply.raw.write(`event: update\ndata: ${event}\n\n`); };
+  const send = (event: string) => { if (!reply.raw.destroyed && !reply.raw.write(`event: update\ndata: ${event}\n\n`)) reply.raw.destroy(); };
   subscribers.add(send);
-  const heartbeat = setInterval(() => { if (!reply.raw.destroyed) reply.raw.write(': heartbeat\n\n'); }, 25_000);
-  reply.raw.on('close', () => { clearInterval(heartbeat); subscribers.delete(send); });
+  const close = () => reply.raw.end();
+  closeStreams.add(close);
+  const heartbeat = setInterval(() => { if (!reply.raw.destroyed && !reply.raw.write(': heartbeat\n\n')) reply.raw.destroy(); }, 25_000);
+  reply.raw.on('close', () => { clearInterval(heartbeat); subscribers.delete(send); closeStreams.delete(close); });
 });
 
 app.get('/api/campaigns', async () => {
   await expireReservations();
+  return publicCache.get('campaigns', async () => {
   const campaigns = await db.campaign.findMany({
     where: { status: 'LIVE' },
     orderBy: { createdAt: 'desc' },
     include: { photos: photoSelect, packages: packageSelect, _count: { select: { numbers: { where: { status: 'SOLD' } } } } },
   });
   return campaigns.map(({ _count, photos, ...campaign }) => ({ ...campaign, photos: imageList(photos), soldCount: _count.numbers }));
+  });
 });
 
 app.get<{ Params: { slug: string } }>('/api/campaigns/:slug', async (request, reply) => {
@@ -583,6 +597,7 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/publish', async (
 });
 
 app.get('/api/winners', async () => {
+  return publicCache.get('winners', async () => {
   const campaigns = await db.campaign.findMany({
     where: { winners: { some: {} } },
     select: { id: true, title: true, prize: true, prizeCount: true, prizes: true, prizeSources: true, numberWidth: true,
@@ -592,6 +607,7 @@ app.get('/api/winners', async () => {
     ...winner, prize: prizes[winner.position - 1], inverseOf: prizeSources[winner.position - 1] || 0, awarded: Boolean(reservation), buyerName: reservation?.buyerName ?? 'Sin boleto vendido',
     campaign: { ...campaign, prizes: prizes.slice(0, 3), prizeSources: prizeSources.slice(0, 3), secondPrize: prizes[1] ?? null, thirdPrize: prizes[2] ?? null },
   }))).sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
+  });
 });
 
 app.get<{ Params: { id: string }; Querystring: { page?: string; search?: string; status?: string } }>('/api/admin/campaigns/:id/overview', async (request, reply) => {
@@ -726,10 +742,18 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/winner', async (r
 const timer = setInterval(() => expireReservations().catch(error => app.log.error(error)), 60_000);
 timer.unref();
 const proposalCleanup = setInterval(() => {
+  for (const [key, value] of failedLogins) if (value.resetAt <= Date.now()) failedLogins.delete(key);
   void db.numberProposal.deleteMany({ where: { expiresAt: { lt: new Date(Date.now() - 24 * 60 * 60_000) } } }).catch(error => app.log.error(error));
 }, 60 * 60_000);
 proposalCleanup.unref();
 app.addHook('onClose', async () => { clearInterval(timer); clearInterval(proposalCleanup); await db.$disconnect(); });
+app.addHook('preClose', async () => { for (const close of closeStreams) close(); });
+let stopping = false;
+for (const signal of ['SIGTERM', 'SIGINT'] as const) process.on(signal, () => {
+  if (stopping) return;
+  stopping = true;
+  void app.close().catch(error => { app.log.error(error); process.exitCode = 1; });
+});
 
 const port = Number(process.env.PORT || 4100);
 await app.listen({ host: process.env.NODE_ENV === 'production' ? '0.0.0.0' : '127.0.0.1', port });

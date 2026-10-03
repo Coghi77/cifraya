@@ -19,7 +19,7 @@ test('concurrent expiry checks share one batch and release claimed numbers once'
   assert.equal(releases, 1);
   assert.equal(notices, 1);
   await expire();
-  assert.equal(reads, 2);
+  assert.equal(reads, 1);
 });
 
 test('an expiry check does not release numbers after another action changes status', async () => {

@@ -77,9 +77,8 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange, onRevie
   useEffect(() => { void reload(); }, [reload]);
   useEffect(() => {
     const refresh = () => { if (document.visibilityState === 'visible') void reload(); };
-    const interval = window.setInterval(refresh, 20_000);
     window.addEventListener('cifraya:update', refresh);
-    return () => { window.clearInterval(interval); window.removeEventListener('cifraya:update', refresh); };
+    return () => { window.removeEventListener('cifraya:update', refresh); };
   }, [reload]);
   useEffect(() => {
     if (!statusOpen) return;

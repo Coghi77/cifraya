@@ -1,7 +1,8 @@
 import type { PrismaClient } from '@prisma/client';
 
-export function createReservationExpirer(db: PrismaClient, notify: () => void) {
+export function createReservationExpirer(db: PrismaClient, notify: () => void, minIntervalMs = 5000) {
   let inFlight: Promise<void> | null = null;
+  let nextCheck = 0;
 
   async function expireBatch() {
     const overdue = await db.reservation.findMany({
@@ -27,10 +28,12 @@ export function createReservationExpirer(db: PrismaClient, notify: () => void) {
       expiredAny ||= expired;
     }
     if (expiredAny) notify();
+    nextCheck = overdue.length === 100 ? 0 : Date.now() + minIntervalMs;
   }
 
   return function expireReservations() {
     if (inFlight) return inFlight;
+    if (Date.now() < nextCheck) return Promise.resolve();
     inFlight = expireBatch().finally(() => { inFlight = null; });
     return inFlight;
   };

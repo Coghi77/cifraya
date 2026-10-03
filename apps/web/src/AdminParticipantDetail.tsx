@@ -28,9 +28,8 @@ export default function AdminParticipantDetail({ reservationId, token, onClose, 
         .catch(cause => { if (active) setError((cause as Error).message); });
     };
     refresh();
-    const interval = window.setInterval(refresh, 20_000);
     window.addEventListener('cifraya:update', refresh);
-    return () => { active = false; window.clearInterval(interval); window.removeEventListener('cifraya:update', refresh); };
+    return () => { active = false; window.removeEventListener('cifraya:update', refresh); };
   }, [reservationId, token, page]);
 
   return <div className="participant-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}><section className="participant-panel" role="dialog" aria-modal="true" aria-label="Ficha del participante"><button className="participant-close" type="button" onClick={onClose} aria-label="Cerrar"><X size={19}/></button><span className="eyebrow">FICHA DEL PARTICIPANTE</span>{error && <p className="admin-detail-error" role="alert">{error}</p>}{data ? <>

@@ -42,11 +42,18 @@ export default function AdminReservationReview({ id, token, onClose, onReviewed 
   const [confirmingPayment, setConfirmingPayment] = useState(false);
   useEffect(() => {
     let active = true;
+    let loading = false;
+    const refresh = () => {
+    if (loading || document.visibilityState !== 'visible') return;
+    loading = true;
     void fetch(`/api/admin/reservations/${id}`, { headers: { Authorization: `Bearer ${token}` } })
       .then(async response => { const data = await response.json(); if (!response.ok) throw new Error(data.error || 'No se pudo abrir la reserva.'); return data as Detail; })
-      .then(data => { if (active) setDetail(data); })
-      .catch(cause => { if (active) setError((cause as Error).message); });
-    return () => { active = false; };
+      .then(data => { if (active) { setDetail(data); setError(''); } })
+      .catch(cause => { if (active) setError((cause as Error).message); }).finally(() => { loading = false; });
+    };
+    refresh();
+    window.addEventListener('cifraya:update', refresh);
+    return () => { active = false; window.removeEventListener('cifraya:update', refresh); };
   }, [id, token]);
 
   async function review(action: 'confirm' | 'reject') {

@@ -1,3 +1,4 @@
+import { startRealtime } from './realtime';
 import PrizeEditor from './PrizeEditor';
 import { useEffect, useState, type FormEvent } from 'react';
 import { ArrowRight, Check, ChevronLeft, Clock3, Copy, LockKeyhole, Plus, Search, ShieldCheck, Sparkles, Ticket, Trophy, X } from 'lucide-react';
@@ -296,19 +297,21 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
-  useEffect(() => {
-    const events = new EventSource('/api/events');
-    const notify = () => window.dispatchEvent(new Event('cifraya:update'));
-    events.addEventListener('update', notify);
-    return () => { events.removeEventListener('update', notify); events.close(); };
-  }, []);
+  useEffect(startRealtime, []);
 
   useEffect(() => {
+    let refreshing = false;
+    let queued = false;
+    let stopped = false;
     async function refresh() {
+      if (stopped) return;
+      if (refreshing) { queued = true; return; }
       if (document.visibilityState !== 'visible') return;
+      refreshing = true;
+      try {
       if (view === 'home') await loadRaffles();
       if (view === 'winners') await loadWinners();
-      if (view === 'admin' && adminUnlocked && adminToken) await loadAdmin(adminToken, true);
+      if (view === 'admin' && !adminDetailId && adminUnlocked && adminToken) await loadAdmin(adminToken, true);
       if (view === 'raffle' && raffle) {
         try {
           const updated = await api<Raffle>(`/api/campaigns/${encodeURIComponent(raffle.slug)}`);
@@ -330,12 +333,11 @@ export default function App() {
       if (view === 'raffle' && reservation?.token) {
         try { await refreshReservation(reservation.token); } catch { /* Keep the last known pass while offline. */ }
       }
+      } finally { refreshing = false; if (queued) { queued = false; void refresh(); } }
     }
-    const interval = window.setInterval(() => { void refresh(); }, 20_000);
-    document.addEventListener('visibilitychange', refresh);
     window.addEventListener('cifraya:update', refresh);
-    return () => { window.clearInterval(interval); document.removeEventListener('visibilitychange', refresh); window.removeEventListener('cifraya:update', refresh); };
-  }, [view, adminUnlocked, adminToken, raffle?.slug, reservation?.token, lookupCode, lookupResult?.status, proposalReady, selectionLoading, randomQuantity, selected.length, showCheckout]);
+    return () => { stopped = true; window.removeEventListener('cifraya:update', refresh); };
+  }, [view, adminDetailId, adminUnlocked, adminToken, raffle?.slug, reservation?.token, lookupCode, lookupResult?.status, proposalReady, selectionLoading, randomQuantity, selected.length, showCheckout]);
 
   async function generateNumbers(quantity: number, campaign = raffle) {
     if (!campaign) return;

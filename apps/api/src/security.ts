@@ -21,7 +21,7 @@ export function registerSecurityHeaders(app: FastifyInstance, production: boolea
     reply.header('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
     reply.header('Content-Security-Policy', contentSecurityPolicy);
     if (production) reply.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-    if (request.url.startsWith('/api/admin/')) {
+    if (request.url.startsWith('/api/')) {
       reply.header('Cache-Control', 'private, no-store');
     }
     done();
