@@ -1,3 +1,4 @@
+import OrderDetail from './OrderDetail';
 import { startRealtime } from './realtime';
 import PrizeEditor from './PrizeEditor';
 import { useEffect, useState, type FormEvent } from 'react';
@@ -57,11 +58,12 @@ type AdminReservation = {
   campaign: { title: string; numberWidth: number };
 };
 type NumberProposal = { values: number[]; changesRemaining: number; invertedValues: number[] | null };
-type View = 'home' | 'raffle' | 'lookup' | 'winners' | 'admin';
+type View = 'order' | 'home' | 'raffle' | 'lookup' | 'winners' | 'admin';
 
 const ADMIN_PATH = '/estudio-cifraya';
 function viewFromPath(path: string): View {
   if (path === ADMIN_PATH || path.startsWith(ADMIN_PATH + '/rifa/')) return 'admin';
+  if (path === '/pedido') return 'order';
   if (path === '/buscar-boletos') return 'lookup';
   if (path === '/ganadores') return 'winners';
   if (path.startsWith('/rifa/')) return 'raffle';
@@ -569,10 +571,12 @@ export default function App() {
       <section className="how-section"><div className="how-inner"><div className="eyebrow">ASÍ DE SIMPLE</div><h2>Un número.<br /><em>Una posibilidad.</em></h2><div className="how-grid"><div><span>01</span><h3>Entrá a una rifa</h3><p>Descubrí el premio y el valor de cada boleto.</p></div><div><span>02</span><h3>Elegí tus boletos</h3><p>Seleccioná un paquete y recibí sus números disponibles al azar.</p></div><div><span>03</span><h3>Revisá tu pase</h3><p>Tu pase muestra tu nombre, tus números y el estado de la reserva.</p></div></div></div></section>
     </main>}
 
+    {view === 'order' && <OrderDetail renderProof={(token, count, refresh) => <ProofUploader token={token} proofCount={count} onUploaded={refresh}/>}/> }
     {view === 'lookup' && <main className="public-page">
       <div className="public-intro"><div className="eyebrow">CIFRAYA / TUS BOLETOS</div><h1>Encontrá tus <em>números.</em></h1><p>Ingresá el código que recibiste al apartar tus números para consultar tu pase y su estado.</p></div>
       <div className="lookup-layout"><section className="lookup-card"><div className="public-icon"><Search size={27}/></div><h2>Buscar boletos</h2><p>El código es privado. Lo podés copiar desde el pase que aparece al hacer la reserva.</p><form onSubmit={event => void lookupTickets(event)} className="form-grid"><label>Código de consulta<input value={lookupCode} onChange={event => setLookupCode(event.target.value)} placeholder="Pegá aquí tu código" autoComplete="off" spellCheck={false} required maxLength={48}/></label><button className="button dark full" disabled={busy || lookupCode.trim().length !== 48}>Consultar mi pase <ArrowRight size={17}/></button></form><span className="lookup-help"><LockKeyhole size={15}/> Solo quien tenga el código puede ver este pase.</span></section>
       <section className="lookup-result">{lookupResult ? <>
+        <a className="button dark" href={`/pedido#${lookupCode.trim()}`}>Ver detalle del pedido <ArrowRight size={16}/></a>
         <TicketPass name={lookupResult.buyerName} title={lookupResult.campaign.title} values={lookupResult.values} baseValues={lookupResult.baseValues} includesInverted={lookupResult.includesInverted} width={lookupResult.campaign.numberWidth} count={lookupResult.values.length} status={lookupResult.status === 'CONFIRMED' ? 'COMPRA CONFIRMADA' : lookupResult.status === 'PENDING_REVIEW' ? 'PAGO EN REVISIÓN' : lookupResult.status === 'ACTIVE' ? 'APARTADO' : lookupResult.status === 'EXPIRED' ? 'RESERVA VENCIDA' : 'RESERVA CANCELADA'} timer={lookupResult.status === 'ACTIVE' ? lookupCountdown : undefined}/>
         <p>{lookupResult.status === 'CONFIRMED' ? `Compra confirmada por ${money(lookupResult.totalCrc)}.` : lookupResult.status === 'PENDING_REVIEW' ? 'Recibimos el comprobante. Tus números siguen apartados mientras revisamos el pago, hasta dos días.' : lookupResult.status === 'ACTIVE' ? 'Adjuntá tu comprobante antes de que venza la reserva.' : lookupResult.status === 'CANCELLED' ? `Reserva rechazada: ${lookupResult.reviewNote || 'consultá con administración.'}` : 'Esta reserva venció y sus números pueden volver a estar disponibles.'}</p>
         {['ACTIVE', 'PENDING_REVIEW'].includes(lookupResult.status) && <ProofUploader token={lookupCode.trim()} proofCount={lookupResult.proofCount || 0} onUploaded={() => refreshReservation(lookupCode.trim())}/>}
@@ -597,6 +601,7 @@ export default function App() {
             {(!reservation.status || ['ACTIVE', 'PENDING_REVIEW'].includes(reservation.status)) && <ProofUploader token={reservation.token} proofCount={reservation.proofCount || 0} onUploaded={() => refreshReservation(reservation.token)} />}
             <div className="reservation-actions">
               <button className="reservation-action primary" onClick={async () => { try { await navigator.clipboard.writeText(reservation.token); setCodeCopied(true); } catch { setError('No se pudo copiar el código. Intentá de nuevo.'); } }}><Copy size={16}/>{codeCopied ? 'Código copiado' : 'Copiar código de consulta'}</button>
+              <a className="reservation-action secondary" href={`/pedido#${reservation.token}`}>Ver mi pedido <ArrowRight size={16}/></a>
               <button className="reservation-action secondary" onClick={() => { setLookupCode(reservation.token); goPublic('lookup'); }}>Buscar mis boletos <ArrowRight size={16}/></button>
             </div>
           </div> : <div className="selection-footer"><div className="selection-summary"><span>{selected.length ? `${selected.length * (includeInverted ? 2 : 1)} boletos en tu paquete` : 'Seleccioná un paquete'}</span><strong>{selectedOffer(raffle, selected.length) && proposalReady ? money(selectedOffer(raffle, selected.length)!.priceCrc * (includeInverted ? 2 : 1)) : '—'}</strong></div><button className="button primary full" disabled={!proposalReady || busy || (includeInverted && !availableInverted)} onClick={() => setShowCheckout(true)}>Continuar con mi paquete <ArrowRight size={17}/></button><p className="phase-note">El pago debe ser verificado por administración para confirmar tus boletos.</p></div>}

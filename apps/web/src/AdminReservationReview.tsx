@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
 type Detail = {
-  id: string; buyerName: string; buyerEmail: string; buyerPhone: string; selectedValues: number[];
+  id: string; orderNumber: number; buyerName: string; buyerEmail: string; buyerPhone: string; selectedValues: number[];
   status: 'ACTIVE' | 'PENDING_REVIEW' | 'CONFIRMED' | 'EXPIRED' | 'CANCELLED'; totalCrc: number;
   createdAt: string; expiresAt: string; proofSubmittedAt: string | null; confirmedAt: string | null; reviewNote: string | null;
   campaign: { title: string; numberWidth: number }; proofs: { id: string; createdAt: string }[];
@@ -69,7 +69,7 @@ export default function AdminReservationReview({ id, token, onClose, onReviewed 
     finally { setBusy(false); }
   }
 
-  return <div className="review-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}><section className="review-panel" role="dialog" aria-modal="true" aria-label="Revisar reserva"><button className="review-close" onClick={onClose} aria-label="Cerrar"><X size={19}/></button><span className="eyebrow">BOLETOS Y PERSONAS</span><h2>Revisar pago</h2>{error && <p className="review-error" role="alert">{error}</p>}{detail ? <>
+  return <div className="review-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}><section className="review-panel" role="dialog" aria-modal="true" aria-label="Revisar reserva"><button className="review-close" onClick={onClose} aria-label="Cerrar"><X size={19}/></button><span className="eyebrow">BOLETOS Y PERSONAS</span><h2>Revisar pago</h2>{detail && <p>Pedido CY-{String(detail.orderNumber).padStart(6, '0')}</p>}{error && <p className="review-error" role="alert">{error}</p>}{detail ? <>
     <div className="review-person"><strong>{detail.buyerName}</strong><span>{detail.buyerEmail}</span><span>{detail.buyerPhone}</span><span>{detail.campaign.title}</span></div>
     <div className="review-summary"><div><small>ESTADO</small><strong>{detail.status === 'PENDING_REVIEW' ? 'Pago en revisión' : detail.status === 'ACTIVE' ? 'Esperando comprobante' : detail.status === 'CONFIRMED' ? 'Compra confirmada' : detail.status === 'EXPIRED' ? 'Vencida' : 'Rechazada'}</strong></div><div><small>IMPORTE</small><strong>{money(detail.totalCrc)}</strong></div><div><small>NÚMEROS</small><strong>{detail.selectedValues.length}</strong></div></div>
     <div className="review-numbers">{detail.selectedValues.map(value => <span key={value}>{String(value).padStart(detail.campaign.numberWidth, '0')}</span>)}</div>

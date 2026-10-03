@@ -298,6 +298,7 @@ app.post('/api/reservations', async (request, reply) => {
     broadcast('reservations');
     return reply.code(201).send({
       token: reservation.lookupToken,
+      orderNumber: reservation.orderNumber,
       expiresAt: reservation.expiresAt,
       values: allValues,
       baseValues: uniqueValues,
@@ -327,6 +328,7 @@ app.get<{ Params: { token: string } }>('/api/reservations/:token', async (reques
   return {
     status: reservation.status,
     expiresAt: reservation.expiresAt,
+    orderNumber: reservation.orderNumber, createdAt: reservation.createdAt, confirmedAt: reservation.confirmedAt,
     buyerName: reservation.buyerName,
     totalCrc: reservation.totalCrc,
     proofCount: reservation._count.proofs,
@@ -346,6 +348,7 @@ app.post('/api/reservations/lookup', async (request, reply) => {
   const reservation = await db.reservation.findUnique({
     where: { lookupToken: parsed.data.token },
     select: {
+      orderNumber: true, createdAt: true, confirmedAt: true,
       buyerName: true,
       status: true,
       expiresAt: true,
@@ -362,6 +365,7 @@ app.post('/api/reservations/lookup', async (request, reply) => {
   });
   if (!reservation) return reply.code(404).send({ error: 'No encontramos una reserva con ese código.' });
   return {
+    orderNumber: reservation.orderNumber, createdAt: reservation.createdAt, confirmedAt: reservation.confirmedAt,
     buyerName: reservation.buyerName,
     status: reservation.status,
     totalCrc: reservation.totalCrc,
@@ -485,7 +489,7 @@ app.get<{ Params: { id: string } }>('/api/admin/reservations/:id', async (reques
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   await expireReservations();
   const reservation = await db.reservation.findUnique({ where: { id: request.params.id }, select: {
-    id: true, buyerName: true, buyerEmail: true, buyerPhone: true, selectedValues: true, status: true, totalCrc: true,
+    id: true, orderNumber: true, buyerName: true, buyerEmail: true, buyerPhone: true, selectedValues: true, status: true, totalCrc: true,
     createdAt: true, expiresAt: true, proofSubmittedAt: true, confirmedAt: true, reviewNote: true,
     campaign: { select: { title: true, numberWidth: true } },
     proofs: { orderBy: { createdAt: 'asc' }, select: { id: true, createdAt: true } },

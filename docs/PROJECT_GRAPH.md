@@ -74,3 +74,9 @@ stateDiagram-v2
 - Los vencimientos se agrupan y tienen pausa de cinco segundos si el lote no está lleno. SSE descarta consumidores lentos; SIGTERM cierra flujos y Prisma.
 - `/api/ready` verifica PostgreSQL. API usa no-store y el registro de solicitudes oculta tokens.
 - Pruebas y límites reales de despliegue: `docs/PRODUCTION.md`. Ejecutar `pnpm test:production` y `pnpm audit --prod`.
+
+## Detalle del pedido
+
+- `/pedido#<codigo-privado>` muestra `OrderDetail.tsx`: número CY, estado, comprador, fecha en Costa Rica, total SINPE, paquete, boletos e inversos, motivo de rechazo y carga de comprobantes. Usa la consulta POST existente y eventos compartidos, sin una conexión SSE adicional.
+- `Reservation.orderNumber` es un entero único autoincremental asignado al reservar y conservado al aprobar/rechazar. La migración asigna números también a reservas anteriores. Es una referencia, nunca una credencial.
+- El enlace usa un fragmento para no enviar el código en la URL de la página o en Referer. El detalle no expone correo, teléfono ni comprobantes. Admin ve el mismo número de pedido en la revisión privada. Los correos automáticos siguen pendientes de integración y configuración del proveedor.

@@ -124,6 +124,7 @@ model EntryNumber {
 
 model Reservation {
   id             String            @id @default(cuid())
+  orderNumber    Int               @unique @default(autoincrement())
   lookupToken    String            @unique
   campaignId     String
   buyerName      String
