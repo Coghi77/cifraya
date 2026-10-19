@@ -55,7 +55,7 @@ stateDiagram-v2
 
 ## Reglas de trabajo
 
-- Mantener el diseño general blanco y negro, con los colores originales de WhatsApp, Facebook e Instagram solo en el footer; las preguntas van dentro de la interfaz. Evitar texto de “prueba” en el producto público.
+- Identidad visual Vnova TCG: naranja #ff4200, azul #395aff, rojo #ff2c2c, blanco y #191919; estilos centralizados en apps/web/src/brand.css, logo vectorial original en public/vnova-logo.svg. Mantener los colores originales de WhatsApp, Facebook e Instagram en el footer; las preguntas van dentro de la interfaz. Evitar texto de “prueba” en el producto público.
 - El footer muestra WhatsApp, Facebook e Instagram con relleno y tooltip de marca. Sin URL configurada, cada icono queda visible pero inactivo; las URL públicas se añaden como `VITE_CIFRAYA_*_URL` al compilar la web.
 - Inicio muestra paquetes de la rifa principal directamente; elegir uno abre `/rifa/:slug` y solicita sus números. El indicador de diez barras aparece al cargar desde Inicio y al generar o cambiar el conjunto completo en la rifa.
 - No publicar credenciales, PIN, comprobantes ni datos personales en este grafo. Las rutas admin requieren sesión; los comprobantes solo se sirven con autorización.
@@ -80,3 +80,5 @@ stateDiagram-v2
 - `/pedido#<codigo-privado>` muestra `OrderDetail.tsx`: número CY, estado, comprador, fecha en Costa Rica, total SINPE, paquete, boletos e inversos, motivo de rechazo y carga de comprobantes. Usa la consulta POST existente y eventos compartidos, sin una conexión SSE adicional.
 - `Reservation.orderNumber` es un entero único autoincremental asignado al reservar y conservado al aprobar/rechazar. La migración asigna números también a reservas anteriores. Es una referencia, nunca una credencial.
 - El enlace usa un fragmento para no enviar el código en la URL de la página o en Referer. El detalle no expone correo, teléfono ni comprobantes. Admin ve el mismo número de pedido en la revisión privada. Los correos automáticos siguen pendientes de integración y configuración del proveedor.
+
+- Cambio visual Vnova TCG (2026-10-19): nombre público y metadatos actualizados; rutas existentes, códigos CY y claves de configuración se mantienen para compatibilidad. Tipografía de marca pendiente del archivo adjunto mencionado en el manual.

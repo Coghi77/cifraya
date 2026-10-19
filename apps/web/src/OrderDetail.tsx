@@ -37,7 +37,7 @@ export default function OrderDetail({ renderProof }: { renderProof: (token: stri
     return () => { controller.abort(); window.removeEventListener('cifraya:update', refresh); };
   }, [token, revision]);
   const refresh = async () => { setRevision(value => value + 1); };
-  return <main className="public-page order-page"><header><span className="eyebrow">CIFRAYA / TU PEDIDO</span><h1>{order ? `CY-${String(order.orderNumber).padStart(6, '0')}` : 'Detalle del pedido'}</h1><p>Guardá este enlace privado para consultar tus boletos.</p></header>
+  return <main className="public-page order-page"><header><span className="eyebrow">VNOVA TCG / TU PEDIDO</span><h1>{order ? `CY-${String(order.orderNumber).padStart(6, '0')}` : 'Detalle del pedido'}</h1><p>Guardá este enlace privado para consultar tus boletos.</p></header>
     {error && <div role="alert"><p>{error}</p><button className="button dark" onClick={() => void refresh()}>Volver a consultar</button></div>}
     {!order && !error && <p role="status">Cargando pedido…</p>}
     {order && <section className="order-card" aria-label="Detalle del pedido"><div className="order-heading"><h2>{order.campaign.title}</h2><span role="status">{labels[order.status] || order.status}</span></div>

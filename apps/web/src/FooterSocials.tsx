@@ -21,9 +21,9 @@ const links = [
 ];
 
 export default function FooterSocials() {
-  return <ul className="footer-socials" aria-label="Redes sociales de Cifraya">
+  return <ul className="footer-socials" aria-label="Redes sociales de Vnova TCG">
     {links.map(({ name, href, icon }) => <li className="footer-social-item" data-social={name.toLowerCase()} key={name}>
-      {href ? <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`Abrir ${name} de Cifraya`}>
+      {href ? <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`Abrir ${name} de Vnova TCG`}>
         <span className="footer-social-fill" aria-hidden="true"/>{icon}
       </a> : <span className="footer-social-disabled" tabIndex={0} aria-label={name} role="img">{icon}</span>}
       <span className="footer-social-tooltip" role="tooltip">{name}</span>

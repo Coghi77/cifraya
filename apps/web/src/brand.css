@@ -1,0 +1,62 @@
+/* Vnova TCG — BRANDBOOKTCG. Keep brand decisions together. */
+:root { --brand-orange:#ff4200; --brand-blue:#395aff; --brand-red:#ff2c2c; --ink:#191919; --deep:#191919; --coral:#ff4200; --line:#dedbd8; color:#191919; font-family:"Aptos","Segoe UI",Arial,sans-serif; }
+button,input,select,textarea { font:inherit; }
+.site-header { background:var(--brand-orange); border-bottom:1px solid #19191918; min-height:104px; gap:24px; }
+.brand { width:110px; height:104px; overflow:visible; }
+.brand-logo { position:static; display:block; width:100%; height:100%; object-fit:contain; filter:none; mix-blend-mode:normal; background:transparent; }
+.site-header nav button { color:#191919; border-color:#191919; font-weight:750; }
+.site-header nav .nav-active,.site-header nav button:hover { background:#191919; color:#fff; }
+h1,h2,h3 { letter-spacing:-.045em; }
+.eyebrow,.heading-star { color:#b82e00; }
+.current-raffle { background:#191919; }
+.current-raffle-content { border-top:5px solid var(--brand-orange); }
+.current-label { color:#ff9069; border-color:#ff9069; }
+.current-raffle h1 { letter-spacing:-.055em; }
+.home-packages button { background:#252525; border-color:#5d514c; border-radius:14px; }
+.home-packages button:hover:not(:disabled),.home-packages button:focus-visible { background:var(--brand-orange); color:#191919; border-color:var(--brand-orange); }
+.home-details-link { border-color:var(--brand-orange); }
+.current-empty { background:var(--brand-orange); color:#fff; }
+.current-empty > img,.current-raffle-image > .current-logo { filter:none; mix-blend-mode:normal; }
+.current-empty .current-label { color:#fff; border-color:#fff; }
+.current-raffle-image:has(.current-logo) { background:var(--brand-orange); }
+.how-section { background:#fff; border-top:1px solid var(--line); }
+.how-grid > div { border-top:3px solid var(--brand-orange); }
+.how-grid > div:nth-child(2) { border-color:var(--brand-blue); }
+.how-grid > div:nth-child(3) { border-color:var(--brand-red); }
+.how-grid span { color:#191919; }
+.site-footer { background:var(--brand-orange); align-items:center; padding-block:18px; border-top:0; }
+.site-footer .footer-brand { width:90px; height:86px; }
+.site-footer .footer-brand img { position:static; width:100%; height:100%; filter:none; mix-blend-mode:normal; border-radius:0; object-fit:contain; }
+.button.dark,.public-icon,.reservation-action.primary { background:var(--brand-blue); color:#fff; border-color:var(--brand-blue); }
+.button.dark:hover:not(:disabled) { background:#2945d8; }
+.lookup-card,.order-card,.selection-panel { border-top:4px solid var(--brand-orange); }
+.lookup-result { background:#f0f2ff; border-color:#d3d9ff; }
+.ticket-pass { border-color:var(--brand-blue); }
+.ticket-stub { background:#f0f2ff; }
+.ticket-status { color:#2945d8; }
+.photo-thumbnails button.active { border-color:var(--brand-orange); }
+.number.selected { background:var(--brand-blue); border-color:var(--brand-blue); }
+.order-heading > span { background:var(--brand-blue); }
+.order-tickets span { border-color:#cbd2ff; background:#f0f2ff; }
+.admin-shell { background:#191919; }
+.admin-shell .eyebrow { color:#ff9069; }
+.admin-card,.admin-login,.admin-stats > div { border-top:3px solid var(--brand-orange); }
+.admin-stats > div:nth-child(2) { border-top-color:var(--brand-blue); }
+.admin-stats > div:nth-child(3) { border-top-color:var(--brand-red); }
+.admin-action-button:hover:not(:disabled) { background:var(--brand-orange); color:#191919; }
+.admin-ticket-card.sold { border-color:#7f92ff; }
+.admin-ticket-card.reserved { border-color:#ff9069; }
+.review-approve { background:var(--brand-blue); color:#fff; border-color:var(--brand-blue); }
+.review-error { border-left:3px solid var(--brand-red); }
+:where(button,a,input,select,textarea):focus-visible { outline:3px solid var(--brand-blue); outline-offset:4px; }
+.admin-shell :where(button,a,input,select,textarea):focus-visible { outline-color:#9aabff; }
+@media(max-width:700px) {
+ .site-header { min-height:78px; padding:8px 16px; gap:10px; }
+ .brand { width:78px; height:74px; }
+ .brand-logo { position:static; width:100%; height:100%; }
+ .site-header nav { gap:4px; }
+ .site-header nav button { font-size:12px; padding:9px 11px; }
+ .site-footer .footer-brand { width:74px; height:70px; }
+ .current-empty { min-height:360px; }
+}
+@media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; } }

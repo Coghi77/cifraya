@@ -28,7 +28,7 @@ export default function WinnersPodium({ winners }: { winners: WinnerResult[] }) 
     const activePosition = Number(selected?.startsWith(campaign.id + ':') ? selected.split(':')[1] : 0);
     const active = results.find(item => item.position === activePosition);
     return <section className="podium-section" key={campaign.id} aria-label={`Resultados de ${campaign.title}`}>
-      <div className="podium-heading"><span>RESULTADOS / CIFRAYA</span><h2>{campaign.title}</h2><p>{results.length} de {campaign.prizeCount} premios publicados</p></div>
+      <div className="podium-heading"><span>RESULTADOS / VNOVA TCG</span><h2>{campaign.title}</h2><p>{results.length} de {campaign.prizeCount} premios publicados</p></div>
       <div className="podium-stage">{[2, 1, 3].filter(position => position <= campaign.prizeCount).map(position => {
         const winner = results.find(item => item.position === position);
         const prize = prizeFor(results[0], position);
