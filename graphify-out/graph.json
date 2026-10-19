@@ -763,7 +763,7 @@
       "file_type": "code",
       "norm_label": "createemailworker()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L24"
+      "source_location": "L51"
     },
     {
       "id": "apps_api_src_paymentemails_createemailworker_drain",
@@ -775,7 +775,7 @@
       "file_type": "code",
       "norm_label": "drain()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L27"
+      "source_location": "L54"
     },
     {
       "id": "apps_api_src_paymentemails_createemailworker_kick",
@@ -787,7 +787,7 @@
       "file_type": "code",
       "norm_label": "kick()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L56"
+      "source_location": "L83"
     },
     {
       "id": "apps_api_src_paymentemails_emailconfigured",
@@ -799,7 +799,7 @@
       "file_type": "code",
       "norm_label": "emailconfigured()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L21"
+      "source_location": "L48"
     },
     {
       "id": "apps_api_src_paymentemails_enqueuepaymentemail",
@@ -811,7 +811,7 @@
       "file_type": "code",
       "norm_label": "enqueuepaymentemail()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L15"
+      "source_location": "L42"
     },
     {
       "id": "apps_api_src_paymentemails_escapehtml",
@@ -847,7 +847,7 @@
       "file_type": "code",
       "norm_label": "retryableemailstatus()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L20"
+      "source_location": "L47"
     },
     {
       "id": "apps_web_src_footersocials_brandicon",
@@ -3693,7 +3693,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L44",
+      "source_location": "L71",
       "weight": 1.0
     },
     {
@@ -3705,7 +3705,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L57",
+      "source_location": "L84",
       "weight": 1.0
     },
     {
@@ -3717,7 +3717,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L57",
+      "source_location": "L84",
       "weight": 1.0
     },
     {
@@ -3729,7 +3729,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L17",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -3741,7 +3741,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L12",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -6126,50 +6126,6 @@
     },
     {
       "source": "apps_api_src_paymentemails",
-      "target": "apps_api_src_paymentemails_enqueuepaymentemail",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L15",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_paymentemails",
-      "target": "apps_api_src_paymentemails_retryableemailstatus",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L20",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_paymentemails",
-      "target": "apps_api_src_paymentemails_emailconfigured",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L21",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_paymentemails",
-      "target": "apps_api_src_paymentemails_createemailworker",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L24",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_paymentemails",
       "target": "apps_api_src_paymentemails_escapehtml",
       "relation": "contains",
       "_origin": "ast",
@@ -6191,6 +6147,50 @@
       "weight": 1.0
     },
     {
+      "source": "apps_api_src_paymentemails",
+      "target": "apps_api_src_paymentemails_enqueuepaymentemail",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_paymentemails",
+      "target": "apps_api_src_paymentemails_retryableemailstatus",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_paymentemails",
+      "target": "apps_api_src_paymentemails_emailconfigured",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_paymentemails",
+      "target": "apps_api_src_paymentemails_createemailworker",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
       "source": "apps_api_src_paymentemails_createemailworker",
       "target": "apps_api_src_paymentemails_createemailworker_drain",
       "relation": "contains",
@@ -6198,7 +6198,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L27",
+      "source_location": "L54",
       "weight": 1.0
     },
     {
@@ -8465,7 +8465,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L59",
+      "source_location": "L86",
       "weight": 1.0
     },
     {
@@ -8530,5 +8530,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "107695d5177457159be7a0b2152a90913679652f"
+  "built_at_commit": "8a7986d81bcf2862a1a425f0e8f5f2b10ddab89f"
 }
