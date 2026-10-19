@@ -89,3 +89,4 @@ stateDiagram-v2
 
 La aprobación/rechazo encola un mensaje en la misma transacción; un trabajador interno envía por Resend tras confirmar la transacción. Reintentos con clave de idempotencia, payload estable y ventana menor a 24 h. La revisión privada muestra estado del envío. Sin claves, no consulta la cola ni envía; las decisiones nuevas se conservan pendientes.
 Diagnóstico de correo: POST/GET /api/admin/email-tests usa la misma cola y plantillas con indicador de prueba, sin reservar ni vender boletos. EmailNotification.reservationId es opcional solo para estos mensajes; la operación de pago conserva su relación y unicidad.
+Notificaciones de reserva: RESERVED al reclamar números; PENDING_REVIEW solo en la transición ACTIVE a PENDING_REVIEW con el primer comprobante. Se conserva el diseño común. /api/health incluye la revisión corta del despliegue para verificar actualizaciones sin operaciones sobre datos.

@@ -41,3 +41,15 @@ test('diagnostic emails are explicitly labeled and contain no private order link
   assert.ok(!email.html.includes('/pedido#'));assert.ok(!email.text.includes('/pedido#'));
  }
 });
+test('reservation and proof receipt have distinct pending statuses without approval or rejection claims', () => {
+ const reserved=paymentEmail(order,'RESERVED','https://vnovatcg.com');
+ const review=paymentEmail(order,'PENDING_REVIEW','https://vnovatcg.com');
+ assert.match(reserved.text,/Adjuntá el comprobante/);
+ assert.match(review.text,/pendiente de revisión/);
+ for(const email of [reserved,review]) {
+  assert.match(email.text,/CY-000012/);assert.match(email.text,/0001, 0120/);
+  assert.ok(!email.html.includes('MOTIVO DEL RECHAZO'));
+  assert.ok(!email.html.includes('TOTAL CONFIRMADO'));
+  assert.match(email.html,/https:\/\/vnovatcg.com\/pedido#abc/);
+ }
+});

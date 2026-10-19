@@ -120,7 +120,7 @@ app.post('/api/admin/login', async (request, reply) => {
 
 const expireReservations = createReservationExpirer(db, () => broadcast('reservations'));
 
-app.get('/api/health', async () => ({ ok: true }));
+app.get('/api/health', async () => ({ ok: true, revision: process.env.RENDER_GIT_COMMIT?.slice(0, 12) ?? null }));
 app.get('/api/ready', async (_request, reply) => {
   try {
     await publicCache.get('readiness', async () => { await db.$queryRaw`SELECT 1`; return true; });
@@ -295,9 +295,11 @@ app.post('/api/reservations', async (request, reply) => {
         data: { status: 'RESERVED', reservationId: created.id },
       });
       if (claimed.count !== allValues.length) throw new Error('NUMBER_UNAVAILABLE');
+      await enqueuePaymentEmail(tx, created.id, 'RESERVED');
       return created;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
     broadcast('reservations');
+    emailWorker.kick();
     return reply.code(201).send({
       token: reservation.lookupToken,
       orderNumber: reservation.orderNumber,
@@ -398,10 +400,12 @@ app.post<{ Params: { token: string } }>('/api/reservations/:token/proofs', { bod
       if (reservation.status === 'ACTIVE') {
         const updated = await tx.reservation.updateMany({ where: { id: reservation.id, status: 'ACTIVE', expiresAt: { gt: new Date() } }, data: { status: 'PENDING_REVIEW', proofSubmittedAt: new Date() } });
         if (updated.count !== 1) throw new Error('RESERVATION_CLOSED');
+        await enqueuePaymentEmail(tx, reservation.id, 'PENDING_REVIEW');
       }
       return created;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
     broadcast('proofs');
+    emailWorker.kick();
     return reply.code(201).send({ id: proof.id, status: 'PENDING_REVIEW' });
   } catch (error) {
     if (error instanceof Error && error.message === 'RESERVATION_CLOSED') return reply.code(409).send({ error: 'La reserva ya venció o fue revisada.' });
