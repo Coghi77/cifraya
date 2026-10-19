@@ -60,7 +60,11 @@ type AdminReservation = {
 type NumberProposal = { values: number[]; changesRemaining: number; invertedValues: number[] | null };
 type View = 'order' | 'home' | 'raffle' | 'lookup' | 'winners' | 'admin';
 
-const ADMIN_PATH = '/estudio-cifraya';
+const ADMIN_PATH = '/estudio-vnova';
+const LEGACY_ADMIN_PATH = '/estudio-cifraya';
+if (window.location.pathname === LEGACY_ADMIN_PATH || window.location.pathname.startsWith(LEGACY_ADMIN_PATH + '/')) {
+  window.history.replaceState(null, '', ADMIN_PATH + window.location.pathname.slice(LEGACY_ADMIN_PATH.length) + window.location.search + window.location.hash);
+}
 function viewFromPath(path: string): View {
   if (path === ADMIN_PATH || path.startsWith(ADMIN_PATH + '/rifa/')) return 'admin';
   if (path === '/pedido') return 'order';

@@ -5,7 +5,7 @@ Leer este archivo primero en futuras sesiones. Para una relación concreta entre
 ```mermaid
 flowchart LR
   P[Comprador: React/Vite] -->|API pública| A[Fastify en Render]
-  M[Admin: /estudio-cifraya] -->|PIN, sesión y API privada| A
+  M[Admin: /estudio-vnova] -->|PIN, sesión y API privada| A
   A -->|Prisma| D[(Supabase PostgreSQL)]
   A -->|SSE /api/events| P
   A -->|SSE /api/events| M
@@ -19,7 +19,7 @@ flowchart LR
 | Nodo | Responsabilidad | Fuente |
 |---|---|---|
 | Web pública | Inicio `/`, `/buscar-boletos`, `/ganadores`, `/rifa/:slug`; selección, reserva, comprobantes, podio y footer social | `apps/web/src/App.tsx`, `apps/web/src/WinnersPodium.tsx`, `apps/web/src/FooterSocials.tsx` |
-| Centro de control | `/estudio-cifraya`; creación y edición de rifas, boletos tipo tarjeta, ganador e historial | `apps/web/src/App.tsx`, `EditRaffle.tsx`, `AdminRaffleDetail.tsx` |
+| Centro de control | `/estudio-vnova`; creación y edición de rifas, boletos tipo tarjeta, ganador e historial | `apps/web/src/App.tsx`, `EditRaffle.tsx`, `AdminRaffleDetail.tsx` |
 | Participantes y pagos | Ficha privada por correo; revisión manual de comprobantes | `AdminParticipantDetail.tsx`, `AdminReservationReview.tsx` |
 | API | Rutas, validación, autenticación, reservas atómicas y SSE | `apps/api/src/server.ts` |
 | Vencimientos | Liberación transaccional de apartados y coordinación de consultas simultáneas | `apps/api/src/reservationExpiry.ts` |
@@ -82,3 +82,5 @@ stateDiagram-v2
 - El enlace usa un fragmento para no enviar el código en la URL de la página o en Referer. El detalle no expone correo, teléfono ni comprobantes. Admin ve el mismo número de pedido en la revisión privada. Los correos automáticos siguen pendientes de integración y configuración del proveedor.
 
 - Cambio visual Vnova TCG (2026-10-19): nombre público y metadatos actualizados; rutas existentes, códigos CY y claves de configuración se mantienen para compatibilidad. Tipografía de marca pendiente del archivo adjunto mencionado en el manual.
+
+- La ruta antigua /estudio-cifraya se normaliza a /estudio-vnova al abrir la web, conservando subrutas, búsqueda y fragmento.
