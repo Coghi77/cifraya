@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 303 nodes · 401 edges · 28 communities (14 shown, 4 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.85)
+- 318 nodes · 424 edges · 32 communities (15 shown, 7 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b47878ca`
+- Built from commit: `abe71112`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -30,8 +30,12 @@
 - Community 13
 - Community 14
 - Community 15
-- Community 20
-- Community 27
+- Community 16
+- Community 17
+- Community 18
+- Community 19
+- Community 24
+- Community 31
 
 ## God Nodes (most connected - your core abstractions)
 1. `App()` - 31 edges
@@ -60,15 +64,15 @@
 ## Import Cycles
 - None detected.
 
-## Communities (28 total, 4 thin omitted)
+## Communities (32 total, 7 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.06
-Nodes (39): issueAdminSession(), verifyAdminSession(), chooseBaseNumbers(), invertedValues(), reverseNumber(), inversePrizeNumber(), normalizePrizeInput(), prizeList (+31 more)
+Nodes (40): issueAdminSession(), verifyAdminSession(), chooseBaseNumbers(), invertedValues(), reverseNumber(), inversePrizeNumber(), normalizePrizeInput(), prizeList (+32 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.06
-Nodes (29): AdminReservation, coverOf(), formatNumber(), InvertedChoice(), LookupResult, money(), NumberProposal, offersFor() (+21 more)
+Cohesion: 0.08
+Nodes (27): AdminReservation, coverOf(), formatNumber(), InvertedChoice(), LookupResult, money(), NumberProposal, offersFor() (+19 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.06
@@ -103,40 +107,44 @@ Cohesion: 0.29
 Nodes (9): AdminRaffleDetail(), publishWinner(), adminRequest(), currency(), History, numberLabel(), NumberRow, Overview (+1 more)
 
 ### Community 10 - "Community 10"
+Cohesion: 0.36
+Nodes (8): createEmailWorker(), drain(), kick(), emailConfigured(), enqueuePaymentEmail(), escapeHtml(), paymentEmail(), retryableEmailStatus()
+
+### Community 11 - "Community 11"
 Cohesion: 0.22
 Nodes (8): compilerOptions, esModuleInterop, module, moduleResolution, resolveJsonModule, skipLibCheck, strict, target
 
-### Community 11 - "Community 11"
+### Community 12 - "Community 12"
 Cohesion: 0.29
 Nodes (6): compilerOptions, outDir, rootDir, extends, include, ../../tsconfig.json
 
-### Community 12 - "Community 12"
+### Community 14 - "Community 14"
 Cohesion: 0.47
 Nodes (5): date(), labels, money(), Order, OrderDetail()
 
-### Community 13 - "Community 13"
+### Community 15 - "Community 15"
 Cohesion: 0.50
 Nodes (3): inventory, inventorySet, times
 
 ## Knowledge Gaps
-- **123 isolated node(s):** `EditableRaffle`, `AdminReservation`, `LookupResult`, `NumberProposal`, `Raffle` (+118 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 162 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **124 isolated node(s):** `AdminReservation`, `LookupResult`, `NumberProposal`, `Raffle`, `Reservation` (+119 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 166 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `react` connect `Community 1` to `Community 9`, `Community 4`, `Community 12`, `Community 7`?**
-  _High betweenness centrality (0.049) - this node is a cross-community bridge._
+- **Why does `@prisma/client` connect `Community 0` to `Community 10`, `Community 2`?**
+  _High betweenness centrality (0.046) - this node is a cross-community bridge._
+- **Why does `react` connect `Community 1` to `Community 9`, `Community 4`, `Community 14`, `Community 7`?**
+  _High betweenness centrality (0.044) - this node is a cross-community bridge._
 - **Why does `App()` connect `Community 3` to `Community 1`?**
-  _High betweenness centrality (0.045) - this node is a cross-community bridge._
-- **Why does `@prisma/client` connect `Community 0` to `Community 2`?**
-  _High betweenness centrality (0.042) - this node is a cross-community bridge._
+  _High betweenness centrality (0.041) - this node is a cross-community bridge._
 - **Are the 3 inferred relationships involving `App()` (e.g. with `onPopState()` and `refresh()`) actually correct?**
   _`App()` has 3 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `EditableRaffle`, `AdminReservation`, `LookupResult` to the rest of the system?**
-  _123 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `AdminReservation`, `LookupResult`, `NumberProposal` to the rest of the system?**
+  _124 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.05656565656565657 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05584415584415584 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.06236786469344609 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07539118065433854 - nodes in this community are weakly interconnected._

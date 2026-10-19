@@ -79,8 +79,12 @@ stateDiagram-v2
 
 - `/pedido#<codigo-privado>` muestra `OrderDetail.tsx`: número CY, estado, comprador, fecha en Costa Rica, total SINPE, paquete, boletos e inversos, motivo de rechazo y carga de comprobantes. Usa la consulta POST existente y eventos compartidos, sin una conexión SSE adicional.
 - `Reservation.orderNumber` es un entero único autoincremental asignado al reservar y conservado al aprobar/rechazar. La migración asigna números también a reservas anteriores. Es una referencia, nunca una credencial.
-- El enlace usa un fragmento para no enviar el código en la URL de la página o en Referer. El detalle no expone correo, teléfono ni comprobantes. Admin ve el mismo número de pedido en la revisión privada. Los correos automáticos siguen pendientes de integración y configuración del proveedor.
+- El enlace usa un fragmento para no enviar el código en la URL de la página o en Referer. El detalle no expone correo, teléfono ni comprobantes. Admin ve el mismo número de pedido en la revisión privada. Los correos automáticos usan paymentEmails.ts y la cola persistente EmailNotification; activación DNS/secretos en docs/EMAILS.md.
 
 - Cambio visual Vnova TCG (2026-10-19): nombre público y metadatos actualizados; rutas existentes, códigos CY y claves de configuración se mantienen para compatibilidad. Tipografía de marca pendiente del archivo adjunto mencionado en el manual.
 
 - La ruta antigua /estudio-cifraya se normaliza a /estudio-vnova al abrir la web, conservando subrutas, búsqueda y fragmento.
+
+## Correos de pago
+
+La aprobación/rechazo encola un mensaje en la misma transacción; un trabajador interno envía por Resend tras confirmar la transacción. Reintentos con clave de idempotencia, payload estable y ventana menor a 24 h. La revisión privada muestra estado del envío. Sin claves, no consulta la cola ni envía; las decisiones nuevas se conservan pendientes.

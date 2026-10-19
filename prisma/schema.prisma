@@ -144,6 +144,7 @@ model Reservation {
   numbers        EntryNumber[]
   winners        Winner[]
   proofs         PaymentProof[]
+  emails         EmailNotification[]
 
   @@index([status, expiresAt])
 }
@@ -157,4 +158,26 @@ model PaymentProof {
   reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
 
   @@index([reservationId])
+}
+
+model EmailNotification {
+  id String @id @default(cuid())
+  reservationId String
+  kind String
+  status String @default("PENDING")
+  recipient String
+  subject String
+  html String
+  text String
+  sender String?
+  attempts Int @default(0)
+  availableAt DateTime @default(now())
+  firstAttemptAt DateTime?
+  sentAt DateTime?
+  providerId String?
+  lastError String?
+  createdAt DateTime @default(now())
+  reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  @@unique([reservationId, kind])
+  @@index([status, availableAt])
 }

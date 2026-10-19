@@ -1,3 +1,4 @@
+import { createEmailWorker, enqueuePaymentEmail, emailConfigured } from './paymentEmails.js';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,6 +18,7 @@ import { createPublicCache } from './publicCache.js';
 const db = new PrismaClient();
 const app = Fastify({ logger: { redact: ['req.headers.authorization', 'req.headers.cookie'], serializers: { req: request => ({ method: request.method, url: request.url?.split('?')[0].replace(/(\/api\/reservations\/)[a-f0-9]{48}/g, '$1[redacted]') }) } } });
 const publicCache = createPublicCache();
+const emailWorker = createEmailWorker(db, () => broadcast('reservations'), () => app.log.error('Email worker failed; queued messages retained'));
 registerSecurityHeaders(app, process.env.NODE_ENV === 'production');
 const subscribers = new Set<(event: string) => void>();
 const closeStreams = new Set<() => void>();
@@ -493,9 +495,10 @@ app.get<{ Params: { id: string } }>('/api/admin/reservations/:id', async (reques
     createdAt: true, expiresAt: true, proofSubmittedAt: true, confirmedAt: true, reviewNote: true,
     campaign: { select: { title: true, numberWidth: true } },
     proofs: { orderBy: { createdAt: 'asc' }, select: { id: true, createdAt: true } },
+    emails: { select: { status: true, sentAt: true, lastError: true }, orderBy: { createdAt: 'desc' } },
   } });
   if (!reservation) return reply.code(404).send({ error: 'Reserva no encontrada.' });
-  return reservation;
+  return { ...reservation, emailConfigured: emailConfigured() };
 });
 
 app.get<{ Params: { id: string } }>('/api/admin/payment-proofs/:id', async (request, reply) => {
@@ -682,9 +685,11 @@ app.post<{ Params: { id: string } }>('/api/admin/reservations/:id/confirm', asyn
       if (changed.count !== 1) throw new Error('RESERVATION_NOT_ACTIVE');
       const sold = await tx.entryNumber.updateMany({ where: { reservationId: request.params.id, status: 'RESERVED' }, data: { status: 'SOLD' } });
       if (sold.count !== reservation.selectedValues.length) throw new Error('RESERVATION_NOT_ACTIVE');
+      await enqueuePaymentEmail(tx, request.params.id, 'CONFIRMED');
       return true;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
     broadcast('reservations');
+    emailWorker.kick();
     return { confirmed };
   } catch (error) {
     if (error instanceof Error && error.message === 'RESERVATION_NOT_ACTIVE') return reply.code(409).send({ error: 'La reserva debe tener un comprobante pendiente de revisión.' });
@@ -702,8 +707,10 @@ app.post<{ Params: { id: string } }>('/api/admin/reservations/:id/reject', async
       const changed = await tx.reservation.updateMany({ where: { id: request.params.id, status: 'PENDING_REVIEW' }, data: { status: 'CANCELLED', reviewNote: parsed.data.reason } });
       if (changed.count !== 1) throw new Error('RESERVATION_NOT_PENDING');
       await tx.entryNumber.updateMany({ where: { reservationId: request.params.id, status: 'RESERVED' }, data: { status: 'AVAILABLE', reservationId: null } });
+      await enqueuePaymentEmail(tx, request.params.id, 'REJECTED');
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
     broadcast('reservations');
+    emailWorker.kick();
     return { ok: true };
   } catch (error) {
     if (error instanceof Error && error.message === 'RESERVATION_NOT_PENDING') return reply.code(409).send({ error: 'Esta reserva ya fue revisada.' });
@@ -750,7 +757,7 @@ const proposalCleanup = setInterval(() => {
   void db.numberProposal.deleteMany({ where: { expiresAt: { lt: new Date(Date.now() - 24 * 60 * 60_000) } } }).catch(error => app.log.error(error));
 }, 60 * 60_000);
 proposalCleanup.unref();
-app.addHook('onClose', async () => { clearInterval(timer); clearInterval(proposalCleanup); await db.$disconnect(); });
+app.addHook('onClose', async () => { clearInterval(timer); clearInterval(proposalCleanup); await emailWorker.close(); await db.$disconnect(); });
 app.addHook('preClose', async () => { for (const close of closeStreams) close(); });
 let stopping = false;
 for (const signal of ['SIGTERM', 'SIGINT'] as const) process.on(signal, () => {

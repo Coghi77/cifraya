@@ -113,8 +113,8 @@
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 14,
+      "community_name": "Community 14",
       "file_type": "code",
       "norm_label": "order",
       "source_file": "apps/web/src/OrderDetail.tsx",
@@ -126,8 +126,8 @@
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 15,
-      "community_name": "Community 15",
+      "community": 19,
+      "community_name": "Community 19",
       "file_type": "code",
       "norm_label": "importmetaenv",
       "source_file": "apps/web/src/vite-env.d.ts",
@@ -391,7 +391,7 @@
       "file_type": "code",
       "norm_label": "adminauthorized()",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L91"
+      "source_location": "L93"
     },
     {
       "id": "apps_api_src_server_availableinvertedvalues",
@@ -403,7 +403,7 @@
       "file_type": "code",
       "norm_label": "availableinvertedvalues()",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L75"
+      "source_location": "L77"
     },
     {
       "id": "apps_api_src_server_broadcast",
@@ -415,7 +415,7 @@
       "file_type": "code",
       "norm_label": "broadcast()",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L23"
+      "source_location": "L25"
     },
     {
       "id": "apps_api_src_server_imagelist",
@@ -427,7 +427,7 @@
       "file_type": "code",
       "norm_label": "imagelist()",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L72"
+      "source_location": "L74"
     },
     {
       "id": "apps_api_src_server_sessionkey",
@@ -439,7 +439,7 @@
       "file_type": "code",
       "norm_label": "sessionkey()",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L62"
+      "source_location": "L64"
     },
     {
       "id": "apps_api_src_server_validphoto",
@@ -451,7 +451,7 @@
       "file_type": "code",
       "norm_label": "validphoto()",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L82"
+      "source_location": "L84"
     },
     {
       "id": "apps_api_src_ticketsearch_ticketprefixrange",
@@ -694,42 +694,6 @@
       "source_location": "L30"
     },
     {
-      "id": "apps_web_src_footersocials_brandicon",
-      "label": "BrandIcon()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Community 1",
-      "file_type": "code",
-      "norm_label": "brandicon()",
-      "source_file": "apps/web/src/FooterSocials.tsx",
-      "source_location": "L7"
-    },
-    {
-      "id": "apps_web_src_footersocials_externallink",
-      "label": "externalLink()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Community 1",
-      "file_type": "code",
-      "norm_label": "externallink()",
-      "source_file": "apps/web/src/FooterSocials.tsx",
-      "source_location": "L11"
-    },
-    {
-      "id": "apps_web_src_footersocials_footersocials",
-      "label": "FooterSocials()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Community 1",
-      "file_type": "code",
-      "norm_label": "footersocials()",
-      "source_file": "apps/web/src/FooterSocials.tsx",
-      "source_location": "L23"
-    },
-    {
       "id": "apps_web_src_prizeeditor_prizeeditor",
       "label": "PrizeEditor()",
       "_callable": true,
@@ -790,12 +754,144 @@
       "source_location": "L24"
     },
     {
+      "id": "apps_api_src_paymentemails_createemailworker",
+      "label": "createEmailWorker()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "Community 10",
+      "file_type": "code",
+      "norm_label": "createemailworker()",
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L24"
+    },
+    {
+      "id": "apps_api_src_paymentemails_createemailworker_drain",
+      "label": "drain()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "Community 10",
+      "file_type": "code",
+      "norm_label": "drain()",
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L27"
+    },
+    {
+      "id": "apps_api_src_paymentemails_createemailworker_kick",
+      "label": "kick()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "Community 10",
+      "file_type": "code",
+      "norm_label": "kick()",
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L56"
+    },
+    {
+      "id": "apps_api_src_paymentemails_emailconfigured",
+      "label": "emailConfigured()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "Community 10",
+      "file_type": "code",
+      "norm_label": "emailconfigured()",
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L21"
+    },
+    {
+      "id": "apps_api_src_paymentemails_enqueuepaymentemail",
+      "label": "enqueuePaymentEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "Community 10",
+      "file_type": "code",
+      "norm_label": "enqueuepaymentemail()",
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "apps_api_src_paymentemails_escapehtml",
+      "label": "escapeHtml()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "Community 10",
+      "file_type": "code",
+      "norm_label": "escapehtml()",
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "apps_api_src_paymentemails_paymentemail",
+      "label": "paymentEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "Community 10",
+      "file_type": "code",
+      "norm_label": "paymentemail()",
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L4"
+    },
+    {
+      "id": "apps_api_src_paymentemails_retryableemailstatus",
+      "label": "retryableEmailStatus()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "Community 10",
+      "file_type": "code",
+      "norm_label": "retryableemailstatus()",
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L20"
+    },
+    {
+      "id": "apps_web_src_footersocials_brandicon",
+      "label": "BrandIcon()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "Community 13",
+      "file_type": "code",
+      "norm_label": "brandicon()",
+      "source_file": "apps/web/src/FooterSocials.tsx",
+      "source_location": "L7"
+    },
+    {
+      "id": "apps_web_src_footersocials_externallink",
+      "label": "externalLink()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "Community 13",
+      "file_type": "code",
+      "norm_label": "externallink()",
+      "source_file": "apps/web/src/FooterSocials.tsx",
+      "source_location": "L11"
+    },
+    {
+      "id": "apps_web_src_footersocials_footersocials",
+      "label": "FooterSocials()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "Community 13",
+      "file_type": "code",
+      "norm_label": "footersocials()",
+      "source_file": "apps/web/src/FooterSocials.tsx",
+      "source_location": "L23"
+    },
+    {
       "id": "apps_web_src_orderdetail_date",
       "label": "date()",
       "_callable": true,
       "_origin": "ast",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 14,
+      "community_name": "Community 14",
       "file_type": "code",
       "norm_label": "date()",
       "source_file": "apps/web/src/OrderDetail.tsx",
@@ -806,8 +902,8 @@
       "label": "money()",
       "_callable": true,
       "_origin": "ast",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 14,
+      "community_name": "Community 14",
       "file_type": "code",
       "norm_label": "money()",
       "source_file": "apps/web/src/OrderDetail.tsx",
@@ -818,8 +914,8 @@
       "label": "OrderDetail()",
       "_callable": true,
       "_origin": "ast",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 14,
+      "community_name": "Community 14",
       "file_type": "code",
       "norm_label": "orderdetail()",
       "source_file": "apps/web/src/OrderDetail.tsx",
@@ -1231,7 +1327,7 @@
       "file_type": "code",
       "norm_label": "adminreservationreview()",
       "source_file": "apps/web/src/AdminReservationReview.tsx",
-      "source_location": "L37"
+      "source_location": "L38"
     },
     {
       "id": "apps_web_src_adminreservationreview_adminreservationreview_review",
@@ -1243,7 +1339,7 @@
       "file_type": "code",
       "norm_label": "review()",
       "source_file": "apps/web/src/AdminReservationReview.tsx",
-      "source_location": "L59"
+      "source_location": "L60"
     },
     {
       "id": "apps_web_src_adminreservationreview_money",
@@ -1255,7 +1351,7 @@
       "file_type": "code",
       "norm_label": "money()",
       "source_file": "apps/web/src/AdminReservationReview.tsx",
-      "source_location": "L11"
+      "source_location": "L12"
     },
     {
       "id": "apps_web_src_adminreservationreview_proofimage",
@@ -1267,7 +1363,7 @@
       "file_type": "code",
       "norm_label": "proofimage()",
       "source_file": "apps/web/src/AdminReservationReview.tsx",
-      "source_location": "L13"
+      "source_location": "L14"
     },
     {
       "id": "apps_web_src_adminraffledetail_adminraffledetail",
@@ -1437,7 +1533,7 @@
       "file_type": "code",
       "norm_label": "app",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L18"
+      "source_location": "L19"
     },
     {
       "id": "apps_api_src_server_campaigninput",
@@ -1448,7 +1544,7 @@
       "file_type": "code",
       "norm_label": "campaigninput",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L37"
+      "source_location": "L39"
     },
     {
       "id": "apps_api_src_server_closestreams",
@@ -1459,7 +1555,7 @@
       "file_type": "code",
       "norm_label": "closestreams",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L22"
+      "source_location": "L24"
     },
     {
       "id": "apps_api_src_server_db",
@@ -1470,7 +1566,18 @@
       "file_type": "code",
       "norm_label": "db",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L17"
+      "source_location": "L18"
+    },
+    {
+      "id": "apps_api_src_server_emailworker",
+      "label": "emailWorker",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "file_type": "code",
+      "norm_label": "emailworker",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L21"
     },
     {
       "id": "apps_api_src_server_expirereservations",
@@ -1481,7 +1588,7 @@
       "file_type": "code",
       "norm_label": "expirereservations",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L119"
+      "source_location": "L121"
     },
     {
       "id": "apps_api_src_server_failedlogins",
@@ -1492,7 +1599,7 @@
       "file_type": "code",
       "norm_label": "failedlogins",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L89"
+      "source_location": "L91"
     },
     {
       "id": "apps_api_src_server_packageselect",
@@ -1503,7 +1610,7 @@
       "file_type": "code",
       "norm_label": "packageselect",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L71"
+      "source_location": "L73"
     },
     {
       "id": "apps_api_src_server_photoinput",
@@ -1514,7 +1621,7 @@
       "file_type": "code",
       "norm_label": "photoinput",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L65"
+      "source_location": "L67"
     },
     {
       "id": "apps_api_src_server_photoselect",
@@ -1525,7 +1632,7 @@
       "file_type": "code",
       "norm_label": "photoselect",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L70"
+      "source_location": "L72"
     },
     {
       "id": "apps_api_src_server_port",
@@ -1536,7 +1643,7 @@
       "file_type": "code",
       "norm_label": "port",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L762"
+      "source_location": "L769"
     },
     {
       "id": "apps_api_src_server_proposalcleanup",
@@ -1547,7 +1654,7 @@
       "file_type": "code",
       "norm_label": "proposalcleanup",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L748"
+      "source_location": "L755"
     },
     {
       "id": "apps_api_src_server_proposalinput",
@@ -1558,7 +1665,7 @@
       "file_type": "code",
       "norm_label": "proposalinput",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L61"
+      "source_location": "L63"
     },
     {
       "id": "apps_api_src_server_publiccache",
@@ -1569,7 +1676,7 @@
       "file_type": "code",
       "norm_label": "publiccache",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L19"
+      "source_location": "L20"
     },
     {
       "id": "apps_api_src_server_reservationinput",
@@ -1580,7 +1687,7 @@
       "file_type": "code",
       "norm_label": "reservationinput",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L52"
+      "source_location": "L54"
     },
     {
       "id": "apps_api_src_server_subscribers",
@@ -1591,7 +1698,7 @@
       "file_type": "code",
       "norm_label": "subscribers",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L21"
+      "source_location": "L23"
     },
     {
       "id": "apps_api_src_server_timer",
@@ -1602,7 +1709,7 @@
       "file_type": "code",
       "norm_label": "timer",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L746"
+      "source_location": "L753"
     },
     {
       "id": "apps_api_src_ticketsearch",
@@ -1726,39 +1833,6 @@
       "source_location": "L1"
     },
     {
-      "id": "apps_web_src_footersocials",
-      "label": "FooterSocials.tsx",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Community 1",
-      "file_type": "code",
-      "norm_label": "footersocials.tsx",
-      "source_file": "apps/web/src/FooterSocials.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_web_src_footersocials_brandpaths",
-      "label": "brandPaths",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Community 1",
-      "file_type": "code",
-      "norm_label": "brandpaths",
-      "source_file": "apps/web/src/FooterSocials.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_web_src_footersocials_links",
-      "label": "links",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Community 1",
-      "file_type": "code",
-      "norm_label": "links",
-      "source_file": "apps/web/src/FooterSocials.tsx",
-      "source_location": "L17"
-    },
-    {
       "id": "apps_web_src_main",
       "label": "main.tsx",
       "_origin": "ast",
@@ -1825,11 +1899,22 @@
       "source_location": "L14"
     },
     {
-      "id": "tsconfig",
-      "label": "tsconfig.json",
+      "id": "apps_api_src_paymentemails",
+      "label": "paymentEmails.ts",
       "_origin": "ast",
       "community": 10,
       "community_name": "Community 10",
+      "file_type": "code",
+      "norm_label": "paymentemails.ts",
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "tsconfig",
+      "label": "tsconfig.json",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "Community 11",
       "file_type": "code",
       "norm_label": "tsconfig.json",
       "source_file": "tsconfig.json",
@@ -1839,8 +1924,8 @@
       "id": "tsconfig_compileroptions",
       "label": "compilerOptions",
       "_origin": "ast",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 11,
+      "community_name": "Community 11",
       "file_type": "code",
       "norm_label": "compileroptions",
       "source_file": "tsconfig.json",
@@ -1850,8 +1935,8 @@
       "id": "tsconfig_compileroptions_esmoduleinterop",
       "label": "esModuleInterop",
       "_origin": "ast",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 11,
+      "community_name": "Community 11",
       "file_type": "code",
       "norm_label": "esmoduleinterop",
       "source_file": "tsconfig.json",
@@ -1861,8 +1946,8 @@
       "id": "tsconfig_compileroptions_module",
       "label": "module",
       "_origin": "ast",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 11,
+      "community_name": "Community 11",
       "file_type": "code",
       "norm_label": "module",
       "source_file": "tsconfig.json",
@@ -1872,8 +1957,8 @@
       "id": "tsconfig_compileroptions_moduleresolution",
       "label": "moduleResolution",
       "_origin": "ast",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 11,
+      "community_name": "Community 11",
       "file_type": "code",
       "norm_label": "moduleresolution",
       "source_file": "tsconfig.json",
@@ -1883,8 +1968,8 @@
       "id": "tsconfig_compileroptions_resolvejsonmodule",
       "label": "resolveJsonModule",
       "_origin": "ast",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 11,
+      "community_name": "Community 11",
       "file_type": "code",
       "norm_label": "resolvejsonmodule",
       "source_file": "tsconfig.json",
@@ -1894,8 +1979,8 @@
       "id": "tsconfig_compileroptions_skiplibcheck",
       "label": "skipLibCheck",
       "_origin": "ast",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 11,
+      "community_name": "Community 11",
       "file_type": "code",
       "norm_label": "skiplibcheck",
       "source_file": "tsconfig.json",
@@ -1905,8 +1990,8 @@
       "id": "tsconfig_compileroptions_strict",
       "label": "strict",
       "_origin": "ast",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 11,
+      "community_name": "Community 11",
       "file_type": "code",
       "norm_label": "strict",
       "source_file": "tsconfig.json",
@@ -1916,8 +2001,8 @@
       "id": "tsconfig_compileroptions_target",
       "label": "target",
       "_origin": "ast",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 11,
+      "community_name": "Community 11",
       "file_type": "code",
       "norm_label": "target",
       "source_file": "tsconfig.json",
@@ -1927,8 +2012,8 @@
       "id": "apps_api_tsconfig",
       "label": "api/tsconfig.json",
       "_origin": "ast",
-      "community": 11,
-      "community_name": "Community 11",
+      "community": 12,
+      "community_name": "Community 12",
       "file_type": "code",
       "norm_label": "api/tsconfig.json",
       "source_file": "apps/api/tsconfig.json",
@@ -1938,8 +2023,8 @@
       "id": "apps_api_tsconfig_compileroptions",
       "label": "compilerOptions",
       "_origin": "ast",
-      "community": 11,
-      "community_name": "Community 11",
+      "community": 12,
+      "community_name": "Community 12",
       "file_type": "code",
       "norm_label": "compileroptions",
       "source_file": "apps/api/tsconfig.json",
@@ -1949,8 +2034,8 @@
       "id": "apps_api_tsconfig_compileroptions_outdir",
       "label": "outDir",
       "_origin": "ast",
-      "community": 11,
-      "community_name": "Community 11",
+      "community": 12,
+      "community_name": "Community 12",
       "file_type": "code",
       "norm_label": "outdir",
       "source_file": "apps/api/tsconfig.json",
@@ -1960,8 +2045,8 @@
       "id": "apps_api_tsconfig_compileroptions_rootdir",
       "label": "rootDir",
       "_origin": "ast",
-      "community": 11,
-      "community_name": "Community 11",
+      "community": 12,
+      "community_name": "Community 12",
       "file_type": "code",
       "norm_label": "rootdir",
       "source_file": "apps/api/tsconfig.json",
@@ -1971,8 +2056,8 @@
       "id": "apps_api_tsconfig_extends",
       "label": "extends",
       "_origin": "ast",
-      "community": 11,
-      "community_name": "Community 11",
+      "community": 12,
+      "community_name": "Community 12",
       "file_type": "code",
       "norm_label": "extends",
       "source_file": "apps/api/tsconfig.json",
@@ -1982,8 +2067,8 @@
       "id": "apps_api_tsconfig_include",
       "label": "include",
       "_origin": "ast",
-      "community": 11,
-      "community_name": "Community 11",
+      "community": 12,
+      "community_name": "Community 12",
       "file_type": "code",
       "norm_label": "include",
       "source_file": "apps/api/tsconfig.json",
@@ -1993,19 +2078,52 @@
       "id": "ref_tsconfig_json",
       "label": "../../tsconfig.json",
       "_origin": "ast",
-      "community": 11,
-      "community_name": "Community 11",
+      "community": 12,
+      "community_name": "Community 12",
       "file_type": "concept",
       "norm_label": "../../tsconfig.json",
       "source_file": "apps/api/tsconfig.json",
       "source_location": "L2"
     },
     {
+      "id": "apps_web_src_footersocials",
+      "label": "FooterSocials.tsx",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "Community 13",
+      "file_type": "code",
+      "norm_label": "footersocials.tsx",
+      "source_file": "apps/web/src/FooterSocials.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_web_src_footersocials_brandpaths",
+      "label": "brandPaths",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "Community 13",
+      "file_type": "code",
+      "norm_label": "brandpaths",
+      "source_file": "apps/web/src/FooterSocials.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_web_src_footersocials_links",
+      "label": "links",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "Community 13",
+      "file_type": "code",
+      "norm_label": "links",
+      "source_file": "apps/web/src/FooterSocials.tsx",
+      "source_location": "L17"
+    },
+    {
       "id": "apps_web_src_orderdetail",
       "label": "OrderDetail.tsx",
       "_origin": "ast",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 14,
+      "community_name": "Community 14",
       "file_type": "code",
       "norm_label": "orderdetail.tsx",
       "source_file": "apps/web/src/OrderDetail.tsx",
@@ -2015,8 +2133,8 @@
       "id": "apps_web_src_orderdetail_labels",
       "label": "labels",
       "_origin": "ast",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 14,
+      "community_name": "Community 14",
       "file_type": "code",
       "norm_label": "labels",
       "source_file": "apps/web/src/OrderDetail.tsx",
@@ -2026,8 +2144,8 @@
       "id": "apps_api_test_invertednumbers_bench",
       "label": "invertedNumbers.bench.mjs",
       "_origin": "ast",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 15,
+      "community_name": "Community 15",
       "file_type": "code",
       "norm_label": "invertednumbers.bench.mjs",
       "source_file": "apps/api/test/invertedNumbers.bench.mjs",
@@ -2037,8 +2155,8 @@
       "id": "apps_api_test_invertednumbers_bench_inventory",
       "label": "inventory",
       "_origin": "ast",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 15,
+      "community_name": "Community 15",
       "file_type": "code",
       "norm_label": "inventory",
       "source_file": "apps/api/test/invertedNumbers.bench.mjs",
@@ -2048,8 +2166,8 @@
       "id": "apps_api_test_invertednumbers_bench_inventoryset",
       "label": "inventorySet",
       "_origin": "ast",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 15,
+      "community_name": "Community 15",
       "file_type": "code",
       "norm_label": "inventoryset",
       "source_file": "apps/api/test/invertedNumbers.bench.mjs",
@@ -2059,19 +2177,52 @@
       "id": "apps_api_test_invertednumbers_bench_times",
       "label": "times",
       "_origin": "ast",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 15,
+      "community_name": "Community 15",
       "file_type": "code",
       "norm_label": "times",
       "source_file": "apps/api/test/invertedNumbers.bench.mjs",
       "source_location": "L6"
     },
     {
+      "id": "prisma_migrations_20261019190000_payment_emails_migration",
+      "label": "20261019190000_payment_emails/migration.sql",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "Community 16",
+      "file_type": "code",
+      "norm_label": "20261019190000_payment_emails/migration.sql",
+      "source_file": "prisma/migrations/20261019190000_payment_emails/migration.sql",
+      "source_location": null
+    },
+    {
+      "id": "prisma_migrations_20261019190000_payment_emails_migration_emailnotification",
+      "label": "\"EmailNotification\"",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "Community 16",
+      "file_type": "code",
+      "norm_label": "\"emailnotification\"",
+      "source_file": "prisma/migrations/20261019190000_payment_emails/migration.sql",
+      "source_location": "L1"
+    },
+    {
+      "id": "reservation",
+      "label": "\"Reservation\"",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "Community 16",
+      "file_type": "code",
+      "norm_label": "\"reservation\"",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
       "id": "apps_api_test_adminsession_test",
       "label": "adminSession.test.mjs",
       "_origin": "ast",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 17,
+      "community_name": "Community 17",
       "file_type": "code",
       "norm_label": "adminsession.test.mjs",
       "source_file": "apps/api/test/adminSession.test.mjs",
@@ -2081,66 +2232,44 @@
       "id": "apps_api_test_adminsession_test_now",
       "label": "now",
       "_origin": "ast",
-      "community": 14,
-      "community_name": "Community 14",
+      "community": 17,
+      "community_name": "Community 17",
       "file_type": "code",
       "norm_label": "now",
       "source_file": "apps/api/test/adminSession.test.mjs",
       "source_location": "L6"
     },
     {
-      "id": "apps_web_src_vite_env_d",
-      "label": "vite-env.d.ts",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "Community 15",
-      "file_type": "code",
-      "norm_label": "vite-env.d.ts",
-      "source_file": "apps/web/src/vite-env.d.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_test_invertednumbers_test",
-      "label": "invertedNumbers.test.mjs",
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "Community 16",
-      "file_type": "code",
-      "norm_label": "invertednumbers.test.mjs",
-      "source_file": "apps/api/test/invertedNumbers.test.mjs",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_test_publiccache_test",
-      "label": "publicCache.test.mjs",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "Community 17",
-      "file_type": "code",
-      "norm_label": "publiccache.test.mjs",
-      "source_file": "apps/api/test/publicCache.test.mjs",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_test_reservationexpiry_test",
-      "label": "reservationExpiry.test.mjs",
+      "id": "apps_api_test_paymentemails_test",
+      "label": "paymentEmails.test.mjs",
       "_origin": "ast",
       "community": 18,
       "community_name": "Community 18",
       "file_type": "code",
-      "norm_label": "reservationexpiry.test.mjs",
-      "source_file": "apps/api/test/reservationExpiry.test.mjs",
+      "norm_label": "paymentemails.test.mjs",
+      "source_file": "apps/api/test/paymentEmails.test.mjs",
       "source_location": "L1"
     },
     {
-      "id": "apps_api_test_ticketsearch_test",
-      "label": "ticketSearch.test.mjs",
+      "id": "apps_api_test_paymentemails_test_order",
+      "label": "order",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "Community 18",
+      "file_type": "code",
+      "norm_label": "order",
+      "source_file": "apps/api/test/paymentEmails.test.mjs",
+      "source_location": "L4"
+    },
+    {
+      "id": "apps_web_src_vite_env_d",
+      "label": "vite-env.d.ts",
       "_origin": "ast",
       "community": 19,
       "community_name": "Community 19",
       "file_type": "code",
-      "norm_label": "ticketsearch.test.mjs",
-      "source_file": "apps/api/test/ticketSearch.test.mjs",
+      "norm_label": "vite-env.d.ts",
+      "source_file": "apps/web/src/vite-env.d.ts",
       "source_location": "L1"
     },
     {
@@ -2474,11 +2603,55 @@
       "source_location": "L22"
     },
     {
-      "id": "campaign",
-      "label": "\"Campaign\"",
+      "id": "apps_api_test_invertednumbers_test",
+      "label": "invertedNumbers.test.mjs",
       "_origin": "ast",
       "community": 20,
       "community_name": "Community 20",
+      "file_type": "code",
+      "norm_label": "invertednumbers.test.mjs",
+      "source_file": "apps/api/test/invertedNumbers.test.mjs",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_test_publiccache_test",
+      "label": "publicCache.test.mjs",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "Community 21",
+      "file_type": "code",
+      "norm_label": "publiccache.test.mjs",
+      "source_file": "apps/api/test/publicCache.test.mjs",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_test_reservationexpiry_test",
+      "label": "reservationExpiry.test.mjs",
+      "_origin": "ast",
+      "community": 22,
+      "community_name": "Community 22",
+      "file_type": "code",
+      "norm_label": "reservationexpiry.test.mjs",
+      "source_file": "apps/api/test/reservationExpiry.test.mjs",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_test_ticketsearch_test",
+      "label": "ticketSearch.test.mjs",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "Community 23",
+      "file_type": "code",
+      "norm_label": "ticketsearch.test.mjs",
+      "source_file": "apps/api/test/ticketSearch.test.mjs",
+      "source_location": "L1"
+    },
+    {
+      "id": "campaign",
+      "label": "\"Campaign\"",
+      "_origin": "ast",
+      "community": 24,
+      "community_name": "Community 24",
       "file_type": "code",
       "norm_label": "\"campaign\"",
       "source_file": "",
@@ -2488,8 +2661,8 @@
       "id": "prisma_migrations_20260930000001_reservation_values_migration",
       "label": "20260930000001_reservation_values/migration.sql",
       "_origin": "ast",
-      "community": 21,
-      "community_name": "Community 21",
+      "community": 25,
+      "community_name": "Community 25",
       "file_type": "code",
       "norm_label": "20260930000001_reservation_values/migration.sql",
       "source_file": "prisma/migrations/20260930000001_reservation_values/migration.sql",
@@ -2499,8 +2672,8 @@
       "id": "prisma_migrations_20261002000000_prize_positions_migration",
       "label": "20261002000000_prize_positions/migration.sql",
       "_origin": "ast",
-      "community": 22,
-      "community_name": "Community 22",
+      "community": 26,
+      "community_name": "Community 26",
       "file_type": "code",
       "norm_label": "20261002000000_prize_positions/migration.sql",
       "source_file": "prisma/migrations/20261002000000_prize_positions/migration.sql",
@@ -2510,8 +2683,8 @@
       "id": "prisma_migrations_20261003000000_inverted_numbers_migration",
       "label": "20261003000000_inverted_numbers/migration.sql",
       "_origin": "ast",
-      "community": 23,
-      "community_name": "Community 23",
+      "community": 27,
+      "community_name": "Community 27",
       "file_type": "code",
       "norm_label": "20261003000000_inverted_numbers/migration.sql",
       "source_file": "prisma/migrations/20261003000000_inverted_numbers/migration.sql",
@@ -2521,8 +2694,8 @@
       "id": "prisma_migrations_20261003180000_order_numbers_migration",
       "label": "20261003180000_order_numbers/migration.sql",
       "_origin": "ast",
-      "community": 24,
-      "community_name": "Community 24",
+      "community": 28,
+      "community_name": "Community 28",
       "file_type": "code",
       "norm_label": "20261003180000_order_numbers/migration.sql",
       "source_file": "prisma/migrations/20261003180000_order_numbers/migration.sql",
@@ -2532,8 +2705,8 @@
       "id": "prisma_migrations_20261004000000_dynamic_prizes_migration",
       "label": "20261004000000_dynamic_prizes/migration.sql",
       "_origin": "ast",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 29,
+      "community_name": "Community 29",
       "file_type": "code",
       "norm_label": "20261004000000_dynamic_prizes/migration.sql",
       "source_file": "prisma/migrations/20261004000000_dynamic_prizes/migration.sql",
@@ -2543,8 +2716,8 @@
       "id": "prisma_migrations_20261005000000_inverse_prize_rules_migration",
       "label": "20261005000000_inverse_prize_rules/migration.sql",
       "_origin": "ast",
-      "community": 26,
-      "community_name": "Community 26",
+      "community": 30,
+      "community_name": "Community 30",
       "file_type": "code",
       "norm_label": "20261005000000_inverse_prize_rules/migration.sql",
       "source_file": "prisma/migrations/20261005000000_inverse_prize_rules/migration.sql",
@@ -2554,8 +2727,8 @@
       "id": "winner",
       "label": "\"Winner\"",
       "_origin": "ast",
-      "community": 27,
-      "community_name": "Community 27",
+      "community": 31,
+      "community_name": "Community 31",
       "file_type": "code",
       "norm_label": "\"winner\"",
       "source_file": "",
@@ -3490,6 +3663,66 @@
       "weight": 1.0
     },
     {
+      "source": "apps_api_src_paymentemails_createemailworker_drain",
+      "target": "apps_api_src_paymentemails_retryableemailstatus",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_paymentemails_createemailworker_kick",
+      "target": "apps_api_src_paymentemails_createemailworker_drain",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_paymentemails_createemailworker_kick",
+      "target": "apps_api_src_paymentemails_emailconfigured",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_paymentemails_enqueuepaymentemail",
+      "target": "apps_api_src_paymentemails_paymentemail",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_paymentemails_paymentemail",
+      "target": "apps_api_src_paymentemails_escapehtml",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
       "source": "apps_api_src_prizes_inverseprizenumber",
       "target": "apps_api_src_invertednumbers_reversenumber",
       "relation": "calls",
@@ -3510,7 +3743,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L92",
+      "source_location": "L94",
       "weight": 1.0
     },
     {
@@ -3522,7 +3755,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L77",
+      "source_location": "L79",
       "weight": 1.0
     },
     {
@@ -3534,7 +3767,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L77",
+      "source_location": "L79",
       "weight": 1.0
     },
     {
@@ -3546,7 +3779,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L50",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server_emailworker",
+      "target": "apps_api_src_server_broadcast",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -3558,7 +3803,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L119",
+      "source_location": "L121",
       "weight": 1.0
     },
     {
@@ -3570,7 +3815,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L746",
+      "source_location": "L753",
       "weight": 1.0
     },
     {
@@ -3678,7 +3923,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminReservationReview.tsx",
-      "source_location": "L74",
+      "source_location": "L76",
       "weight": 1.0
     },
     {
@@ -4338,7 +4583,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminReservationReview.tsx",
-      "source_location": "L59",
+      "source_location": "L60",
       "weight": 1.0
     },
     {
@@ -4619,122 +4864,38 @@
     },
     {
       "source": "apps_api_src_server",
-      "target": "apps_api_src_invertednumbers_choosebasenumbers",
+      "target": "apps_api_src_paymentemails_createemailworker",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L10",
+      "source_location": "L1",
       "weight": 1.0
     },
     {
       "source": "apps_api_src_server",
-      "target": "apps_api_src_invertednumbers_invertedvalues",
+      "target": "apps_api_src_paymentemails_emailconfigured",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L10",
+      "source_location": "L1",
       "weight": 1.0
     },
     {
       "source": "apps_api_src_server",
-      "target": "apps_api_src_invertednumbers_reversenumber",
+      "target": "apps_api_src_paymentemails_enqueuepaymentemail",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L10",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_server",
-      "target": "apps_api_src_reservationexpiry_createreservationexpirer",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/api/src/server.ts",
-      "source_location": "L11",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_server",
-      "target": "apps_api_src_security_registersecurityheaders",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/api/src/server.ts",
-      "source_location": "L12",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_server",
-      "target": "apps_api_src_prizes_inverseprizenumber",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/api/src/server.ts",
-      "source_location": "L13",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_server",
-      "target": "apps_api_src_prizes_prizelist",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/api/src/server.ts",
-      "source_location": "L13",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_server",
-      "target": "apps_api_src_prizes_validprizesources",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/api/src/server.ts",
-      "source_location": "L13",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_server",
-      "target": "apps_api_src_ticketsearch_ticketsearchwhere",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/api/src/server.ts",
-      "source_location": "L14",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_server",
-      "target": "apps_api_src_publiccache_createpubliccache",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/api/src/server.ts",
-      "source_location": "L15",
+      "source_location": "L1",
       "weight": 1.0
     },
     {
@@ -4746,7 +4907,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L9",
+      "source_location": "L10",
       "weight": 1.0
     },
     {
@@ -4758,7 +4919,127 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L9",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_invertednumbers_choosebasenumbers",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_invertednumbers_invertedvalues",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_invertednumbers_reversenumber",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_reservationexpiry_createreservationexpirer",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_security_registersecurityheaders",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_prizes_inverseprizenumber",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_prizes_prizelist",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_prizes_validprizesources",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_ticketsearch_ticketsearchwhere",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_publiccache_createpubliccache",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -4954,6 +5235,19 @@
       "weight": 1.0
     },
     {
+      "source": "apps_api_src_paymentemails",
+      "target": "ref_prisma_client",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L1",
+      "type_only": true,
+      "weight": 1.0
+    },
+    {
       "source": "apps_api_src_prizes",
       "target": "ref_zod",
       "relation": "imports_from",
@@ -5005,7 +5299,19 @@
     },
     {
       "source": "apps_api_src_server",
-      "target": "apps_api_src_invertednumbers",
+      "target": "apps_api_src_paymentemails",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_adminsession",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5017,7 +5323,7 @@
     },
     {
       "source": "apps_api_src_server",
-      "target": "apps_api_src_reservationexpiry",
+      "target": "apps_api_src_invertednumbers",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5029,7 +5335,7 @@
     },
     {
       "source": "apps_api_src_server",
-      "target": "apps_api_src_security",
+      "target": "apps_api_src_reservationexpiry",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5041,7 +5347,7 @@
     },
     {
       "source": "apps_api_src_server",
-      "target": "apps_api_src_prizes",
+      "target": "apps_api_src_security",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5053,7 +5359,7 @@
     },
     {
       "source": "apps_api_src_server",
-      "target": "apps_api_src_ticketsearch",
+      "target": "apps_api_src_prizes",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5065,7 +5371,7 @@
     },
     {
       "source": "apps_api_src_server",
-      "target": "apps_api_src_publiccache",
+      "target": "apps_api_src_ticketsearch",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5077,19 +5383,19 @@
     },
     {
       "source": "apps_api_src_server",
-      "target": "ref_fastify",
+      "target": "apps_api_src_publiccache",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L4",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
       "source": "apps_api_src_server",
-      "target": "ref_fastify_cors",
+      "target": "ref_fastify",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5101,7 +5407,7 @@
     },
     {
       "source": "apps_api_src_server",
-      "target": "ref_fastify_static",
+      "target": "ref_fastify_cors",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5113,7 +5419,7 @@
     },
     {
       "source": "apps_api_src_server",
-      "target": "ref_prisma_client",
+      "target": "ref_fastify_static",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5125,7 +5431,7 @@
     },
     {
       "source": "apps_api_src_server",
-      "target": "ref_zod",
+      "target": "ref_prisma_client",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5137,7 +5443,7 @@
     },
     {
       "source": "apps_api_src_server",
-      "target": "apps_api_src_adminsession",
+      "target": "ref_zod",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5785,6 +6091,83 @@
       "weight": 1.0
     },
     {
+      "source": "apps_api_src_paymentemails",
+      "target": "apps_api_src_paymentemails_enqueuepaymentemail",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_paymentemails",
+      "target": "apps_api_src_paymentemails_retryableemailstatus",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_paymentemails",
+      "target": "apps_api_src_paymentemails_emailconfigured",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_paymentemails",
+      "target": "apps_api_src_paymentemails_createemailworker",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_paymentemails",
+      "target": "apps_api_src_paymentemails_escapehtml",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_paymentemails",
+      "target": "apps_api_src_paymentemails_paymentemail",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_paymentemails_createemailworker",
+      "target": "apps_api_src_paymentemails_createemailworker_drain",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
       "source": "apps_api_src_prizes",
       "target": "apps_api_src_prizes_inverseprizenumber",
       "relation": "contains",
@@ -5880,7 +6263,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L119",
+      "source_location": "L121",
       "weight": 1.0
     },
     {
@@ -5891,7 +6274,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -5902,7 +6285,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -5913,12 +6296,12 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L19",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
       "source": "apps_api_src_server",
-      "target": "apps_api_src_server_subscribers",
+      "target": "apps_api_src_server_emailworker",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5929,18 +6312,7 @@
     },
     {
       "source": "apps_api_src_server",
-      "target": "apps_api_src_server_closestreams",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/api/src/server.ts",
-      "source_location": "L22",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_server",
-      "target": "apps_api_src_server_broadcast",
+      "target": "apps_api_src_server_subscribers",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5951,13 +6323,35 @@
     },
     {
       "source": "apps_api_src_server",
+      "target": "apps_api_src_server_closestreams",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_server_broadcast",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
       "target": "apps_api_src_server_campaigninput",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L37",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -5968,7 +6362,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L52",
+      "source_location": "L54",
       "weight": 1.0
     },
     {
@@ -5979,7 +6373,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L61",
+      "source_location": "L63",
       "weight": 1.0
     },
     {
@@ -5990,7 +6384,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L62",
+      "source_location": "L64",
       "weight": 1.0
     },
     {
@@ -6001,7 +6395,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L65",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -6012,7 +6406,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L70",
+      "source_location": "L72",
       "weight": 1.0
     },
     {
@@ -6023,7 +6417,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L71",
+      "source_location": "L73",
       "weight": 1.0
     },
     {
@@ -6034,7 +6428,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L72",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -6045,7 +6439,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L746",
+      "source_location": "L753",
       "weight": 1.0
     },
     {
@@ -6056,18 +6450,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L748",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_server",
-      "target": "apps_api_src_server_availableinvertedvalues",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/api/src/server.ts",
-      "source_location": "L75",
+      "source_location": "L755",
       "weight": 1.0
     },
     {
@@ -6078,7 +6461,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L762",
+      "source_location": "L769",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_server_availableinvertedvalues",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L77",
       "weight": 1.0
     },
     {
@@ -6089,7 +6483,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L82",
+      "source_location": "L84",
       "weight": 1.0
     },
     {
@@ -6100,7 +6494,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L89",
+      "source_location": "L91",
       "weight": 1.0
     },
     {
@@ -6111,7 +6505,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L91",
+      "source_location": "L93",
       "weight": 1.0
     },
     {
@@ -6178,6 +6572,17 @@
       "confidence_score": 1.0,
       "source_file": "apps/api/test/invertedNumbers.bench.mjs",
       "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_test_paymentemails_test",
+      "target": "apps_api_test_paymentemails_test_order",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/test/paymentEmails.test.mjs",
+      "source_location": "L4",
       "weight": 1.0
     },
     {
@@ -6617,7 +7022,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/AdminReservationReview.tsx",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -6628,7 +7033,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/AdminReservationReview.tsx",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -6639,7 +7044,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/AdminReservationReview.tsx",
-      "source_location": "L37",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
@@ -7754,6 +8159,17 @@
       "weight": 1.0
     },
     {
+      "source": "prisma_migrations_20261019190000_payment_emails_migration",
+      "target": "prisma_migrations_20261019190000_payment_emails_migration_emailnotification",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "prisma/migrations/20261019190000_payment_emails/migration.sql",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
       "source": "prisma_seed",
       "target": "prisma_seed_db",
       "relation": "contains",
@@ -7996,6 +8412,29 @@
       "weight": 1.0
     },
     {
+      "source": "prisma_migrations_20261019190000_payment_emails_migration_emailnotification",
+      "target": "reservation",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "prisma/migrations/20261019190000_payment_emails/migration.sql",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_paymentemails_createemailworker",
+      "target": "apps_api_src_paymentemails_createemailworker_kick",
+      "relation": "indirect_call",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "context": "argument",
+      "source_file": "apps/api/src/paymentEmails.ts",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
       "source": "apps_api_src_server",
       "target": "apps_api_src_prizes_normalizeprizeinput",
       "relation": "indirect_call",
@@ -8004,7 +8443,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L37",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -8057,5 +8496,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "b47878ca2d48c83393f49f617d23e904385ace67"
+  "built_at_commit": "abe711126569a7d7ecb49533165670164225cb1d"
 }
