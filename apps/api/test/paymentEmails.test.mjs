@@ -5,7 +5,7 @@ const order = { orderNumber: 12, buyerName: '<img src=x>', lookupToken: 'abc', s
 test('payment email escapes HTML and preserves order, padded numbers and private link', () => {
  const email = paymentEmail(order, 'CONFIRMED', 'https://vnovatcg.com');
  assert.match(email.subject, /CY-000012/); assert.match(email.text, /0001, 0120/);
- assert.match(email.html, /&lt;img/); assert.ok(!email.html.includes('<img'));
+ assert.match(email.html, /&lt;img/); assert.ok(!email.html.includes('<img src=x>')); assert.match(email.html, /alt="Logo Vnova TCG"/);
  assert.match(email.html, /https:\/\/vnovatcg.com\/pedido#abc/);
  assert.throws(() => paymentEmail(order, 'CONFIRMED', 'javascript:alert(1)'));
  const rejected = paymentEmail(order, 'REJECTED', 'https://vnovatcg.com');
