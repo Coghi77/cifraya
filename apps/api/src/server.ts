@@ -60,7 +60,7 @@ const reservationInput = z.object({
   buyerPhone: z.string().min(8).max(25),
 });
 
-const proposalInput = z.object({ quantity: z.number().int().min(1).max(20) });
+const proposalInput = z.object({ quantity: z.number().int().min(1).max(20), values: z.array(z.number().int().min(0).max(9999)).min(1).max(20).optional() }).refine(data => !data.values || (data.values.length === data.quantity && new Set(data.values).size === data.quantity));
 function sessionKey(cookie: string | undefined) {
   return cookie?.match(/(?:^|;\s*)cifraya_selection=([a-f0-9]{48})(?:;|$)/)?.[1];
 }
@@ -169,19 +169,18 @@ app.get<{ Params: { id: string } }>('/api/campaign-photos/:id', async (request, 
   return reply.type(photo.mimeType).header('Cache-Control', 'public, max-age=3600').send(Buffer.from(photo.data));
 });
 
-app.get<{ Params: { slug: string }; Querystring: { page?: string } }>('/api/campaigns/:slug/numbers', async (request, reply) => {
+app.get<{ Params: { slug: string }; Querystring: { page?: string; search?: string } }>('/api/campaigns/:slug/numbers', async (request, reply) => {
   await expireReservations();
   const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug } });
   if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible' });
   const page = Math.max(1, Math.min(1000, Number(request.query.page) || 1));
-  const numbers = await db.entryNumber.findMany({
-    where: { campaignId: campaign.id },
-    orderBy: { value: 'asc' },
-    skip: (page - 1) * 100,
-    take: 100,
-    select: { value: true, status: true },
-  });
-  return { page, pageCount: Math.ceil(campaign.numberCount / 100), numbers };
+  const search = request.query.search?.trim() || '';
+  if (search && (!/^[0-9]+$/.test(search) || search.length > campaign.numberWidth)) return reply.code(400).send({ error: 'Buscá por número o por sus primeros dígitos.' });
+  const scale = 10 ** (campaign.numberWidth - search.length);
+  const where = { campaignId: campaign.id, ...(search ? { value: { gte: Number(search) * scale, lt: (Number(search) + 1) * scale } } : {}) };
+  const total = await db.entryNumber.count({ where });
+  const numbers = await db.entryNumber.findMany({ where, orderBy: { value: 'asc' }, skip: (page - 1) * 100, take: 100, select: { value: true, status: true } });
+  return { page, pageCount: Math.ceil(total / 100), numbers };
 });
 
 app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal', async (request, reply) => {
@@ -201,6 +200,16 @@ app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal', async (r
     const proposal = await db.$transaction(async tx => {
       const existing = await tx.numberProposal.findUnique({ where: { campaignId_sessionKey: { campaignId: campaign.id, sessionKey: key } } });
       const valid = existing && !existing.consumedAt && existing.expiresAt > new Date();
+      if (parsed.data.values) {
+        const values = [...parsed.data.values].sort((a, b) => a - b);
+        const count = await tx.entryNumber.count({ where: { campaignId: campaign.id, value: { in: values }, status: 'AVAILABLE' } });
+        if (count !== values.length) throw new Error('NUMBER_UNAVAILABLE');
+        return tx.numberProposal.upsert({
+          where: { campaignId_sessionKey: { campaignId: campaign.id, sessionKey: key } },
+          create: { campaignId: campaign.id, sessionKey: key, values, expiresAt: new Date(Date.now() + 15 * 60_000) },
+          update: { values, expiresAt: new Date(Date.now() + 15 * 60_000), consumedAt: null },
+        });
+      }
       const currentAvailable = valid ? await tx.entryNumber.count({ where: { campaignId: campaign.id, value: { in: existing.values }, status: 'AVAILABLE' } }) : 0;
       if (valid && existing.values.length === parsed.data.quantity && currentAvailable === existing.values.length) return existing;
       const available = await tx.entryNumber.findMany({ where: { campaignId: campaign.id, status: 'AVAILABLE' }, select: { value: true } });
@@ -215,6 +224,7 @@ app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal', async (r
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
     return { values: proposal.values, changesRemaining: 5 - proposal.changesUsed, invertedValues: await availableInvertedValues(campaign.id, proposal.values, campaign.numberWidth, campaign.invertedEnabled) };
   } catch (error) {
+    if (error instanceof Error && error.message === 'NUMBER_UNAVAILABLE') return reply.code(409).send({ error: 'Uno de esos números ya no está disponible. Elegí otro.' });
     if (error instanceof Error && error.message === 'NO_CHANGES_LEFT') return reply.code(409).send({ error: 'Ya usaste los cinco cambios disponibles.' });
     if (error instanceof Error && error.message === 'NOT_ENOUGH_NUMBERS') return reply.code(409).send({ error: 'No quedan suficientes números disponibles.' });
     if (error instanceof Prisma.PrismaClientKnownRequestError && ['P2002', 'P2034'].includes(error.code)) return reply.code(409).send({ error: 'La selección cambió. Intentá de nuevo.' });

@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 320 nodes · 425 edges · 34 communities (15 shown, 8 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.85)
+- 330 nodes · 431 edges · 35 communities (16 shown, 8 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f853b671`
+- Built from commit: `6db6ea4a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -34,25 +34,24 @@
 - Community 17
 - Community 18
 - Community 19
-- Community 24
+- Community 20
 - Community 25
-- Community 33
+- Community 26
+- Community 34
 
 ## God Nodes (most connected - your core abstractions)
-1. `App()` - 31 edges
-2. `compilerOptions` - 15 edges
-3. `scripts` - 11 edges
-4. `react` - 10 edges
-5. `api()` - 8 edges
-6. `loadAdmin()` - 8 edges
-7. `compilerOptions` - 8 edges
-8. `reverseNumber()` - 7 edges
+1. `compilerOptions` - 15 edges
+2. `scripts` - 11 edges
+3. `react` - 11 edges
+4. `api()` - 8 edges
+5. `loadAdmin()` - 8 edges
+6. `compilerOptions` - 8 edges
+7. `reverseNumber()` - 7 edges
+8. `@prisma/client` - 7 edges
 9. `"Campaign"` - 7 edges
 10. `addPhotos()` - 6 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `App()` --indirect_call--> `startRealtime()`  [INFERRED]
-  apps/web/src/App.tsx → apps/web/src/realtime.ts
 - `"CampaignPhoto"` --references--> `"Campaign"`  [EXTRACTED]
   prisma/migrations/20260930000002_campaign_photos/migration.sql → prisma/migrations/20260930000000_initial/migration.sql
 - `"PricePackage"` --references--> `"Campaign"`  [EXTRACTED]
@@ -61,35 +60,37 @@
   prisma/migrations/20261001000001_payment_proofs_and_random_selection/migration.sql → prisma/migrations/20260930000000_initial/migration.sql
 - `"PaymentProof"` --references--> `"Reservation"`  [EXTRACTED]
   prisma/migrations/20261001000001_payment_proofs_and_random_selection/migration.sql → prisma/migrations/20260930000000_initial/migration.sql
+- `adminAuthorized()` --calls--> `verifyAdminSession()`  [EXTRACTED]
+  apps/api/src/server.ts → apps/api/src/adminSession.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (34 total, 8 thin omitted)
+## Communities (35 total, 8 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.06
-Nodes (40): issueAdminSession(), verifyAdminSession(), chooseBaseNumbers(), invertedValues(), reverseNumber(), inversePrizeNumber(), normalizePrizeInput(), prizeList (+32 more)
+Cohesion: 0.07
+Nodes (40): addPhotos(), AdminReservation, api(), ApiError, createRaffle(), currentServerTime(), expireAdminSession(), formatNumber() (+32 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.08
-Nodes (27): AdminReservation, coverOf(), formatNumber(), InvertedChoice(), LookupResult, money(), NumberProposal, offersFor() (+19 more)
+Cohesion: 0.06
+Nodes (36): issueAdminSession(), verifyAdminSession(), chooseBaseNumbers(), invertedValues(), reverseNumber(), inversePrizeNumber(), normalizePrizeInput(), prizeList (+28 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.06
 Nodes (29): Stream, devDependencies, prisma, @prisma/client, tsx, @types/node, typescript, name (+21 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.15
-Nodes (23): api(), ApiError, App(), addPhotos(), createRaffle(), expireAdminSession(), generateNumbers(), goHome() (+15 more)
-
-### Community 4 - "Community 4"
 Cohesion: 0.08
 Nodes (23): dependencies, lucide-react, react, react-dom, devDependencies, @types/react, @types/react-dom, typescript (+15 more)
 
-### Community 5 - "Community 5"
+### Community 4 - "Community 4"
 Cohesion: 0.09
 Nodes (21): dependencies, fastify, @fastify/cors, @fastify/static, @prisma/client, zod, devDependencies, tsx (+13 more)
+
+### Community 5 - "Community 5"
+Cohesion: 0.15
+Nodes (11): EditableRaffle, EditRaffle(), ManualNumbers(), NumberRow, date(), labels, money(), Order (+3 more)
 
 ### Community 6 - "Community 6"
 Cohesion: 0.12
@@ -100,52 +101,56 @@ Cohesion: 0.17
 Nodes (11): AdminParticipantDetail(), money(), numberLabel(), ParticipantResponse, Reservation, statusLabel(), AdminReservationReview(), Detail (+3 more)
 
 ### Community 8 - "Community 8"
+Cohesion: 0.17
+Nodes (7): ticketPrefixRange(), ticketSearchWhere(), db, @prisma/client, database, proof, require
+
+### Community 9 - "Community 9"
 Cohesion: 0.26
 Nodes (8): "Campaign", "EntryNumber", "Reservation", "CampaignPhoto", "PricePackage", "Winner", "NumberProposal", "PaymentProof"
 
-### Community 9 - "Community 9"
+### Community 10 - "Community 10"
 Cohesion: 0.29
 Nodes (9): AdminRaffleDetail(), publishWinner(), adminRequest(), currency(), History, numberLabel(), NumberRow, Overview (+1 more)
 
-### Community 10 - "Community 10"
+### Community 11 - "Community 11"
 Cohesion: 0.36
 Nodes (8): createEmailWorker(), drain(), kick(), emailConfigured(), enqueuePaymentEmail(), escapeHtml(), paymentEmail(), retryableEmailStatus()
 
-### Community 11 - "Community 11"
+### Community 12 - "Community 12"
 Cohesion: 0.22
 Nodes (8): compilerOptions, esModuleInterop, module, moduleResolution, resolveJsonModule, skipLibCheck, strict, target
 
-### Community 12 - "Community 12"
+### Community 13 - "Community 13"
 Cohesion: 0.29
 Nodes (6): compilerOptions, outDir, rootDir, extends, include, ../../tsconfig.json
 
-### Community 14 - "Community 14"
-Cohesion: 0.47
-Nodes (5): date(), labels, money(), Order, OrderDetail()
-
 ### Community 15 - "Community 15"
+Cohesion: 0.47
+Nodes (5): MoreWinners(), positionName, prizeFor(), WinnerResult, WinnersPodium()
+
+### Community 16 - "Community 16"
 Cohesion: 0.50
 Nodes (3): inventory, inventorySet, times
 
 ## Knowledge Gaps
-- **124 isolated node(s):** `AdminReservation`, `LookupResult`, `NumberProposal`, `Raffle`, `Reservation` (+119 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 168 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **128 isolated node(s):** `AdminReservation`, `LookupResult`, `NumberProposal`, `Raffle`, `Reservation` (+123 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 176 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `@prisma/client` connect `Community 0` to `Community 10`, `Community 2`?**
-  _High betweenness centrality (0.045) - this node is a cross-community bridge._
-- **Why does `react` connect `Community 1` to `Community 9`, `Community 4`, `Community 14`, `Community 7`?**
-  _High betweenness centrality (0.044) - this node is a cross-community bridge._
-- **Why does `App()` connect `Community 3` to `Community 1`?**
-  _High betweenness centrality (0.041) - this node is a cross-community bridge._
-- **Are the 3 inferred relationships involving `App()` (e.g. with `onPopState()` and `refresh()`) actually correct?**
-  _`App()` has 3 INFERRED edges - model-reasoned connections that need verification._
+- **Why does `@prisma/client` connect `Community 8` to `Community 1`, `Community 2`, `Community 11`?**
+  _High betweenness centrality (0.347) - this node is a cross-community bridge._
+- **Why does `reserve()` connect `Community 0` to `Community 8`?**
+  _High betweenness centrality (0.306) - this node is a cross-community bridge._
+- **Why does `react` connect `Community 5` to `Community 0`, `Community 3`, `Community 7`, `Community 10`, `Community 15`?**
+  _High betweenness centrality (0.076) - this node is a cross-community bridge._
 - **What connects `AdminReservation`, `LookupResult`, `NumberProposal` to the rest of the system?**
-  _124 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _128 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.05584415584415584 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06894049346879536 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.07539118065433854 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06377551020408163 - nodes in this community are weakly interconnected._
+- **Should `Community 2` be split into smaller, more focused modules?**
+  _Cohesion score 0.06060606060606061 - nodes in this community are weakly interconnected._
