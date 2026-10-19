@@ -17,3 +17,4 @@ SENT significa aceptado por Resend, no entregado. Revisar rebotes/entrega en Res
 Render debe estar activo para procesar la cola: el plan gratuito puede dormir y retrasar reintentos. Controlar cuotas del proveedor. Los mensajes se conservan en PostgreSQL e incluyen información privada: restringir acceso y definir retención según operación. El remitente no crea un buzón para recibir respuestas.
 
 Pruebas automatizadas usan un proveedor simulado y no envían correo real. La activación y entrega real se verifican después de DNS y secretos.
+`POST /api/admin/email-tests` permite una pareja de mensajes de diagnóstico con correo autorizado y requestId UUID. Requiere sesión admin, máximo cinco parejas/hora, reintentos con el mismo UUID no duplican mensajes. No crea pedidos, boletos ni pagos. GET del mismo recurso con UUID muestra aceptación/error. Los mensajes se identifican [PRUEBA] y no contienen enlaces privados de pedido.

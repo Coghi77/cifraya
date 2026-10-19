@@ -1,15 +1,15 @@
 import type { Prisma, PrismaClient } from '@prisma/client';
 
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
-export function paymentEmail(order: { orderNumber: number; buyerName: string; lookupToken: string; selectedValues: number[]; totalCrc: number; reviewNote: string | null; campaign: { title: string; numberWidth: number } }, kind: 'CONFIRMED' | 'REJECTED', origin: string) {
+export function paymentEmail(order: { orderNumber: number; buyerName: string; lookupToken: string; selectedValues: number[]; totalCrc: number; reviewNote: string | null; campaign: { title: string; numberWidth: number } }, kind: 'CONFIRMED' | 'REJECTED', origin: string, diagnostic = false) {
   const url = new URL(origin);
   if (url.protocol !== 'https:' || url.username || url.password) throw new Error('INVALID_PUBLIC_APP_URL');
-  const link = `${url.origin}/pedido#${encodeURIComponent(order.lookupToken)}`;
-  const reference = `CY-${String(order.orderNumber).padStart(6, '0')}`;
+  const link = diagnostic ? url.origin : `${url.origin}/pedido#${encodeURIComponent(order.lookupToken)}`;
+  const reference = diagnostic ? 'PRUEBA-SIN-COMPRA' : `CY-${String(order.orderNumber).padStart(6, '0')}`;
   const heading = kind === 'CONFIRMED' ? 'Tu pago fue aprobado' : 'Tu pago fue rechazado';
   const numbers = order.selectedValues.map(n => String(n).padStart(order.campaign.numberWidth, '0')).join(', ');
   const lines = [heading, `Hola, ${order.buyerName}.`, `Pedido: ${reference}`, `Rifa: ${order.campaign.title}`, `Total: ₡${order.totalCrc.toLocaleString('es-CR')}`, `Números: ${numbers}`, kind === 'CONFIRMED' ? 'Tu compra está confirmada y tus boletos están vendidos a tu nombre.' : `Motivo: ${order.reviewNote ?? ''}`, `Consultá tu pedido: ${link}`, 'Este enlace es privado. No lo compartás.'];
-  return { subject: `${heading} · ${reference} · Vnova TCG`, text: lines.join('\n\n'), html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#191919"><h2 style="background:#ff4200;color:white;padding:24px">Vnova TCG</h2>${lines.slice(0, 7).map(line => `<p>${escapeHtml(line)}</p>`).join('')}<p><a style="background:#395aff;color:white;padding:12px 18px;display:inline-block" href="${escapeHtml(link)}">Ver mi pedido</a></p><p>Este enlace es privado. No lo compartás.</p></div>` };
+  return { subject: `${diagnostic ? '[PRUEBA] ' : ''}${heading} · ${reference} · Vnova TCG`, text: (diagnostic ? ['Prueba técnica autorizada. No representa una compra ni un pago real.', ...lines] : lines).join('\n\n'), html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#191919"><h2 style="background:#ff4200;color:white;padding:24px">Vnova TCG</h2>${diagnostic ? '<p><strong>Prueba técnica autorizada. No representa una compra ni un pago real.</strong></p>' : ''}${lines.slice(0, 7).map(line => `<p>${escapeHtml(line)}</p>`).join('')}<p><a style="background:#395aff;color:white;padding:12px 18px;display:inline-block" href="${escapeHtml(link)}">Ver mi pedido</a></p><p>Este enlace es privado. No lo compartás.</p></div>` };
 }
 
 export async function enqueuePaymentEmail(tx: Prisma.TransactionClient, reservationId: string, kind: 'CONFIRMED' | 'REJECTED') {

@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 318 nodes · 424 edges · 32 communities (15 shown, 7 thin omitted)
+- 320 nodes · 425 edges · 34 communities (15 shown, 8 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `abe71112`
+- Built from commit: `107695d5`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -35,7 +35,8 @@
 - Community 18
 - Community 19
 - Community 24
-- Community 31
+- Community 25
+- Community 33
 
 ## God Nodes (most connected - your core abstractions)
 1. `App()` - 31 edges
@@ -64,7 +65,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (32 total, 7 thin omitted)
+## Communities (34 total, 8 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.06
@@ -128,14 +129,14 @@ Nodes (3): inventory, inventorySet, times
 
 ## Knowledge Gaps
 - **124 isolated node(s):** `AdminReservation`, `LookupResult`, `NumberProposal`, `Raffle`, `Reservation` (+119 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 166 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 168 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `@prisma/client` connect `Community 0` to `Community 10`, `Community 2`?**
-  _High betweenness centrality (0.046) - this node is a cross-community bridge._
+  _High betweenness centrality (0.045) - this node is a cross-community bridge._
 - **Why does `react` connect `Community 1` to `Community 9`, `Community 4`, `Community 14`, `Community 7`?**
   _High betweenness centrality (0.044) - this node is a cross-community bridge._
 - **Why does `App()` connect `Community 3` to `Community 1`?**

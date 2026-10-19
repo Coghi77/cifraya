@@ -1643,7 +1643,7 @@
       "file_type": "code",
       "norm_label": "port",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L769"
+      "source_location": "L803"
     },
     {
       "id": "apps_api_src_server_proposalcleanup",
@@ -1654,7 +1654,7 @@
       "file_type": "code",
       "norm_label": "proposalcleanup",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L755"
+      "source_location": "L789"
     },
     {
       "id": "apps_api_src_server_proposalinput",
@@ -1709,7 +1709,7 @@
       "file_type": "code",
       "norm_label": "timer",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L753"
+      "source_location": "L787"
     },
     {
       "id": "apps_api_src_ticketsearch",
@@ -2658,11 +2658,22 @@
       "source_location": ""
     },
     {
-      "id": "prisma_migrations_20260930000001_reservation_values_migration",
-      "label": "20260930000001_reservation_values/migration.sql",
+      "id": "emailnotification",
+      "label": "\"EmailNotification\"",
       "_origin": "ast",
       "community": 25,
       "community_name": "Community 25",
+      "file_type": "code",
+      "norm_label": "\"emailnotification\"",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "prisma_migrations_20260930000001_reservation_values_migration",
+      "label": "20260930000001_reservation_values/migration.sql",
+      "_origin": "ast",
+      "community": 26,
+      "community_name": "Community 26",
       "file_type": "code",
       "norm_label": "20260930000001_reservation_values/migration.sql",
       "source_file": "prisma/migrations/20260930000001_reservation_values/migration.sql",
@@ -2672,8 +2683,8 @@
       "id": "prisma_migrations_20261002000000_prize_positions_migration",
       "label": "20261002000000_prize_positions/migration.sql",
       "_origin": "ast",
-      "community": 26,
-      "community_name": "Community 26",
+      "community": 27,
+      "community_name": "Community 27",
       "file_type": "code",
       "norm_label": "20261002000000_prize_positions/migration.sql",
       "source_file": "prisma/migrations/20261002000000_prize_positions/migration.sql",
@@ -2683,8 +2694,8 @@
       "id": "prisma_migrations_20261003000000_inverted_numbers_migration",
       "label": "20261003000000_inverted_numbers/migration.sql",
       "_origin": "ast",
-      "community": 27,
-      "community_name": "Community 27",
+      "community": 28,
+      "community_name": "Community 28",
       "file_type": "code",
       "norm_label": "20261003000000_inverted_numbers/migration.sql",
       "source_file": "prisma/migrations/20261003000000_inverted_numbers/migration.sql",
@@ -2694,8 +2705,8 @@
       "id": "prisma_migrations_20261003180000_order_numbers_migration",
       "label": "20261003180000_order_numbers/migration.sql",
       "_origin": "ast",
-      "community": 28,
-      "community_name": "Community 28",
+      "community": 29,
+      "community_name": "Community 29",
       "file_type": "code",
       "norm_label": "20261003180000_order_numbers/migration.sql",
       "source_file": "prisma/migrations/20261003180000_order_numbers/migration.sql",
@@ -2705,8 +2716,8 @@
       "id": "prisma_migrations_20261004000000_dynamic_prizes_migration",
       "label": "20261004000000_dynamic_prizes/migration.sql",
       "_origin": "ast",
-      "community": 29,
-      "community_name": "Community 29",
+      "community": 30,
+      "community_name": "Community 30",
       "file_type": "code",
       "norm_label": "20261004000000_dynamic_prizes/migration.sql",
       "source_file": "prisma/migrations/20261004000000_dynamic_prizes/migration.sql",
@@ -2716,19 +2727,30 @@
       "id": "prisma_migrations_20261005000000_inverse_prize_rules_migration",
       "label": "20261005000000_inverse_prize_rules/migration.sql",
       "_origin": "ast",
-      "community": 30,
-      "community_name": "Community 30",
+      "community": 31,
+      "community_name": "Community 31",
       "file_type": "code",
       "norm_label": "20261005000000_inverse_prize_rules/migration.sql",
       "source_file": "prisma/migrations/20261005000000_inverse_prize_rules/migration.sql",
       "source_location": null
     },
     {
+      "id": "prisma_migrations_20261019193000_email_diagnostics_migration",
+      "label": "20261019193000_email_diagnostics/migration.sql",
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "Community 32",
+      "file_type": "code",
+      "norm_label": "20261019193000_email_diagnostics/migration.sql",
+      "source_file": "prisma/migrations/20261019193000_email_diagnostics/migration.sql",
+      "source_location": null
+    },
+    {
       "id": "winner",
       "label": "\"Winner\"",
       "_origin": "ast",
-      "community": 31,
-      "community_name": "Community 31",
+      "community": 33,
+      "community_name": "Community 33",
       "file_type": "code",
       "norm_label": "\"winner\"",
       "source_file": "",
@@ -3815,7 +3837,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L753",
+      "source_location": "L787",
       "weight": 1.0
     },
     {
@@ -4889,6 +4911,18 @@
     {
       "source": "apps_api_src_server",
       "target": "apps_api_src_paymentemails_enqueuepaymentemail",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_paymentemails_paymentemail",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -6433,13 +6467,24 @@
     },
     {
       "source": "apps_api_src_server",
+      "target": "apps_api_src_server_availableinvertedvalues",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
       "target": "apps_api_src_server_timer",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L753",
+      "source_location": "L787",
       "weight": 1.0
     },
     {
@@ -6450,7 +6495,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L755",
+      "source_location": "L789",
       "weight": 1.0
     },
     {
@@ -6461,18 +6506,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L769",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_server",
-      "target": "apps_api_src_server_availableinvertedvalues",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/api/src/server.ts",
-      "source_location": "L77",
+      "source_location": "L803",
       "weight": 1.0
     },
     {
@@ -8496,5 +8530,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "abe711126569a7d7ecb49533165670164225cb1d"
+  "built_at_commit": "107695d5177457159be7a0b2152a90913679652f"
 }

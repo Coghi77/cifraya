@@ -162,7 +162,7 @@ model PaymentProof {
 
 model EmailNotification {
   id String @id @default(cuid())
-  reservationId String
+  reservationId String?
   kind String
   status String @default("PENDING")
   recipient String
@@ -177,7 +177,7 @@ model EmailNotification {
   providerId String?
   lastError String?
   createdAt DateTime @default(now())
-  reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  reservation Reservation? @relation(fields: [reservationId], references: [id], onDelete: Cascade)
   @@unique([reservationId, kind])
   @@index([status, availableAt])
 }

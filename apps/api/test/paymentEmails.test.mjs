@@ -32,3 +32,12 @@ test('worker retries with same payload/key, coalesces kicks and persists accepta
  assert.equal(requests[0].body,requests[1].body);assert.equal(requests[0].headers['Idempotency-Key'],requests[1].headers['Idempotency-Key']);
  } finally {await worker.close();global.fetch=oldFetch;if(oldKey===undefined)delete process.env.RESEND_API_KEY;else process.env.RESEND_API_KEY=oldKey;if(oldFrom===undefined)delete process.env.EMAIL_FROM;else process.env.EMAIL_FROM=oldFrom;}
 });
+test('diagnostic emails are explicitly labeled and contain no private order link', () => {
+ for (const kind of ['CONFIRMED', 'REJECTED']) {
+  const email=paymentEmail(order, kind, 'https://vnovatcg.com', true);
+  assert.match(email.subject, /^\[PRUEBA\]/);
+  assert.match(email.text, /No representa una compra ni un pago real/);
+  assert.match(email.html, /No representa una compra ni un pago real/);
+  assert.ok(!email.html.includes('/pedido#'));assert.ok(!email.text.includes('/pedido#'));
+ }
+});
