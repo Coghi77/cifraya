@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react';
 
 type NumberRow = { value: number; status: string };
-export default function ManualNumbers({ slug, quantity, width, disabled, onConfirm }: { slug: string; quantity: number; width: number; disabled: boolean; onConfirm: (values: number[]) => Promise<void> }) {
+export default function ManualNumbers({ slug, quantity, width, disabled, onPick, onConfirm }: { slug: string; quantity: number; width: number; disabled: boolean; onPick: (values: number[]) => Promise<void>; onConfirm: (values: number[]) => Promise<void> }) {
+  const [saving, setSaving] = useState(false);
+  async function pick(values: number[]) {
+    setSaving(true);
+    try { await onPick(values); setPicked(values); setError(''); } catch (cause) { setError((cause as Error).message); setRevision(n => n + 1); } finally { setSaving(false); }
+  }
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [rows, setRows] = useState<NumberRow[]>([]);
@@ -24,10 +29,10 @@ export default function ManualNumbers({ slug, quantity, width, disabled, onConfi
     return () => { clearTimeout(timer); controller.abort(); };
   }, [slug, page, search, revision]);
   return <section className="manual-numbers" aria-label="Elegir números disponibles"><label>Buscar número<input inputMode="numeric" value={search} maxLength={width} placeholder={'Ej. ' + '0'.repeat(width)} onChange={e => { setSearch(e.target.value.replace(/\D/g, '')); setPage(1); }}/></label><p>Elegí {quantity} números. Los apartados y vendidos están deshabilitados.</p>
-    {error && <p role="alert">{error}</p>}<div className="manual-grid" aria-busy={loading}>{rows.map(n => <button type="button" key={n.value} aria-pressed={picked.includes(n.value)} aria-label={`${String(n.value).padStart(width, '0')}, ${n.status === 'AVAILABLE' ? 'disponible' : 'no disponible'}`} disabled={disabled || loading || n.status !== 'AVAILABLE' || (!picked.includes(n.value) && picked.length >= quantity)} onClick={() => setPicked(current => current.includes(n.value) ? current.filter(v => v !== n.value) : [...current, n.value])}>{String(n.value).padStart(width, '0')}</button>)}</div>
+    {error && <p role="alert">{error}</p>}<div className="manual-grid" aria-busy={loading}>{rows.map(n => <button type="button" key={n.value} aria-pressed={picked.includes(n.value)} aria-label={`${String(n.value).padStart(width, '0')}, ${n.status === 'AVAILABLE' ? 'disponible' : 'no disponible'}`} disabled={disabled || saving || loading || n.status !== 'AVAILABLE' || (!picked.includes(n.value) && picked.length >= quantity)} onClick={() => void pick(picked.includes(n.value) ? picked.filter(v => v !== n.value) : [...picked, n.value])}>{String(n.value).padStart(width, '0')}</button>)}</div>
     {loading && <p role="status">Cargando números…</p>}{!loading && !rows.length && <p>No hay coincidencias.</p>}
     <div className="manual-pagination"><button type="button" disabled={page <= 1 || loading} onClick={() => setPage(p => p - 1)}>Anterior</button><span>{page} / {Math.max(1, pages)}</span><button type="button" disabled={page >= pages || loading} onClick={() => setPage(p => p + 1)}>Siguiente</button></div>
     <p aria-live="polite">{picked.length} de {quantity} seleccionados{picked.length ? ': ' + picked.map(n => String(n).padStart(width, '0')).join(', ') : ''}</p>
-    <button type="button" className="button dark full" disabled={disabled || loading || picked.length !== quantity} onClick={() => void onConfirm(picked)}>Usar estos números</button><p>La selección no aparta boletos. Se reservarán al confirmar tus datos.</p>
+    <button type="button" className="button dark full" disabled={disabled || loading || picked.length !== quantity} onClick={() => { void onConfirm(picked).catch(cause => setError(cause.message)); }}>Usar estos números</button><p>Cada número que elegís queda bloqueado por cinco minutos desde tu primera selección. Si salís, se libera automáticamente al vencer.</p>
   </section>;
 }

@@ -62,6 +62,7 @@ model NumberProposal {
   campaignId  String
   sessionKey  String
   values      Int[]    @default([])
+  quantity    Int      @default(0)
   changesUsed Int      @default(0)
   expiresAt   DateTime
   consumedAt  DateTime?
@@ -113,12 +114,15 @@ model EntryNumber {
   campaignId     String
   value          Int
   status         NumberStatus  @default(AVAILABLE)
+  holdKey        String?
+  holdExpiresAt  DateTime?
   reservationId  String?
   campaign       Campaign      @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   reservation    Reservation?  @relation(fields: [reservationId], references: [id], onDelete: SetNull)
 
   @@unique([campaignId, value])
   @@index([campaignId, status])
+  @@index([holdExpiresAt])
   @@index([reservationId])
 }
 

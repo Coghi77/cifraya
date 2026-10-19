@@ -5,6 +5,7 @@ export function createReservationExpirer(db: PrismaClient, notify: () => void, m
   let nextCheck = 0;
 
   async function expireBatch() {
+    const released = await db.entryNumber.updateMany({ where: { holdExpiresAt: { lte: new Date() } }, data: { holdKey: null, holdExpiresAt: null } });
     const overdue = await db.reservation.findMany({
       where: { status: 'ACTIVE', expiresAt: { lte: new Date() } },
       select: { id: true },
@@ -27,7 +28,7 @@ export function createReservationExpirer(db: PrismaClient, notify: () => void, m
       });
       expiredAny ||= expired;
     }
-    if (expiredAny) notify();
+    if (expiredAny || released.count) notify();
     nextCheck = overdue.length === 100 ? 0 : Date.now() + minIntervalMs;
   }
 

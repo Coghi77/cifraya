@@ -58,7 +58,7 @@ type AdminReservation = {
   values: number[];
   campaign: { title: string; numberWidth: number };
 };
-type NumberProposal = { values: number[]; changesRemaining: number; invertedValues: number[] | null };
+type NumberProposal = { expiresAt: string; values: number[]; changesRemaining: number; invertedValues: number[] | null };
 type View = 'order' | 'home' | 'raffle' | 'lookup' | 'winners' | 'admin';
 
 const ADMIN_PATH = '/estudio-vnova';
@@ -230,6 +230,8 @@ export default function App() {
   const [availableInverted, setAvailableInverted] = useState<number[] | null>(null);
   const [includeInverted, setIncludeInverted] = useState(false);
   const [randomQuantity, setRandomQuantity] = useState('');
+  const [holdExpiresAt, setHoldExpiresAt] = useState<string>();
+  const holdCountdown = useCountdown(holdExpiresAt);
   const [proposalReady, setProposalReady] = useState(false);
   const [selectionLoading, setSelectionLoading] = useState<'generating' | 'changing' | null>(null);
   const [homePackageLoading, setHomePackageLoading] = useState<number | null>(null);
@@ -330,16 +332,6 @@ export default function App() {
           setRaffle(current => current?.id === updated.id ? { ...current, soldCount: updated.soldCount } : current);
         } catch { /* Keep the last known count while offline. */ }
       }
-      if (view === 'raffle' && raffle && selectionMode === 'random' && proposalReady && !selectionLoading && !reservation && !showCheckout && Number(randomQuantity) === selected.length) {
-        try {
-          const proposal = await api<NumberProposal>(`/api/campaigns/${encodeURIComponent(raffle.slug)}/proposal`, { method: 'POST', body: JSON.stringify({ quantity: selected.length }) });
-          if (stopped) return;
-          setSelected(current => current.every((value, index) => value === proposal.values[index]) ? current : proposal.values);
-          setAvailableInverted(proposal.invertedValues);
-          if (!proposal.invertedValues) setIncludeInverted(false);
-          setChangesRemaining(proposal.changesRemaining);
-        } catch { /* A reservation attempt will report a stale proposal explicitly. */ }
-      }
       if (view === 'lookup' && lookupResult && lookupCode.trim().length === 48) {
         try { await refreshReservation(lookupCode.trim()); } catch { /* Keep the last known result while offline. */ }
       }
@@ -352,24 +344,40 @@ export default function App() {
     return () => { stopped = true; window.removeEventListener('cifraya:update', refresh); };
   }, [view, adminDetailId, adminUnlocked, adminToken, raffle?.slug, reservation?.token, lookupCode, lookupResult?.status, proposalReady, selectionLoading, randomQuantity, selected.length, showCheckout, selectionMode]);
 
+  useEffect(() => {
+    if (holdExpiresAt && holdCountdown === '00:00' && new Date(holdExpiresAt).getTime() <= currentServerTime() && !reservation) {
+      setProposalReady(false); setSelected([]); setRandomQuantity(''); setAvailableInverted(null); setIncludeInverted(false); setShowCheckout(false); setHoldExpiresAt(undefined);
+      setError('El apartado temporal venció. Volvé a elegir tus números disponibles.');
+    }
+  }, [holdCountdown, holdExpiresAt, reservation]);
+
   async function generateNumbers(quantity: number, campaign = raffle) {
     if (!campaign) return;
     setBusy(true); setError(''); setSelectionLoading('generating'); setRandomQuantity(String(quantity)); setSelected([]); setAvailableInverted(null); setIncludeInverted(false); setProposalReady(false);
     try {
       const proposal = await api<NumberProposal>(`/api/campaigns/${encodeURIComponent(campaign.slug)}/proposal`, { method: 'POST', body: JSON.stringify({ quantity }) });
-      setSelected(proposal.values); setAvailableInverted(proposal.invertedValues); setChangesRemaining(proposal.changesRemaining); setProposalReady(true);
+      setHoldExpiresAt(proposal.expiresAt); setSelected(proposal.values); setAvailableInverted(proposal.invertedValues); setChangesRemaining(proposal.changesRemaining); setProposalReady(true);
     } catch (cause) { setRandomQuantity(''); setError((cause as Error).message); }
     finally { setBusy(false); setSelectionLoading(null); }
   }
 
-  async function chooseManually(values: number[]) {
+  async function chooseManually(values: number[], ready = true) {
     if (!raffle) return;
     setBusy(true); setError(''); setProposalReady(false);
     try {
       const proposal = await api<NumberProposal>(`/api/campaigns/${encodeURIComponent(raffle.slug)}/proposal`, { method: 'POST', body: JSON.stringify({ quantity: Number(randomQuantity), values }) });
-      setSelected(proposal.values); setAvailableInverted(proposal.invertedValues); setIncludeInverted(false); setProposalReady(true);
-    } catch (cause) { setError((cause as Error).message); }
+      setHoldExpiresAt(proposal.expiresAt); setSelected(proposal.values); setAvailableInverted(proposal.invertedValues); setIncludeInverted(false); setProposalReady(ready);
+    } catch (cause) { setError((cause as Error).message); throw cause; }
     finally { setBusy(false); }
+  }
+
+  async function toggleInverted(value: boolean) {
+    if (!raffle) return;
+    setBusy(true); setError('');
+    try {
+      const proposal = await api<NumberProposal>(`/api/campaigns/${encodeURIComponent(raffle.slug)}/proposal`, { method: 'POST', body: JSON.stringify({ quantity: selected.length, values: selected, includeInverted: value }) });
+      setHoldExpiresAt(proposal.expiresAt); setAvailableInverted(proposal.invertedValues); setIncludeInverted(value);
+    } catch (cause) { setError((cause as Error).message); } finally { setBusy(false); }
   }
 
   async function changeRandomNumbers() {
@@ -377,7 +385,7 @@ export default function App() {
     setBusy(true); setError(''); setSelectionLoading('changing');
     try {
       const proposal = await api<NumberProposal>(`/api/campaigns/${encodeURIComponent(raffle.slug)}/proposal/change`, { method: 'POST' });
-      setSelected(proposal.values); setAvailableInverted(proposal.invertedValues); if (!proposal.invertedValues) setIncludeInverted(false); setChangesRemaining(proposal.changesRemaining);
+      setHoldExpiresAt(proposal.expiresAt); setSelected(proposal.values); setAvailableInverted(proposal.invertedValues); setIncludeInverted(false); setChangesRemaining(proposal.changesRemaining);
     } catch (cause) { setError((cause as Error).message); }
     finally { setBusy(false); setSelectionLoading(null); }
   }
@@ -614,7 +622,7 @@ export default function App() {
         <div className="detail-side">
           <div className="detail-side-top"><span className="status-label">RIFA ABIERTA</span><span>Elegí un paquete</span></div><RaffleProgress raffle={raffle}/>
           <div className="selection-head"><div><h2>Elegí tu paquete</h2><p>Elegí un paquete y decidí si querés números al azar o seleccionarlos vos.</p></div></div>
-          {!reservation && <div className="random-picker"><div className="selection-modes" role="group" aria-label="Forma de elegir números">{(['random', 'manual'] as const).map(mode => <button type="button" key={mode} disabled={busy} aria-pressed={selectionMode === mode} onClick={() => { setSelectionMode(mode); setProposalReady(false); setSelected([]); setRandomQuantity(''); setAvailableInverted(null); setIncludeInverted(false); }}>{mode === 'random' ? 'Al azar' : 'Elegir mis números'}</button>)}</div><div className="package-offers"><strong>Paquetes disponibles</strong><div>{offersFor(raffle).map(offer => <button key={offer.quantity} type="button" className="package-option" aria-pressed={randomQuantity === String(offer.quantity)} disabled={busy} onClick={() => { if (selectionMode === 'random') void generateNumbers(offer.quantity); else { setRandomQuantity(String(offer.quantity)); setSelected([]); setProposalReady(false); setAvailableInverted(null); setIncludeInverted(false); } }}><strong>{offer.quantity} {offer.quantity === 1 ? 'número' : 'números'}</strong><span>{money(offer.priceCrc)}</span></button>)}</div></div>{selectionMode === 'manual' && randomQuantity && !proposalReady && <ManualNumbers key={raffle.id + ':' + randomQuantity} slug={raffle.slug} quantity={Number(randomQuantity)} width={width} disabled={busy} onConfirm={chooseManually}/ >}{(proposalReady || selectionLoading) && <div className="selection-result" aria-busy={Boolean(selectionLoading)}>{proposalReady && <><div className="random-selection-heading"><strong>Tus {selected.length} {selected.length === 1 ? 'número' : 'números'}</strong>{selectionMode === 'random' && <span>{changesRemaining} de 5 cambios disponibles</span>}</div><div className="random-values">{selected.map(value => <span key={value}>{formatNumber(value, width)}</span>)}</div><InvertedChoice raffle={raffle} values={selected} inverted={availableInverted} selected={includeInverted} disabled={busy || Boolean(selectionLoading)} onToggle={setIncludeInverted}/><button className="button dark full" type="button" disabled={busy || (selectionMode === 'random' && changesRemaining === 0)} onClick={() => { if (selectionMode === 'random') void changeRandomNumbers(); else { setProposalReady(false); setSelected([]); setIncludeInverted(false); } }}>{selectionMode === 'random' ? 'Cambiar todos los números' : 'Elegir otros números'}</button><p>Los números se apartan al confirmar la reserva, no al seleccionarlos.</p></>}{selectionLoading && <div className="selection-loader" role="status" aria-live="polite"><SelectionSpinner/><span>{selectionLoading === 'changing' ? 'Buscando otros números disponibles…' : 'Generando tus números…'}</span></div>}</div>}</div>}
+          {!reservation && <div className="random-picker"><div className="selection-modes" role="group" aria-label="Forma de elegir números">{(['random', 'manual'] as const).map(mode => <button type="button" key={mode} disabled={busy} aria-pressed={selectionMode === mode} onClick={() => { setSelectionMode(mode); setProposalReady(false); setSelected([]); setRandomQuantity(''); setAvailableInverted(null); setIncludeInverted(false); }}>{mode === 'random' ? 'Al azar' : 'Elegir mis números'}</button>)}</div><div className="package-offers">{holdExpiresAt && <p role="status">Apartado temporal: {holdCountdown}</p>}<strong>Paquetes disponibles</strong><div>{offersFor(raffle).map(offer => <button key={offer.quantity} type="button" className="package-option" aria-pressed={randomQuantity === String(offer.quantity)} disabled={busy} onClick={() => { if (selectionMode === 'random') void generateNumbers(offer.quantity); else { setRandomQuantity(String(offer.quantity)); setSelected([]); setProposalReady(false); setAvailableInverted(null); setIncludeInverted(false); } }}><strong>{offer.quantity} {offer.quantity === 1 ? 'número' : 'números'}</strong><span>{money(offer.priceCrc)}</span></button>)}</div></div>{selectionMode === 'manual' && randomQuantity && !proposalReady && <ManualNumbers key={raffle.id + ':' + randomQuantity} slug={raffle.slug} quantity={Number(randomQuantity)} width={width} disabled={busy} onPick={values => chooseManually(values, false)} onConfirm={chooseManually}/ >}{(proposalReady || selectionLoading) && <div className="selection-result" aria-busy={Boolean(selectionLoading)}>{proposalReady && <><div className="random-selection-heading"><strong>Tus {selected.length} {selected.length === 1 ? 'número' : 'números'}</strong>{selectionMode === 'random' && <span>{changesRemaining} de 5 cambios disponibles</span>}</div><div className="random-values">{selected.map(value => <span key={value}>{formatNumber(value, width)}</span>)}</div><InvertedChoice raffle={raffle} values={selected} inverted={availableInverted} selected={includeInverted} disabled={busy || Boolean(selectionLoading)} onToggle={value => void toggleInverted(value)}/><button className="button dark full" type="button" disabled={busy || (selectionMode === 'random' && changesRemaining === 0)} onClick={() => { if (selectionMode === 'random') void changeRandomNumbers(); else { setProposalReady(false); setSelected([]); setIncludeInverted(false); } }}>{selectionMode === 'random' ? 'Cambiar todos los números' : 'Elegir otros números'}</button><p>Apartados exclusivamente para vos durante {holdCountdown}. Confirmá tus datos antes de que termine el plazo.</p></>}{selectionLoading && <div className="selection-loader" role="status" aria-live="polite"><SelectionSpinner/><span>{selectionLoading === 'changing' ? 'Buscando otros números disponibles…' : 'Generando tus números…'}</span></div>}</div>}</div>}
           {reservation ? <div className="reservation-result">
             <TicketPass name={buyer.buyerName} title={raffle.title} values={reservation.values} baseValues={reservation.baseValues} includesInverted={reservation.includesInverted} width={width} count={reservation.values.length} status={reservation.status === 'CONFIRMED' ? 'COMPRA CONFIRMADA' : reservation.status === 'PENDING_REVIEW' ? 'PAGO EN REVISIÓN' : reservation.status === 'EXPIRED' ? 'RESERVA VENCIDA' : reservation.status === 'CANCELLED' ? 'RESERVA RECHAZADA' : 'APARTADO'} timer={!reservation.status || reservation.status === 'ACTIVE' ? countdown : undefined} />
             <strong>Total de la reserva: {money(reservation.totalCrc)}</strong>
@@ -643,7 +651,7 @@ export default function App() {
     {editingRaffleId && adminUnlocked && adminRaffles.find(item => item.id === editingRaffleId) && <EditRaffle key={editingRaffleId} raffle={adminRaffles.find(item => item.id === editingRaffleId)!} token={adminToken} onClose={() => setEditingRaffleId(null)} onUnauthorized={() => { setEditingRaffleId(null); expireAdminSession(); }} onSaved={() => { void loadAdmin(adminToken, true); void loadRaffles(); void loadWinners(); }} /> }
     {reviewReservationId && adminUnlocked && <AdminReservationReview id={reviewReservationId} token={adminToken} onClose={() => setReviewReservationId(null)} onReviewed={() => { void loadAdmin(adminToken, true); void loadRaffles(); }} />}
 
-    {showCheckout && raffle && <div className="modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setShowCheckout(false); }}><div className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button className="modal-close" onClick={() => setShowCheckout(false)} aria-label="Cerrar"><X size={20}/></button><div className="eyebrow">TU PASE / PASO FINAL</div><h2 id="modal-title">Dale nombre a tu boleto.</h2><p>La reserva dura 30 minutos. Administración confirmará tus boletos cuando verifique el pago.</p><div className="modal-numbers">{[...selected, ...(includeInverted ? availableInverted || [] : [])].map(value => <span key={value}><Check size={14}/>{formatNumber(value, width)}</span>)}</div><form onSubmit={reserve} className="form-grid"><label>Nombre en el boleto<input required minLength={2} autoComplete="off" value={buyer.buyerName} onChange={event => setBuyer({ ...buyer, buyerName: event.target.value })} /></label><label>Correo electrónico<input required type="email" autoComplete="off" value={buyer.buyerEmail} onChange={event => setBuyer({ ...buyer, buyerEmail: event.target.value })} /></label><label>Teléfono<input required minLength={8} autoComplete="off" value={buyer.buyerPhone} onChange={event => setBuyer({ ...buyer, buyerPhone: event.target.value })} /></label><label className="checkout-proof-field">Comprobante SINPE Móvil (podés adjuntarlo ahora o durante la reserva)<input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={event => { const files = Array.from(event.target.files || []); if (files.length > 3) { setError('Podés adjuntar hasta tres comprobantes.'); event.target.value = ''; return; } setCheckoutProofs(files); }} /><span>{checkoutProofs.length ? `${checkoutProofs.length} foto${checkoutProofs.length === 1 ? '' : 's'} lista${checkoutProofs.length === 1 ? '' : 's'}` : 'Seleccionar hasta 3 fotos'}</span></label><div className="modal-total"><span>{includeInverted ? 'Total con invertidos' : 'Total'}</span><strong>{money((selectedOffer(raffle, selected.length)?.priceCrc ?? 0) * (includeInverted ? 2 : 1))}</strong></div><button className="button primary full" disabled={busy}>{busy ? 'Apartando...' : 'Apartar números'} <ArrowRight size={17}/></button></form></div></div>}
+    {showCheckout && raffle && <div className="modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setShowCheckout(false); }}><div className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button className="modal-close" onClick={() => setShowCheckout(false)} aria-label="Cerrar"><X size={20}/></button><div className="eyebrow">TU PASE / PASO FINAL</div><h2 id="modal-title">Dale nombre a tu boleto.</h2><p>Tu selección está protegida durante {holdCountdown}. Al confirmar, la reserva dura 30 minutos. Administración confirmará tus boletos cuando verifique el pago.</p><div className="modal-numbers">{[...selected, ...(includeInverted ? availableInverted || [] : [])].map(value => <span key={value}><Check size={14}/>{formatNumber(value, width)}</span>)}</div><form onSubmit={reserve} className="form-grid"><label>Nombre en el boleto<input required minLength={2} autoComplete="off" value={buyer.buyerName} onChange={event => setBuyer({ ...buyer, buyerName: event.target.value })} /></label><label>Correo electrónico<input required type="email" autoComplete="off" value={buyer.buyerEmail} onChange={event => setBuyer({ ...buyer, buyerEmail: event.target.value })} /></label><label>Teléfono<input required minLength={8} autoComplete="off" value={buyer.buyerPhone} onChange={event => setBuyer({ ...buyer, buyerPhone: event.target.value })} /></label><label className="checkout-proof-field">Comprobante SINPE Móvil (podés adjuntarlo ahora o durante la reserva)<input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={event => { const files = Array.from(event.target.files || []); if (files.length > 3) { setError('Podés adjuntar hasta tres comprobantes.'); event.target.value = ''; return; } setCheckoutProofs(files); }} /><span>{checkoutProofs.length ? `${checkoutProofs.length} foto${checkoutProofs.length === 1 ? '' : 's'} lista${checkoutProofs.length === 1 ? '' : 's'}` : 'Seleccionar hasta 3 fotos'}</span></label><div className="modal-total"><span>{includeInverted ? 'Total con invertidos' : 'Total'}</span><strong>{money((selectedOffer(raffle, selected.length)?.priceCrc ?? 0) * (includeInverted ? 2 : 1))}</strong></div><button className="button primary full" disabled={busy}>{busy ? 'Apartando...' : 'Apartar números'} <ArrowRight size={17}/></button></form></div></div>}
 
     <footer className="site-footer"><span className="footer-brand"><img src="/vnova-logo.svg" alt="Logo de Vnova TCG"/></span><FooterSocials/></footer>
   </div>;

@@ -7,6 +7,7 @@ test('concurrent expiry checks share one batch and release claimed numbers once'
   let releases = 0;
   let notices = 0;
   const db = {
+    entryNumber: { updateMany: async () => ({ count: 0 }) },
     reservation: { findMany: async () => { reads++; await new Promise(resolve => setTimeout(resolve, 10)); return [{ id: 'reservation-1' }]; } },
     $transaction: async callback => callback({
       reservation: { updateMany: async () => ({ count: 1 }) },
@@ -26,6 +27,7 @@ test('an expiry check does not release numbers after another action changes stat
   let releases = 0;
   let notices = 0;
   const db = {
+    entryNumber: { updateMany: async () => ({ count: 0 }) },
     reservation: { findMany: async () => [{ id: 'reservation-1' }] },
     $transaction: async callback => callback({
       reservation: { updateMany: async () => ({ count: 0 }) },

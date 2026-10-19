@@ -1,3 +1,4 @@
+import { selectNumbers } from './selectionHolds.js';
 import { createEmailWorker, enqueuePaymentEmail, emailConfigured, paymentEmail } from './paymentEmails.js';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { dirname, resolve } from 'node:path';
@@ -8,7 +9,7 @@ import fastifyStatic from '@fastify/static';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import { issueAdminSession, verifyAdminSession } from './adminSession.js';
-import { chooseBaseNumbers, invertedValues, reverseNumber } from './invertedNumbers.js';
+import { invertedValues, reverseNumber } from './invertedNumbers.js';
 import { createReservationExpirer } from './reservationExpiry.js';
 import { registerSecurityHeaders } from './security.js';
 import { normalizePrizeInput, prizeList, validPrizeSources, inversePrizeNumber } from './prizes.js';
@@ -60,7 +61,7 @@ const reservationInput = z.object({
   buyerPhone: z.string().min(8).max(25),
 });
 
-const proposalInput = z.object({ quantity: z.number().int().min(1).max(20), values: z.array(z.number().int().min(0).max(9999)).min(1).max(20).optional() }).refine(data => !data.values || (data.values.length === data.quantity && new Set(data.values).size === data.quantity));
+const proposalInput = z.object({ quantity: z.number().int().min(1).max(20), includeInverted: z.boolean().optional(), values: z.array(z.number().int().min(0).max(9999)).max(20).optional() }).refine(data => !data.values || (data.values.length <= data.quantity && new Set(data.values).size === data.values.length));
 function sessionKey(cookie: string | undefined) {
   return cookie?.match(/(?:^|;\s*)cifraya_selection=([a-f0-9]{48})(?:;|$)/)?.[1];
 }
@@ -73,13 +74,6 @@ const photoSelect = { select: { id: true }, orderBy: { sortOrder: 'asc' as const
 const packageSelect = { select: { quantity: true, priceCrc: true }, orderBy: { quantity: 'asc' as const } };
 function imageList(photos: { id: string }[]) {
   return photos.map(photo => ({ id: photo.id, url: `/api/campaign-photos/${photo.id}` }));
-}
-async function availableInvertedValues(campaignId: string, values: number[], width: number, enabled: boolean) {
-  if (!enabled) return null;
-  const reversed = invertedValues(values, width, new Set(values.map(value => reverseNumber(value, width))));
-  if (!reversed) return null;
-  const count = await db.entryNumber.count({ where: { campaignId, value: { in: reversed }, status: 'AVAILABLE' } });
-  return count === reversed.length ? reversed : null;
 }
 function validPhoto(data: Buffer, mimeType: string) {
   if (data.length === 0 || data.length > 2_000_000) return false;
@@ -179,8 +173,9 @@ app.get<{ Params: { slug: string }; Querystring: { page?: string; search?: strin
   const scale = 10 ** (campaign.numberWidth - search.length);
   const where = { campaignId: campaign.id, ...(search ? { value: { gte: Number(search) * scale, lt: (Number(search) + 1) * scale } } : {}) };
   const total = await db.entryNumber.count({ where });
-  const numbers = await db.entryNumber.findMany({ where, orderBy: { value: 'asc' }, skip: (page - 1) * 100, take: 100, select: { value: true, status: true } });
-  return { page, pageCount: Math.ceil(total / 100), numbers };
+  const numbers = await db.entryNumber.findMany({ where, orderBy: { value: 'asc' }, skip: (page - 1) * 100, take: 100, select: { value: true, status: true, holdKey: true, holdExpiresAt: true } });
+  const key = sessionKey(request.headers.cookie);
+  return { page, pageCount: Math.ceil(total / 100), numbers: numbers.map(n => ({ value: n.value, status: n.status === 'AVAILABLE' && n.holdKey && n.holdExpiresAt && n.holdExpiresAt > new Date() && n.holdKey !== key ? 'HELD' : n.status })) };
 });
 
 app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal', async (request, reply) => {
@@ -197,33 +192,11 @@ app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal', async (r
     reply.header('Set-Cookie', `cifraya_selection=${key}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`);
   }
   try {
-    const proposal = await db.$transaction(async tx => {
-      const existing = await tx.numberProposal.findUnique({ where: { campaignId_sessionKey: { campaignId: campaign.id, sessionKey: key } } });
-      const valid = existing && !existing.consumedAt && existing.expiresAt > new Date();
-      if (parsed.data.values) {
-        const values = [...parsed.data.values].sort((a, b) => a - b);
-        const count = await tx.entryNumber.count({ where: { campaignId: campaign.id, value: { in: values }, status: 'AVAILABLE' } });
-        if (count !== values.length) throw new Error('NUMBER_UNAVAILABLE');
-        return tx.numberProposal.upsert({
-          where: { campaignId_sessionKey: { campaignId: campaign.id, sessionKey: key } },
-          create: { campaignId: campaign.id, sessionKey: key, values, expiresAt: new Date(Date.now() + 15 * 60_000) },
-          update: { values, expiresAt: new Date(Date.now() + 15 * 60_000), consumedAt: null },
-        });
-      }
-      const currentAvailable = valid ? await tx.entryNumber.count({ where: { campaignId: campaign.id, value: { in: existing.values }, status: 'AVAILABLE' } }) : 0;
-      if (valid && existing.values.length === parsed.data.quantity && currentAvailable === existing.values.length) return existing;
-      const available = await tx.entryNumber.findMany({ where: { campaignId: campaign.id, status: 'AVAILABLE' }, select: { value: true } });
-      if (available.length < parsed.data.quantity) throw new Error('NOT_ENOUGH_NUMBERS');
-      const values = chooseBaseNumbers(available.map(item => item.value), parsed.data.quantity, campaign.numberWidth, campaign.invertedEnabled);
-      if (!values) throw new Error('NOT_ENOUGH_NUMBERS');
-      return tx.numberProposal.upsert({
-        where: { campaignId_sessionKey: { campaignId: campaign.id, sessionKey: key } },
-        create: { campaignId: campaign.id, sessionKey: key, values, expiresAt: new Date(Date.now() + 15 * 60_000) },
-        update: { values, changesUsed: valid && existing.values.length === parsed.data.quantity ? existing.changesUsed : 0, expiresAt: new Date(Date.now() + 15 * 60_000), consumedAt: null },
-      });
-    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
-    return { values: proposal.values, changesRemaining: 5 - proposal.changesUsed, invertedValues: await availableInvertedValues(campaign.id, proposal.values, campaign.numberWidth, campaign.invertedEnabled) };
+    const proposal = await selectNumbers(db, campaign, key, parsed.data);
+    broadcast('numbers');
+    return proposal;
   } catch (error) {
+    if (error instanceof Error && error.message === 'CAMPAIGN_CLOSED') return reply.code(409).send({ error: 'Esta rifa ya no está disponible.' });
     if (error instanceof Error && error.message === 'NUMBER_UNAVAILABLE') return reply.code(409).send({ error: 'Uno de esos números ya no está disponible. Elegí otro.' });
     if (error instanceof Error && error.message === 'NO_CHANGES_LEFT') return reply.code(409).send({ error: 'Ya usaste los cinco cambios disponibles.' });
     if (error instanceof Error && error.message === 'NOT_ENOUGH_NUMBERS') return reply.code(409).send({ error: 'No quedan suficientes números disponibles.' });
@@ -239,18 +212,11 @@ app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal/change', a
   const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, select: { id: true, status: true, numberWidth: true, invertedEnabled: true } });
   if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible.' });
   try {
-    const proposal = await db.$transaction(async tx => {
-      const existing = await tx.numberProposal.findUnique({ where: { campaignId_sessionKey: { campaignId: campaign.id, sessionKey: key } } });
-      if (!existing || existing.consumedAt || existing.expiresAt <= new Date()) throw new Error('PROPOSAL_EXPIRED');
-      if (existing.changesUsed >= 5) throw new Error('NO_CHANGES_LEFT');
-      const available = await tx.entryNumber.findMany({ where: { campaignId: campaign.id, status: 'AVAILABLE', value: { notIn: existing.values } }, select: { value: true } });
-      if (available.length < existing.values.length) throw new Error('NOT_ENOUGH_NUMBERS');
-      const values = chooseBaseNumbers(available.map(item => item.value), existing.values.length, campaign.numberWidth, campaign.invertedEnabled);
-      if (!values) throw new Error('NOT_ENOUGH_NUMBERS');
-      return tx.numberProposal.update({ where: { id: existing.id }, data: { values, changesUsed: { increment: 1 }, expiresAt: new Date(Date.now() + 15 * 60_000) } });
-    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
-    return { values: proposal.values, changesRemaining: 5 - proposal.changesUsed, invertedValues: await availableInvertedValues(campaign.id, proposal.values, campaign.numberWidth, campaign.invertedEnabled) };
+    const proposal = await selectNumbers(db, campaign, key, { quantity: 0, change: true });
+    broadcast('numbers');
+    return proposal;
   } catch (error) {
+    if (error instanceof Error && error.message === 'CAMPAIGN_CLOSED') return reply.code(409).send({ error: 'Esta rifa ya no está disponible.' });
     if (error instanceof Error && error.message === 'PROPOSAL_EXPIRED') return reply.code(409).send({ error: 'La selección venció. Generá otra.' });
     if (error instanceof Error && error.message === 'NO_CHANGES_LEFT') return reply.code(409).send({ error: 'Ya usaste los cinco cambios disponibles.' });
     if (error instanceof Error && error.message === 'NOT_ENOUGH_NUMBERS') return reply.code(409).send({ error: 'No quedan suficientes números diferentes disponibles.' });
@@ -301,10 +267,11 @@ app.post('/api/reservations', async (request, reply) => {
         },
       });
       const claimed = await tx.entryNumber.updateMany({
-        where: { campaignId: campaign.id, value: { in: allValues }, status: 'AVAILABLE' },
-        data: { status: 'RESERVED', reservationId: created.id },
+        where: { campaignId: campaign.id, value: { in: allValues }, status: 'AVAILABLE', holdKey: key, holdExpiresAt: { gt: new Date() } },
+        data: { status: 'RESERVED', reservationId: created.id, holdKey: null, holdExpiresAt: null },
       });
       if (claimed.count !== allValues.length) throw new Error('NUMBER_UNAVAILABLE');
+      await tx.entryNumber.updateMany({ where: { campaignId: campaign.id, holdKey: key }, data: { holdKey: null, holdExpiresAt: null } });
       await enqueuePaymentEmail(tx, created.id, 'RESERVED');
       return created;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
