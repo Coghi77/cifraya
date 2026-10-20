@@ -26,7 +26,18 @@ export async function auditStickers(request, db, proof, token) {
   const email=await db.emailNotification.findFirst({where:{reservationId:stored.id,kind:'RESERVED'}});
   assert.match(email.html,/15 stickers/);
   const patch = async body => {const response=await fetch('http://127.0.0.1:4199/api/admin/campaigns/'+id,{method:'PATCH',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({title:data.title,description:'',...body})});return {status:response.status,data:await response.json()};};
+  assert.equal((await patch({drawMode:'DATE',drawDate:null})).status,400);
+  const dated=await patch({drawMode:'DATE',drawDate:'2020-01-01T00:00:00.000Z'});
+  assert.equal(dated.status,200);assert.equal(dated.data.drawMode,'DATE');
+  assert.equal((await patch({})).data.drawDate,'2020-01-01T00:00:00.000Z');
+  // Expired countdown must not close sales or change existing orders.
   const pending=await request('/api/campaigns/sticker-audit/proposal',{quantity:30});
+  assert.equal(pending.status,200);
+  for(const drawMode of ['SOLD_OUT','ANNOUNCED']) {
+    const changed=await patch({drawMode});assert.equal(changed.status,200);assert.equal(changed.data.drawDate,null);
+    assert.equal((await request('/api/reservations/lookup',{token:order.data.token})).data.totalCrc,25000);
+  }
+  console.log('Draw schedule PASS: date required, live edits preserved orders, elapsed date permits sales, optional modes clear date');
   assert.equal((await patch({packages:[{quantity:3,priceCrc:100}]})).status,400);
   assert.equal((await patch({numbersPerSticker:3})).status,400);
   assert.equal((await patch({packages:[{quantity:2,priceCrc:1500},{quantity:30,priceCrc:22000}]})).status,200);

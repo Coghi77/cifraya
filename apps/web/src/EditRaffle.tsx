@@ -1,10 +1,11 @@
+import DrawScheduleEditor, {toDrawDate,fromDrawDate} from './DrawScheduleEditor';
 import StickerCardEditor, { cardPackages, type StickerCard } from './StickerCardEditor';
 import BrandSelect, { numberCountOptions } from './BrandSelect';
 import PrizeEditor from './PrizeEditor';
 import { useEffect, useState, type FormEvent } from 'react';
 
 export type EditableRaffle = {
-  id: string; status: string; title: string; slug: string; description: string;
+  drawMode:string; drawDate:string|null; id: string; status: string; title: string; slug: string; description: string;
   prize: string; prizes: string[]; prizeSources: number[]; prizeCount: number; secondPrize: string | null; thirdPrize: string | null;
   numbersPerSticker: number | null; priceCrc: number; numberCount: number; invertedEnabled: boolean; invertedPrizeEnabled: boolean; packages: { quantity: number; priceCrc: number }[];
 };
@@ -13,7 +14,7 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
   raffle: EditableRaffle; token: string; onClose: () => void; onSaved: () => void; onUnauthorized: () => void;
 }) {
   const [form, setForm] = useState({
-    title: raffle.title, slug: raffle.slug, description: raffle.description, prize: raffle.prize,
+    drawMode:raffle.drawMode || 'ANNOUNCED', drawDate:fromDrawDate(raffle.drawDate), title: raffle.title, slug: raffle.slug, description: raffle.description, prize: raffle.prize,
     prizes: raffle.prizes, prizeSources: raffle.prizeSources,
     numbersPerSticker: String(raffle.numbersPerSticker || 2),
     priceCrc: String(raffle.priceCrc), numberCount: String(raffle.numberCount),
@@ -34,9 +35,9 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
     event.preventDefault();
     if (isDraft && (form.prizes.length > Number(form.numberCount) || form.prizes.some(prize => prize.trim().length < 3))) { setError('Completá cada premio y verificá que no haya más premios que números.'); return; }
     const payload = isDraft ? {
-      ...form, priceCrc: Number(form.priceCrc), numberCount: Number(form.numberCount),
+      ...form, drawDate:form.drawMode==='DATE'?toDrawDate(form.drawDate):null, priceCrc: Number(form.priceCrc), numberCount: Number(form.numberCount),
       numbersPerSticker: Number(form.numbersPerSticker), packages: cardPackages(cards, Number(form.numbersPerSticker)),
-    } : { title: form.title, description: form.description, ...(raffle.status === 'LIVE' ? {packages:cardPackages(cards,raffle.numbersPerSticker || 1)} : {}) };
+    } : { title: form.title, description: form.description, ...(raffle.status === 'LIVE' ? {packages:cardPackages(cards,raffle.numbersPerSticker || 1), drawMode:form.drawMode, drawDate:form.drawMode==='DATE'?toDrawDate(form.drawDate):null} : {}) };
     setBusy(true); setError('');
     try {
       const response = await fetch(`/api/admin/campaigns/${raffle.id}`, { method: 'PATCH', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -58,6 +59,7 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
         <label>Nombre de la rifa<input required minLength={3} maxLength={120} value={form.title} onChange={event => setForm({ ...form, title: event.target.value })}/></label>
         {isDraft && <label>Identificador URL<input required pattern="[a-z0-9]+(-[a-z0-9]+)*" maxLength={80} value={form.slug} onChange={event => setForm({ ...form, slug: event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}/></label>}
         <label>Descripción<textarea maxLength={3000} rows={4} value={form.description} onChange={event => setForm({ ...form, description: event.target.value })}/></label>
+        {raffle.status!=='CLOSED' && <DrawScheduleEditor mode={form.drawMode} date={form.drawDate} onChange={(drawMode,drawDate)=>setForm({...form,drawMode,drawDate})}/>}
         {isDraft && <>
           <PrizeEditor prizes={form.prizes} sources={form.prizeSources} onChange={(prizes, prizeSources) => setForm({ ...form, prizes, prizeSources })}/>
           <div className="form-row"><label>Precio por sticker (₡)<input required inputMode="numeric" pattern="[0-9]+" value={form.priceCrc} onChange={event => setForm({ ...form, priceCrc: event.target.value.replace(/\D/g, '') })}/></label><div className="select-field"><span>Cantidad de números</span><BrandSelect label="Cantidad de números" required value={form.numberCount} onChange={value => setForm({ ...form, numberCount: value })} options={numberCountOptions}/></div></div>

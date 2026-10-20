@@ -4,8 +4,11 @@ import {ChevronLeft, ChevronRight, X, Expand} from 'lucide-react';
 type Photo = {url:string};
 export default function PrizePhoto({photos, src, title}: {photos:Photo[]; src:string; title:string}) {
   const [open,setOpen]=useState(false);
+  const [chosen,setChosen]=useState(src);
   const images=photos.length ? photos : [{url:src}];
-  return <><button type="button" className="prize-photo-open" aria-label={'Ampliar fotos de '+title} onClick={()=>setOpen(true)}><img src={src} alt={title}/><span className="prize-photo-hint"><Expand size={16}/> Ampliar foto{images.length>1 ? ` · ${images.length} fotos` : ''}</span></button>{open && <PrizeGallery photos={images} title={title} initialIndex={Math.max(0,images.findIndex(photo=>photo.url===src))} onClose={()=>setOpen(false)}/>}</>;
+  const selected=images.some(photo=>photo.url===chosen)?chosen:images[0].url;
+  useEffect(()=>setChosen(src),[src]);
+  return <div className="prize-photo"><button type="button" className="prize-photo-open" aria-label={'Ampliar fotos de '+title} onClick={()=>setOpen(true)}><img src={selected} alt={title}/><span className="prize-photo-hint"><Expand size={16}/> Ampliar foto</span></button>{images.length>1 && <div className="prize-photo-thumbnails" aria-label="Fotos del premio">{images.map((photo,index)=><button key={photo.url} type="button" aria-label={`Ver foto ${index+1}`} aria-pressed={selected===photo.url} onClick={()=>setChosen(photo.url)}><img src={photo.url} alt="" loading="lazy"/></button>)}</div>}{open && <PrizeGallery photos={images} title={title} initialIndex={Math.max(0,images.findIndex(photo=>photo.url===selected))} onClose={()=>setOpen(false)}/>}</div>;
 }
 
 function PrizeGallery({photos,title,initialIndex,onClose}:{photos:Photo[];title:string;initialIndex:number;onClose:()=>void}) {

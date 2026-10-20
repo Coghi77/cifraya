@@ -50,6 +50,7 @@ model Campaign {
   invertedEnabled Boolean        @default(false)
   invertedPrizeEnabled Boolean   @default(false)
   status         CampaignStatus @default(DRAFT)
+  drawMode       String         @default("ANNOUNCED")
   drawDate       DateTime?
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt

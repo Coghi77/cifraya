@@ -142,3 +142,9 @@ scripts/lottery-audit.mjs prueba inventario100k, vista previa con autorización,
 - Revisión móvil: CheckoutDialog.tsx usa dialog nativo con foco y scroll controlados. Autocompletado y teclado telefónico, tarjetas en dos columnas y acceso directo a compra. Resultados y límites de la auditoría en docs/MOBILE_SECURITY_REVIEW.md.
 
 - Todos los correos nuevos del pedido incluyen el lookupToken completo como código copiable (HTML y texto), más el enlace privado existente. Diagnósticos no incluyen códigos reales; no se reescriben mensajes ya encolados. Pruebas en paymentEmails.test.mjs. Buscar boletos separa botón, pase y comprobantes con gap de 20 px.
+
+## Galería y fecha del sorteo (2026-10-20)
+- PrizePhoto muestra una imagen completa y miniaturas seleccionables debajo; abre el modal en la imagen elegida. Reutilizado en Inicio y detalle, hasta tres fotos.
+- Campaign.drawMode: DATE, SOLD_OUT o ANNOUNCED. DrawScheduleEditor permite editar modalidad y fecha en borradores y rifas LIVE. Los campos se conservan cuando no se envían; CLOSED no admite cambios de fecha. Migración conserva fechas existentes como DATE.
+- Fecha/hora de administración siempre representa Costa Rica (UTC-6), almacenada en UTC. DrawCountdown actualiza localmente cada segundo, sin peticiones adicionales. Es informativo: llegar a cero NO cierra ventas, no libera reservas ni declara ganadores. Sin fecha muestra Hasta agotar números o Fecha por anunciar.
+- Validación y pruebas: drawSchedule.ts, drawSchedule.test.mjs y sticker-audit.mjs verifican fechas, modalidades, edición sin alterar pedidos y ventas después de vencer la cuenta regresiva.

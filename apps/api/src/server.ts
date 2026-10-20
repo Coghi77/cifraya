@@ -1,3 +1,4 @@
+import {drawFields,resolveDrawSchedule} from './drawSchedule.js';
 import { composeLotteryNumber } from './lotteryResults.js';
 import { purchaseOffer, validStickerQuantity } from './stickers.js';
 import { selectNumbers } from './selectionHolds.js';
@@ -61,7 +62,7 @@ const campaignInput = z.preprocess(normalizePrizeInput, z.object({
   invertedEnabled: z.boolean().default(false),
   invertedPrizeEnabled: z.boolean().default(false),
   packages: z.array(z.object({ quantity: z.number().int().min(1).max(100), priceCrc: z.number().int().positive().max(100_000_000) })).max(10).default([]),
-  drawDate: z.string().datetime().optional(),
+  ...drawFields,
 }).refine(data => validPrizeSources(data.prizes, data.prizeSources), { message: 'Cada premio inverso debe apuntar a un premio directo anterior.', path: ['prizeSources'] }).refine(data => data.prizes.length <= data.numberCount, { message: 'No puede haber más premios que números.', path: ['prizes'] }).transform(data => ({ ...data, invertedPrizeEnabled: data.prizeSources.some(source => source > 0), prize: data.prizes[0], prizeCount: data.prizes.length, secondPrize: data.prizes[1], thirdPrize: data.prizes[2] })));
 
 const reservationInput = z.object({
@@ -517,6 +518,8 @@ app.post('/api/admin/campaigns', async (request, reply) => {
   const parsed = campaignInput.safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: 'Datos inválidos', details: parsed.error.flatten() });
   const input = parsed.data;
+  const schedule=resolveDrawSchedule(input);
+  if(!schedule.success) return reply.code(400).send({error:"Indicá la fecha y hora del sorteo."});
   if (new Set(input.packages.map(item => item.quantity)).size !== input.packages.length || input.packages.some(item => input.numbersPerSticker ? !validStickerQuantity(item.quantity, input.numbersPerSticker) : (item.quantity < 2 || item.quantity > 20 || item.priceCrc >= item.quantity * input.priceCrc))) {
     return reply.code(400).send({ error: 'Revisá las tarjetas: las cantidades deben ser distintas, incluir stickers completos y respetar los límites.' });
   }
@@ -538,7 +541,7 @@ app.post('/api/admin/campaigns', async (request, reply) => {
         numberWidth: String(input.numberCount - 1).length,
         invertedEnabled: input.invertedEnabled,
         invertedPrizeEnabled: input.invertedPrizeEnabled,
-        drawDate: input.drawDate ? new Date(input.drawDate) : undefined,
+        ...schedule.data,
         packages: { create: input.packages },
       },
     });
@@ -558,10 +561,14 @@ app.post('/api/admin/campaigns', async (request, reply) => {
 
 app.patch<{ Params: { id: string } }>('/api/admin/campaigns/:id', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
-  const current = await db.campaign.findUnique({ where: { id: request.params.id }, select: { status: true } });
+  const current = await db.campaign.findUnique({ where: { id: request.params.id }, select: { status: true, drawMode:true, drawDate:true } });
   if (!current) return reply.code(404).send({ error: 'Rifa no encontrada.' });
-  const parsed = (current.status === 'DRAFT' ? campaignInput : z.object({ title: z.string().min(3).max(120), description: z.string().max(3000).default(''), packages: z.array(z.object({quantity:z.number().int().min(1).max(100),priceCrc:z.number().int().positive().max(100_000_000)})).max(10).optional() }).strict()).safeParse(request.body);
+  const parsed = (current.status === 'DRAFT' ? campaignInput : z.object({ ...drawFields, title: z.string().min(3).max(120), description: z.string().max(3000).default(''), packages: z.array(z.object({quantity:z.number().int().min(1).max(100),priceCrc:z.number().int().positive().max(100_000_000)})).max(10).optional() }).strict()).safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: 'Revisá los datos de la rifa.' });
+  const hasSchedule=parsed.data.drawMode!==undefined || parsed.data.drawDate!==undefined;
+  const schedule=resolveDrawSchedule(parsed.data,current);
+  if(!schedule.success || (hasSchedule && current.status==='CLOSED')) return reply.code(400).send({error:'Revisá la fecha del sorteo; una rifa finalizada no admite cambios de fecha.'});
+  const scheduleUpdate=hasSchedule ? schedule.data : {};
   try {
     const updated = await db.$transaction(async tx => {
       const campaign = await tx.campaign.findUnique({ where: { id: request.params.id }, select: { status: true, numbersPerSticker: true, numberCount: true, _count: { select: { reservations: true, winners: true } } } });
@@ -573,7 +580,7 @@ app.patch<{ Params: { id: string } }>('/api/admin/campaigns/:id', async (request
           if (new Set(packages.map(item => item.quantity)).size !== packages.length || packages.some(item => !validStickerQuantity(item.quantity, campaign.numbersPerSticker || 1))) throw new Error('INVALID_PACKAGES');
           await tx.pricePackage.deleteMany({where:{campaignId:request.params.id}});
         }
-        return tx.campaign.update({where:{id:request.params.id},data:{title:parsed.data.title,description:parsed.data.description,...(packages !== undefined ? {packages:{create:packages}} : {})}});
+        return tx.campaign.update({where:{id:request.params.id},data:{...scheduleUpdate,title:parsed.data.title,description:parsed.data.description,...(packages !== undefined ? {packages:{create:packages}} : {})}});
       }
       const input = parsed.data as z.infer<typeof campaignInput>;
       if (campaign._count.reservations || campaign._count.winners) throw new Error('CAMPAIGN_CHANGED');
@@ -586,7 +593,7 @@ app.patch<{ Params: { id: string } }>('/api/admin/campaigns/:id', async (request
       }
       await tx.pricePackage.deleteMany({ where: { campaignId: request.params.id } });
       return tx.campaign.update({ where: { id: request.params.id }, data: {
-        title: input.title, slug: input.slug, description: input.description, prize: input.prize,
+        ...scheduleUpdate, title: input.title, slug: input.slug, description: input.description, prize: input.prize,
         prizes: input.prizes, prizeSources: input.prizeSources, prizeCount: input.prizeCount, secondPrize: input.prizeCount >= 2 ? input.secondPrize : null,
         thirdPrize: input.prizes[2] ?? null, priceCrc: input.priceCrc, numbersPerSticker: input.numbersPerSticker,
         numberCount: input.numberCount, numberWidth: String(input.numberCount - 1).length,

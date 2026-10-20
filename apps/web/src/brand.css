@@ -247,3 +247,31 @@ h1,h2,h3 { letter-spacing:-.045em; }
   .lookup-layout { gap:24px; }
   .lookup-result .ticket-name { overflow-wrap:anywhere; }
 }
+
+/* Prize gallery with a quiet thumbnail strip; the purchase content stays unchanged. */
+.prize-photo { width:100%; height:100%; min-height:0; display:grid; grid-template-rows:minmax(0,1fr) auto; gap:12px; }
+.prize-photo-open { min-height:0; overflow:hidden; border-radius:12px; }
+.prize-photo-thumbnails { display:flex; gap:10px; justify-content:center; overflow-x:auto; padding:3px; }
+.prize-photo-thumbnails button { flex:0 0 72px; height:72px; padding:3px; border:2px solid transparent; border-radius:10px; background:#e5e5e5; opacity:.6; }
+.prize-photo-thumbnails button[aria-pressed=true] { opacity:1; border-color:#ff4200; }
+.prize-photo-thumbnails img { display:block; width:100%; height:100%; object-fit:contain; border-radius:6px; }
+.prize-photo-thumbnails button:focus-visible { outline:3px solid #395aff; outline-offset:1px; }
+.current-raffle-image { padding:14px; background:transparent; border:0; }
+.draw-date-note { display:flex; align-items:center; gap:8px; font-size:14px; line-height:1.5; margin:12px 0; }
+.draw-countdown { width:100%; padding:20px; margin:12px 0; border-radius:14px; background:linear-gradient(120deg,#bd2d00,#ff4200); color:white; }
+.draw-countdown > div:first-child { display:flex; align-items:center; gap:10px; }
+.draw-countdown time { display:block; margin:10px 0 16px; font-size:13px; line-height:1.5; }
+.draw-countdown-units { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+.draw-countdown-units > div { display:grid; gap:3px; text-align:center; border-radius:9px; background:#ffffff20; padding:10px 4px; }
+.draw-countdown-units b { font-size:26px; font-variant-numeric:tabular-nums; }
+.draw-countdown-units span { font-size:11px; }
+.draw-schedule-editor { display:grid; gap:12px; padding:18px; border:1px solid #666; border-radius:12px; min-width:0; }
+.draw-schedule-editor legend { color:#ff6a38; font-weight:700; padding:0 6px; }
+.draw-schedule-editor small { line-height:1.5; }
+@media(max-width:800px) {
+ .current-raffle-image,.detail-image { height:clamp(320px,52svh,460px); padding:14px; }
+ .prize-photo-thumbnails button { flex-basis:60px; height:60px; }
+ .draw-countdown { padding:16px; }
+}
+
+@media(min-width:801px) { .current-raffle-image { align-self:start; } }
