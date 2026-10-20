@@ -509,7 +509,7 @@ app.get<{ Params: { id: string } }>('/api/admin/reservations/:id', async (reques
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   await expireReservations();
   const reservation = await db.reservation.findUnique({ where: { id: request.params.id }, select: {
-    id: true, orderNumber: true, buyerName: true, buyerEmail: true, buyerPhone: true, selectedValues: true, status: true, totalCrc: true,
+    paymentMethod:true, id: true, orderNumber: true, buyerName: true, buyerEmail: true, buyerPhone: true, selectedValues: true, status: true, totalCrc: true,
     createdAt: true, expiresAt: true, proofSubmittedAt: true, confirmedAt: true, reviewNote: true,
     campaign: { select: { title: true, numberWidth: true } },
     proofs: { orderBy: { createdAt: 'asc' }, select: { id: true, createdAt: true } },

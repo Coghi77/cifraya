@@ -65,6 +65,7 @@ export async function auditStickers(request, db, proof, token) {
   const cashOrder=await request('/api/admin/reservations',cashBody,cashProposal.cookie,token);
   assert.equal(cashOrder.status,201);
   const cashStored=await db.reservation.findUnique({where:{id:cashOrder.data.reservationId},include:{numbers:true,proofs:true,emails:true}});
+  assert.equal((await request('/api/admin/reservations/'+cashOrder.data.reservationId,undefined,'',token)).data.paymentMethod,'CASH');
   assert.equal(cashStored.paymentMethod,'CASH');assert.equal(cashStored.status,'CONFIRMED');assert.ok(cashStored.confirmedAt);
   assert.equal(cashStored.proofs.length,0);assert.equal(cashStored.numbers.length,2);assert.ok(cashStored.numbers.every(n=>n.status==='SOLD'));
   assert.deepEqual(cashStored.emails.map(e=>e.kind),['CONFIRMED']);assert.match(cashStored.emails[0].html,/efectivo recibido/);
