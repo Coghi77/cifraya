@@ -94,3 +94,7 @@ Notificaciones de reserva: RESERVED al reclamar números; PENDING_REVIEW solo en
 ## Auditoría de reservas
 
 `scripts/reservation-audit.mjs` prueba HTTP y PostgreSQL real aislado: 12 selecciones y reservas simultáneas del mismo número (una acepta, once 409), 30 selecciones mixtas a través de dos procesos API sin números compartidos, conflictos entre paquetes, ausencia de reservas/correos huérfanos, duración de 30 minutos, comprobante tardío, conservación al revisar y exclusión de vendidos. No usa la base de producción ni envía correos. Instrucciones en docs/RESERVATION_AUDIT.md. El contador de la web se sincroniza con Date del servidor y avanza con reloj monotónico. La propuesta y su bloqueo exclusivo vencen a los cinco minutos. Confirmar los datos convierte atómicamente el bloqueo propio vigente en una reserva de 30 minutos para adjuntar el primer comprobante.
+
+## Studio: distribución y comprobación
+
+El centro de control usa dos secciones de ancho completo (Tus rifas y Nueva rifa), conservando el formulario montado al cambiar para no perder el borrador. Tarjetas de gestión en dos columnas en escritorio y una en pantallas pequeñas; estilos en brand.css. El encabezado Studio usa #ff4200. `scripts/security-audit.mjs`, ejecutado desde reservation-audit.mjs, prueba 18 rutas administrativas con credenciales ausentes/falsas, privacidad, precios, imágenes inválidas, límites de PIN y creación/edición de 10/20 premios. El manejador de errores oculta detalles de base de datos y devuelve 409 para identificadores duplicados.

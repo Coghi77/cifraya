@@ -18,6 +18,14 @@ import { createPublicCache } from './publicCache.js';
 
 const db = new PrismaClient();
 const app = Fastify({ logger: { redact: ['req.headers.authorization', 'req.headers.cookie'], serializers: { req: request => ({ method: request.method, url: request.url?.split('?')[0].replace(/(\/api\/reservations\/)[a-f0-9]{48}/g, '$1[redacted]') }) } } });
+// Never expose database diagnostics or internal paths in HTTP errors.
+app.setErrorHandler((error, request, reply) => {
+  const failure = error as { code?: string; statusCode?: number };
+  if (failure.code === 'P2002') return reply.code(409).send({ error: 'Ese identificador ya existe.' });
+  const status = failure.statusCode && failure.statusCode >= 400 && failure.statusCode < 500 ? failure.statusCode : 500;
+  if (status === 500) request.log.error({ code: failure.code || 'INTERNAL' }, 'Request failed');
+  return reply.code(status).send({ error: status === 500 ? 'No se pudo completar la operación. Intentá de nuevo.' : 'Solicitud inválida.' });
+});
 const publicCache = createPublicCache();
 const emailWorker = createEmailWorker(db, () => broadcast('reservations'), () => app.log.error('Email worker failed; queued messages retained'));
 registerSecurityHeaders(app, process.env.NODE_ENV === 'production');
