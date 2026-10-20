@@ -1,3 +1,4 @@
+import { purchaseOffer, validStickerQuantity } from './stickers.js';
 import { selectNumbers } from './selectionHolds.js';
 import { createEmailWorker, enqueuePaymentEmail, emailConfigured, paymentEmail } from './paymentEmails.js';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
@@ -53,6 +54,7 @@ const campaignInput = z.preprocess(normalizePrizeInput, z.object({
   prizeSources: z.array(z.number().int().min(0).max(10_000)).max(10_000),
   imageUrl: z.string().url().refine(value => new URL(value).protocol === 'https:', 'La imagen debe usar HTTPS.').optional(),
   priceCrc: z.number().int().positive().max(100_000_000),
+  numbersPerSticker: z.number().int().min(1).max(20).nullable().default(null),
   numberCount: z.union([z.literal(100), z.literal(1000), z.literal(10000)]),
   invertedEnabled: z.boolean().default(false),
   invertedPrizeEnabled: z.boolean().default(false),
@@ -62,14 +64,14 @@ const campaignInput = z.preprocess(normalizePrizeInput, z.object({
 
 const reservationInput = z.object({
   campaignId: z.string(),
-  values: z.array(z.number().int().nonnegative()).min(1).max(20),
+  values: z.array(z.number().int().nonnegative()).min(1).max(100),
   includeInverted: z.boolean().default(false),
   buyerName: z.string().min(2).max(120),
   buyerEmail: z.string().email().max(200),
   buyerPhone: z.string().min(8).max(25),
 });
 
-const proposalInput = z.object({ quantity: z.number().int().min(1).max(20), includeInverted: z.boolean().optional(), values: z.array(z.number().int().min(0).max(9999)).max(20).optional() }).refine(data => !data.values || (data.values.length <= data.quantity && new Set(data.values).size === data.values.length));
+const proposalInput = z.object({ quantity: z.number().int().min(1).max(100), includeInverted: z.boolean().optional(), values: z.array(z.number().int().min(0).max(9999)).max(100).optional() }).refine(data => !data.values || (data.values.length <= data.quantity && new Set(data.values).size === data.values.length));
 function sessionKey(cookie: string | undefined) {
   return cookie?.match(/(?:^|;\s*)cifraya_selection=([a-f0-9]{48})(?:;|$)/)?.[1];
 }
@@ -190,10 +192,10 @@ app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal', async (r
   await expireReservations();
   const parsed = proposalInput.safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: 'Seleccioná un paquete válido.' });
-  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, select: { id: true, status: true, numberWidth: true, invertedEnabled: true, packages: { select: { quantity: true } } } });
+  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, select: { id: true, status: true, numberWidth: true, invertedEnabled: true, numbersPerSticker: true, packages: { select: { quantity: true } } } });
   if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible.' });
   const offeredQuantities = campaign.packages.length ? campaign.packages.map(item => item.quantity) : [1];
-  if (!offeredQuantities.includes(parsed.data.quantity)) return reply.code(400).send({ error: 'Ese paquete no está disponible.' });
+  if (campaign.numbersPerSticker ? !validStickerQuantity(parsed.data.quantity, campaign.numbersPerSticker) : !offeredQuantities.includes(parsed.data.quantity)) return reply.code(400).send({ error: 'Esa cantidad no está disponible para esta rifa.' });
   let key = sessionKey(request.headers.cookie);
   if (!key) {
     key = randomBytes(24).toString('hex');
@@ -243,8 +245,8 @@ app.post('/api/reservations', async (request, reply) => {
   const campaign = await db.campaign.findUnique({ where: { id: input.campaignId }, include: { packages: packageSelect } });
   if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible' });
   if (uniqueValues.some(value => value >= campaign.numberCount)) return reply.code(400).send({ error: 'Número fuera del rango' });
-  const selectedPackage = campaign.packages.length ? campaign.packages.find(item => item.quantity === uniqueValues.length) : uniqueValues.length === 1 ? { priceCrc: campaign.priceCrc } : undefined;
-  if (!selectedPackage) return reply.code(400).send({ error: 'Seleccioná uno de los paquetes disponibles.' });
+  const selectedPackage = purchaseOffer(campaign, uniqueValues.length);
+  if (!selectedPackage) return reply.code(400).send({ error: 'Elegí una cantidad válida para esta rifa.' });
   if (input.includeInverted && !campaign.invertedEnabled) return reply.code(400).send({ error: 'Esta rifa no ofrece números invertidos.' });
   const extraValues = input.includeInverted ? invertedValues(uniqueValues, campaign.numberWidth, new Set(uniqueValues.map(value => reverseNumber(value, campaign.numberWidth)))) : [];
   if (input.includeInverted && !extraValues) return reply.code(400).send({ error: 'Estos números no admiten un conjunto invertido distinto.' });
@@ -270,6 +272,8 @@ app.post('/api/reservations', async (request, reply) => {
           selectedValues: allValues,
           baseValues: uniqueValues,
           includesInverted: input.includeInverted,
+          stickerCount: campaign.numbersPerSticker ? uniqueValues.length / campaign.numbersPerSticker : null,
+          numbersPerSticker: campaign.numbersPerSticker,
           totalCrc: selectedPackage.priceCrc * (input.includeInverted ? 2 : 1),
           expiresAt: new Date(Date.now() + 30 * 60_000),
         },
@@ -292,7 +296,8 @@ app.post('/api/reservations', async (request, reply) => {
       values: allValues,
       baseValues: uniqueValues,
       includesInverted: input.includeInverted,
-      totalCrc: reservation.totalCrc,
+      stickerCount: reservation.stickerCount, numbersPerSticker: reservation.numbersPerSticker,
+    totalCrc: reservation.totalCrc,
     });
   } catch (error) {
     if (error instanceof Error && error.message === 'CAMPAIGN_CLOSED') return reply.code(409).send({ error: 'Esta rifa ya no está disponible.' });
@@ -319,6 +324,7 @@ app.get<{ Params: { token: string } }>('/api/reservations/:token', async (reques
     expiresAt: reservation.expiresAt,
     orderNumber: reservation.orderNumber, createdAt: reservation.createdAt, confirmedAt: reservation.confirmedAt,
     buyerName: reservation.buyerName,
+    stickerCount: reservation.stickerCount, numbersPerSticker: reservation.numbersPerSticker,
     totalCrc: reservation.totalCrc,
     proofCount: reservation._count.proofs,
     proofSubmittedAt: reservation.proofSubmittedAt,
@@ -337,7 +343,7 @@ app.post('/api/reservations/lookup', async (request, reply) => {
   const reservation = await db.reservation.findUnique({
     where: { lookupToken: parsed.data.token },
     select: {
-      orderNumber: true, createdAt: true, confirmedAt: true,
+      orderNumber: true, createdAt: true, confirmedAt: true, stickerCount: true, numbersPerSticker: true,
       buyerName: true,
       status: true,
       expiresAt: true,
@@ -357,6 +363,7 @@ app.post('/api/reservations/lookup', async (request, reply) => {
     orderNumber: reservation.orderNumber, createdAt: reservation.createdAt, confirmedAt: reservation.confirmedAt,
     buyerName: reservation.buyerName,
     status: reservation.status,
+    stickerCount: reservation.stickerCount, numbersPerSticker: reservation.numbersPerSticker,
     totalCrc: reservation.totalCrc,
     proofCount: reservation._count.proofs,
     proofSubmittedAt: reservation.proofSubmittedAt,
@@ -423,7 +430,7 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/photos', { bodyLi
     const photo = await db.$transaction(async tx => {
       const campaign = await tx.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, _count: { select: { photos: true } } } });
       if (!campaign) throw new Error('CAMPAIGN_NOT_FOUND');
-      if (campaign._count.photos >= 5) throw new Error('PHOTO_LIMIT');
+      if (campaign._count.photos >= 3) throw new Error('PHOTO_LIMIT');
       return tx.campaignPhoto.create({
         data: { campaignId: campaign.id, mimeType: parsed.data.mimeType, data: bytes, sortOrder: campaign._count.photos },
         select: { id: true },
@@ -433,7 +440,7 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/photos', { bodyLi
     return reply.code(201).send({ id: photo.id, url: `/api/campaign-photos/${photo.id}` });
   } catch (error) {
     if (error instanceof Error && error.message === 'CAMPAIGN_NOT_FOUND') return reply.code(404).send({ error: 'Rifa no encontrada' });
-    if (error instanceof Error && error.message === 'PHOTO_LIMIT') return reply.code(409).send({ error: 'Cada rifa admite hasta 5 fotos.' });
+    if (error instanceof Error && error.message === 'PHOTO_LIMIT') return reply.code(409).send({ error: 'Cada rifa admite hasta 3 fotos.' });
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2034') return reply.code(409).send({ error: 'Las fotos cambiaron. Intentá de nuevo.' });
     throw error;
   }
@@ -517,12 +524,13 @@ app.post('/api/admin/campaigns', async (request, reply) => {
         thirdPrize: input.prizes[2] ?? null,
         imageUrl: input.imageUrl,
         priceCrc: input.priceCrc,
+        numbersPerSticker: input.numbersPerSticker,
         numberCount: input.numberCount,
         numberWidth: String(input.numberCount - 1).length,
         invertedEnabled: input.invertedEnabled,
         invertedPrizeEnabled: input.invertedPrizeEnabled,
         drawDate: input.drawDate ? new Date(input.drawDate) : undefined,
-        packages: { create: input.packages },
+        packages: { create: input.numbersPerSticker ? [] : input.packages },
       },
     });
     for (let start = 0; start < input.numberCount; start += 1000) {
@@ -563,10 +571,10 @@ app.patch<{ Params: { id: string } }>('/api/admin/campaigns/:id', async (request
       return tx.campaign.update({ where: { id: request.params.id }, data: {
         title: input.title, slug: input.slug, description: input.description, prize: input.prize,
         prizes: input.prizes, prizeSources: input.prizeSources, prizeCount: input.prizeCount, secondPrize: input.prizeCount >= 2 ? input.secondPrize : null,
-        thirdPrize: input.prizes[2] ?? null, priceCrc: input.priceCrc,
+        thirdPrize: input.prizes[2] ?? null, priceCrc: input.priceCrc, numbersPerSticker: input.numbersPerSticker,
         numberCount: input.numberCount, numberWidth: String(input.numberCount - 1).length,
         invertedEnabled: input.invertedEnabled, invertedPrizeEnabled: input.invertedPrizeEnabled,
-        packages: { create: input.packages },
+        packages: { create: input.numbersPerSticker ? [] : input.packages },
       } });
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, timeout: 60_000 });
     broadcast('campaigns');

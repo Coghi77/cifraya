@@ -113,3 +113,12 @@ h1,h2,h3 { letter-spacing:-.045em; }
 .brand-select-menu [role=option] svg { flex-shrink:0; }
 .select-field { display:grid; align-content:start; gap:7px; min-width:0; }
 .select-field > span { color:inherit; font-size:12px; font-weight:800; }
+
+.sticker-picker { display: grid; gap: 12px; padding: 18px; border: 1px solid #d6d6d6; border-radius: 14px; background: #fff; color: #191919; }
+.sticker-picker p { margin: 0; line-height: 1.6; }
+.sticker-picker label { display: grid; gap: 8px; font-weight: 700; }
+.sticker-picker input { width: 100%; min-height: 46px; padding: 10px 14px; border: 1px solid #777; border-radius: 8px; background: #fff; color: #191919; font: inherit; }
+.sticker-picker input:focus-visible { outline: 2px solid #ff4200; outline-offset: 2px; }
+
+.random-picker .package-offers > .sticker-picker { grid-template-columns: 1fr; gap: 12px; }
+.sticker-picker > .button { background: #ff4200; color: #191919; border-color: #ff4200; }

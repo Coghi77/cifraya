@@ -5,7 +5,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 export type EditableRaffle = {
   id: string; status: string; title: string; slug: string; description: string;
   prize: string; prizes: string[]; prizeSources: number[]; prizeCount: number; secondPrize: string | null; thirdPrize: string | null;
-  priceCrc: number; numberCount: number; invertedEnabled: boolean; invertedPrizeEnabled: boolean; packages: { quantity: number; priceCrc: number }[];
+  numbersPerSticker: number | null; priceCrc: number; numberCount: number; invertedEnabled: boolean; invertedPrizeEnabled: boolean; packages: { quantity: number; priceCrc: number }[];
 };
 
 export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthorized }: {
@@ -14,10 +14,10 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
   const [form, setForm] = useState({
     title: raffle.title, slug: raffle.slug, description: raffle.description, prize: raffle.prize,
     prizes: raffle.prizes, prizeSources: raffle.prizeSources,
+    numbersPerSticker: String(raffle.numbersPerSticker || 2),
     priceCrc: String(raffle.priceCrc), numberCount: String(raffle.numberCount),
     invertedEnabled: raffle.invertedEnabled, invertedPrizeEnabled: raffle.invertedPrizeEnabled,
   });
-  const [packages, setPackages] = useState(raffle.packages.map(item => ({ quantity: String(item.quantity), priceCrc: String(item.priceCrc) })));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const isDraft = raffle.status === 'DRAFT';
@@ -33,7 +33,7 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
     if (isDraft && (form.prizes.length > Number(form.numberCount) || form.prizes.some(prize => prize.trim().length < 3))) { setError('Completá cada premio y verificá que no haya más premios que números.'); return; }
     const payload = isDraft ? {
       ...form, priceCrc: Number(form.priceCrc), numberCount: Number(form.numberCount),
-      packages: packages.map(item => ({ quantity: Number(item.quantity), priceCrc: Number(item.priceCrc) })),
+      numbersPerSticker: Number(form.numbersPerSticker), packages: [],
     } : { title: form.title, description: form.description };
     setBusy(true); setError('');
     try {
@@ -58,9 +58,9 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
         <label>Descripción<textarea maxLength={3000} rows={4} value={form.description} onChange={event => setForm({ ...form, description: event.target.value })}/></label>
         {isDraft && <>
           <PrizeEditor prizes={form.prizes} sources={form.prizeSources} onChange={(prizes, prizeSources) => setForm({ ...form, prizes, prizeSources })}/>
-          <div className="form-row"><label>Precio por boleto (₡)<input required inputMode="numeric" pattern="[0-9]+" value={form.priceCrc} onChange={event => setForm({ ...form, priceCrc: event.target.value.replace(/\D/g, '') })}/></label><div className="select-field"><span>Cantidad de números</span><BrandSelect label="Cantidad de números" required value={form.numberCount} onChange={value => setForm({ ...form, numberCount: value })} options={numberCountOptions}/></div></div>
-          <div className="inverted-settings"><label><input type="checkbox" checked={form.invertedEnabled} onChange={event => setForm({ ...form, invertedEnabled: event.target.checked, invertedPrizeEnabled: event.target.checked && form.invertedPrizeEnabled })}/> Ofrecer paquete con números invertidos por el doble del precio</label></div>
-          <div className="package-editor"><div className="package-heading"><strong>Paquetes de números</strong><button type="button" disabled={packages.length >= 10} onClick={() => setPackages(current => [...current, { quantity: '', priceCrc: '' }])}>+ Agregar paquete</button></div>{packages.map((item, index) => <div className="package-row" key={index}><label>Cantidad<input required inputMode="numeric" pattern="[0-9]+" value={item.quantity} onChange={event => setPackages(current => current.map((entry, position) => position === index ? { ...entry, quantity: event.target.value.replace(/\D/g, '') } : entry))}/></label><label>Precio del paquete (₡)<input required inputMode="numeric" pattern="[0-9]+" value={item.priceCrc} onChange={event => setPackages(current => current.map((entry, position) => position === index ? { ...entry, priceCrc: event.target.value.replace(/\D/g, '') } : entry))}/></label><button type="button" aria-label="Quitar paquete" onClick={() => setPackages(current => current.filter((_, position) => position !== index))}>×</button></div>)}</div>
+          <div className="form-row"><label>Precio por sticker (₡)<input required inputMode="numeric" pattern="[0-9]+" value={form.priceCrc} onChange={event => setForm({ ...form, priceCrc: event.target.value.replace(/\D/g, '') })}/></label><div className="select-field"><span>Cantidad de números</span><BrandSelect label="Cantidad de números" required value={form.numberCount} onChange={value => setForm({ ...form, numberCount: value })} options={numberCountOptions}/></div></div>
+          <div className="inverted-settings"><label><input type="checkbox" checked={form.invertedEnabled} onChange={event => setForm({ ...form, invertedEnabled: event.target.checked, invertedPrizeEnabled: event.target.checked && form.invertedPrizeEnabled })}/> Ofrecer números invertidos adicionales por el doble del precio</label></div>
+          <label>Números incluidos por sticker<input required type="number" min="1" max="20" step="1" value={form.numbersPerSticker} onChange={event => setForm({ ...form, numbersPerSticker: event.target.value })}/></label>
         </>}
         {error && <p className="edit-raffle-error" role="alert">{error}</p>}
         <div className="edit-raffle-actions"><button type="button" onClick={onClose} disabled={busy}>Cancelar</button><button type="submit" disabled={busy}>{busy ? 'Guardando...' : 'Guardar cambios'}</button></div>

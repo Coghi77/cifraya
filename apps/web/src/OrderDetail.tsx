@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 
 type Order = {
-  orderNumber: number; buyerName: string; status: string; totalCrc: number;
+  stickerCount: number | null; numbersPerSticker: number | null; orderNumber: number; buyerName: string; status: string; totalCrc: number;
   createdAt: string; confirmedAt: string | null; expiresAt: string; reviewNote: string | null;
   values: number[]; baseValues: number[]; includesInverted: boolean; proofCount: number;
   campaign: { title: string; numberWidth: number };
@@ -41,7 +41,7 @@ export default function OrderDetail({ renderProof }: { renderProof: (token: stri
     {error && <div role="alert"><p>{error}</p><button className="button dark" onClick={() => void refresh()}>Volver a consultar</button></div>}
     {!order && !error && <p role="status">Cargando pedido…</p>}
     {order && <section className="order-card" aria-label="Detalle del pedido"><div className="order-heading"><h2>{order.campaign.title}</h2><span role="status">{labels[order.status] || order.status}</span></div>
-      <dl className="order-facts"><div><dt>A nombre de</dt><dd>{order.buyerName}</dd></div><div><dt>Total</dt><dd>{money(order.totalCrc)}</dd></div><div><dt>Fecha del pedido</dt><dd>{date(order.createdAt)}</dd></div><div><dt>Método de pago</dt><dd>SINPE Móvil</dd></div><div><dt>Paquete</dt><dd>{order.baseValues.length || order.values.length} números{order.includesInverted ? ' + invertidos' : ''}</dd></div><div><dt>Boletos del pedido</dt><dd>{order.values.length}</dd></div>{order.confirmedAt && <div><dt>Pago confirmado</dt><dd>{date(order.confirmedAt)}</dd></div>}</dl>
+      <dl className="order-facts"><div><dt>A nombre de</dt><dd>{order.buyerName}</dd></div><div><dt>Total</dt><dd>{money(order.totalCrc)}</dd></div><div><dt>Fecha del pedido</dt><dd>{date(order.createdAt)}</dd></div><div><dt>Método de pago</dt><dd>SINPE Móvil</dd></div><div><dt>{order.stickerCount ? 'Stickers' : 'Selección'}</dt><dd>{order.stickerCount && `${order.stickerCount} stickers de ${order.numbersPerSticker} números · `}{order.baseValues.length || order.values.length} números{order.includesInverted ? ' + invertidos' : ''}</dd></div><div><dt>Números del pedido</dt><dd>{order.values.length}</dd></div>{order.confirmedAt && <div><dt>Pago confirmado</dt><dd>{date(order.confirmedAt)}</dd></div>}</dl>
       <div className="order-tickets"><h3>Números de tu pedido</h3><div>{order.values.map(value => <span key={value}>{String(value).padStart(order.campaign.numberWidth, '0')}{order.includesInverted && !order.baseValues.includes(value) && <small>Inverso</small>}</span>)}</div></div>
       {order.status === 'ACTIVE' && <p>Adjuntá tu comprobante antes del {date(order.expiresAt)} para que revisemos el pago.</p>}
       {order.status === 'PENDING_REVIEW' && <p>Tu comprobante está en revisión. El estado se actualiza automáticamente al resolver el pago.</p>}

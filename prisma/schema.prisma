@@ -41,6 +41,7 @@ model Campaign {
   thirdPrize     String?
   imageUrl       String?
   priceCrc       Int
+  numbersPerSticker Int?
   numberCount    Int
   numberWidth    Int
   invertedEnabled Boolean        @default(false)
@@ -136,6 +137,8 @@ model Reservation {
   buyerPhone     String
   selectedValues Int[]             @default([])
   baseValues     Int[]             @default([])
+  stickerCount   Int?
+  numbersPerSticker Int?
   includesInverted Boolean         @default(false)
   status         ReservationStatus @default(ACTIVE)
   expiresAt      DateTime

@@ -1,7 +1,7 @@
 import type { Prisma, PrismaClient } from '@prisma/client';
 
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
-export function paymentEmail(order: { orderNumber: number; buyerName: string; lookupToken: string; selectedValues: number[]; totalCrc: number; reviewNote: string | null; campaign: { title: string; numberWidth: number } }, kind: 'CONFIRMED' | 'REJECTED' | 'RESERVED' | 'PENDING_REVIEW', origin: string, diagnostic = false) {
+export function paymentEmail(order: { stickerCount?: number | null; numbersPerSticker?: number | null; orderNumber: number; buyerName: string; lookupToken: string; selectedValues: number[]; totalCrc: number; reviewNote: string | null; campaign: { title: string; numberWidth: number } }, kind: 'CONFIRMED' | 'REJECTED' | 'RESERVED' | 'PENDING_REVIEW', origin: string, diagnostic = false) {
   const url = new URL(origin);
   if (url.protocol !== 'https:' || url.username || url.password) throw new Error('INVALID_PUBLIC_APP_URL');
   const link = diagnostic ? url.origin : `${url.origin}/pedido#${encodeURIComponent(order.lookupToken)}`;
@@ -14,7 +14,8 @@ export function paymentEmail(order: { orderNumber: number; buyerName: string; lo
   }[kind];
   const heading = copy.heading;
   const numbers = order.selectedValues.map(n => String(n).padStart(order.campaign.numberWidth, '0')).join(', ');
-  const lines = [heading, `Hola, ${order.buyerName}.`, `Pedido: ${reference}`, `Rifa: ${order.campaign.title}`, `Total: ₡${order.totalCrc.toLocaleString('es-CR')}`, `Números: ${numbers}`, kind === 'REJECTED' ? `Motivo: ${order.reviewNote ?? ''}` : copy.description, `Consultá tu pedido: ${link}`, 'Este enlace es privado. No lo compartás.'];
+  const stickerDetail = order.stickerCount ? `${order.stickerCount} stickers · ${order.numbersPerSticker} números por sticker` : '';
+  const lines = [stickerDetail,heading, `Hola, ${order.buyerName}.`, `Pedido: ${reference}`, `Rifa: ${order.campaign.title}`, `Total: ₡${order.totalCrc.toLocaleString('es-CR')}`, `Números: ${numbers}`, kind === 'REJECTED' ? `Motivo: ${order.reviewNote ?? ''}` : copy.description, `Consultá tu pedido: ${link}`, 'Este enlace es privado. No lo compartás.'];
   const approved = kind === 'CONFIRMED';
   const accent = kind === 'REJECTED' ? '#b52a28' : '#395aff';
   const tickets = order.selectedValues.map(n => '<span style="display:inline-block;margin:4px;padding:12px 16px;border:1px dashed #b6b9c5;border-radius:8px;background:#ffffff;font-size:18px;font-weight:700;letter-spacing:2px;color:#191919">' + String(n).padStart(order.campaign.numberWidth, '0') + '</span>').join('');
@@ -35,6 +36,7 @@ ${kind === 'REJECTED' ? '<div style="padding:18px;background:#fff2f0;border-left
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #e6e6ec;border-bottom:1px solid #e6e6ec">
 <tr><td style="padding:16px 0 6px;font-size:12px;color:#686875">PEDIDO</td></tr><tr><td style="padding:0 0 18px;font-size:17px;font-weight:700;overflow-wrap:anywhere">${escapeHtml(reference)}</td></tr>
 <tr><td style="padding:0 0 6px;font-size:12px;color:#686875">RIFA</td></tr><tr><td style="padding:0 0 18px;font-size:17px;font-weight:700;overflow-wrap:anywhere">${escapeHtml(order.campaign.title)}</td></tr>
+${stickerDetail ? `<tr><td style="padding:0 0 18px;font-size:15px">${escapeHtml(stickerDetail)}</td></tr>` : ''}
 <tr><td style="padding:0 0 6px;font-size:12px;color:#686875">${approved ? 'TOTAL CONFIRMADO' : 'TOTAL DEL PEDIDO'}</td></tr><tr><td style="padding:0 0 18px;font-size:26px;font-weight:700">₡${order.totalCrc.toLocaleString('es-CR')}</td></tr></table>
 <p style="margin:24px 0 10px;font-size:12px;font-weight:700;letter-spacing:1px;color:#686875">${approved ? 'TUS BOLETOS' : 'NÚMEROS DEL PEDIDO · NO CONFIRMADOS'}</p>
 <div style="margin:0 -4px 26px">${tickets}</div>
