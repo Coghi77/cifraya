@@ -132,3 +132,7 @@ scripts/lottery-audit.mjs prueba inventario100k, vista previa con autorización,
 - enqueuePaymentEmail omite por completo la cola de notificaciones para isTest.
 - finish-test solo admite isTest, pausa la campaña y cancela sus pedidos/libera números en una transacción. Conserva montos y selecciones como evidencia; rechaza campañas reales.
 - scripts/published-price-audit.mjs usa las rutas normales de producción con una rifa técnica y finaliza en finally; se prueba primero en la base aislada. No imprime tokens ni credenciales.
+
+### Fotos adaptables del premio
+- brand.css limita la altura de portada y detalle, usa object-fit:contain y centra la imagen completa. En móvil la foto precede al contenido de compra; la portada ya no estira la foto con la altura de las tarjetas.
+- Verificación visual de portada con foto real en escritorio y viewport 390×844; compilación web correcta.
