@@ -98,3 +98,5 @@ Notificaciones de reserva: RESERVED al reclamar números; PENDING_REVIEW solo en
 ## Studio: distribución y comprobación
 
 El centro de control usa dos secciones de ancho completo (Tus rifas y Nueva rifa), conservando el formulario montado al cambiar para no perder el borrador. Tarjetas de gestión en dos columnas en escritorio y una en pantallas pequeñas; estilos en brand.css. El encabezado Studio usa #ff4200. `scripts/security-audit.mjs`, ejecutado desde reservation-audit.mjs, prueba 18 rutas administrativas con credenciales ausentes/falsas, privacidad, precios, imágenes inválidas, límites de PIN y creación/edición de 10/20 premios. El manejador de errores oculta detalles de base de datos y devuelve 409 para identificadores duplicados.
+
+Los desplegables de cantidad de números (crear/editar) y origen del premio inverso usan BrandSelect.tsx: menú oscuro propio, selección naranja, teclado y validación requerida del formulario. No agregan dependencias.
