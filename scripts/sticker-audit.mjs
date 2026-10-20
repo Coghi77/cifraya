@@ -25,5 +25,22 @@ export async function auditStickers(request, db, proof, token) {
   const stored=await db.reservation.findUnique({where:{lookupToken:order.data.token}});
   const email=await db.emailNotification.findFirst({where:{reservationId:stored.id,kind:'RESERVED'}});
   assert.match(email.html,/15 stickers/);
+  const patch = async body => {const response=await fetch('http://127.0.0.1:4199/api/admin/campaigns/'+id,{method:'PATCH',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({title:data.title,description:'',...body})});return {status:response.status,data:await response.json()};};
+  const pending=await request('/api/campaigns/sticker-audit/proposal',{quantity:30});
+  assert.equal((await patch({packages:[{quantity:3,priceCrc:100}]})).status,400);
+  assert.equal((await patch({numbersPerSticker:3})).status,400);
+  assert.equal((await patch({packages:[{quantity:2,priceCrc:1500},{quantity:30,priceCrc:22000}]})).status,200);
+  assert.equal((await request('/api/reservations/lookup',{token:order.data.token})).data.totalCrc,25000);
+  assert.deepEqual((await db.reservation.findUnique({where:{id:stored.id}})).selectedValues,stored.selectedValues);
+  const body={campaignId:id,values:pending.data.values,buyerName:'New buyer',buyerEmail:'audit@example.invalid',buyerPhone:'00000000'};
+  assert.equal((await request('/api/reservations',{...body,expectedTotalCrc:25000},pending.cookie)).status,409);
+  const updatedOrder=await request('/api/reservations',{...body,expectedTotalCrc:22000},pending.cookie);
+  assert.equal(updatedOrder.status,201);assert.equal(updatedOrder.data.totalCrc,22000);
+  await db.reservation.update({where:{id:stored.id},data:{status:'CONFIRMED'}});
+  assert.equal((await patch({packages:[{quantity:2,priceCrc:1800}]})).status,200);
+  const original=await request('/api/reservations/lookup',{token:order.data.token});
+  assert.equal(original.data.totalCrc,25000);assert.equal(original.data.stickerCount,15);
+  assert.equal((await request('/api/campaigns/sticker-audit/proposal',{quantity:30})).status,400);
+  console.log('Live cards PASS: pending and confirmed snapshots preserved; stale total rejected; new price used; removed quantities blocked; rules immutable');
   console.log(JSON.stringify({stickers:'PASS',checks:['15 stickers / 30 unique numbers / CRC 25000','price and count tampering ignored','incomplete sticker rejected','held numbers excluded','three-photo limit','order snapshot and email']}));
 }

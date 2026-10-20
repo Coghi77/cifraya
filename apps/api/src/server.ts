@@ -64,6 +64,7 @@ const campaignInput = z.preprocess(normalizePrizeInput, z.object({
 }).refine(data => validPrizeSources(data.prizes, data.prizeSources), { message: 'Cada premio inverso debe apuntar a un premio directo anterior.', path: ['prizeSources'] }).refine(data => data.prizes.length <= data.numberCount, { message: 'No puede haber más premios que números.', path: ['prizes'] }).transform(data => ({ ...data, invertedPrizeEnabled: data.prizeSources.some(source => source > 0), prize: data.prizes[0], prizeCount: data.prizes.length, secondPrize: data.prizes[1], thirdPrize: data.prizes[2] })));
 
 const reservationInput = z.object({
+  expectedTotalCrc: z.number().int().positive().optional(),
   campaignId: z.string(),
   values: z.array(z.number().int().nonnegative()).min(1).max(100),
   includeInverted: z.boolean().default(false),
@@ -207,6 +208,7 @@ app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal', async (r
     broadcast('numbers');
     return proposal;
   } catch (error) {
+    if (error instanceof Error && error.message === 'PRICE_CHANGED') return reply.code(409).send({ error: 'Las tarjetas cambiaron. Revisá el precio actualizado antes de reservar.' });
     if (error instanceof Error && error.message === 'CAMPAIGN_CLOSED') return reply.code(409).send({ error: 'Esta rifa ya no está disponible.' });
     if (error instanceof Error && error.message === 'NUMBER_UNAVAILABLE') return reply.code(409).send({ error: 'Uno de esos números ya no está disponible. Elegí otro.' });
     if (error instanceof Error && error.message === 'NO_CHANGES_LEFT') return reply.code(409).send({ error: 'Ya usaste los cinco cambios disponibles.' });
@@ -227,6 +229,7 @@ app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal/change', a
     broadcast('numbers');
     return proposal;
   } catch (error) {
+    if (error instanceof Error && error.message === 'PRICE_CHANGED') return reply.code(409).send({ error: 'Las tarjetas cambiaron. Revisá el precio actualizado antes de reservar.' });
     if (error instanceof Error && error.message === 'CAMPAIGN_CLOSED') return reply.code(409).send({ error: 'Esta rifa ya no está disponible.' });
     if (error instanceof Error && error.message === 'PROPOSAL_EXPIRED') return reply.code(409).send({ error: 'La selección venció. Generá otra.' });
     if (error instanceof Error && error.message === 'NO_CHANGES_LEFT') return reply.code(409).send({ error: 'Ya usaste los cinco cambios disponibles.' });
@@ -255,8 +258,10 @@ app.post('/api/reservations', async (request, reply) => {
 
   try {
     const reservation = await db.$transaction(async tx => {
-      const liveCampaign = await tx.campaign.findUnique({ where: { id: campaign.id }, select: { status: true } });
+      const liveCampaign = await tx.campaign.findUnique({ where: { id: campaign.id }, include: { packages: packageSelect } });
       if (liveCampaign?.status !== 'LIVE') throw new Error('CAMPAIGN_CLOSED');
+      const liveOffer = purchaseOffer(liveCampaign, uniqueValues.length);
+      if (!liveOffer || liveOffer.priceCrc !== selectedPackage.priceCrc || (input.expectedTotalCrc !== undefined && input.expectedTotalCrc !== liveOffer.priceCrc * (input.includeInverted ? 2 : 1))) throw new Error('PRICE_CHANGED');
       const key = sessionKey(request.headers.cookie);
       if (!key) throw new Error('PROPOSAL_REQUIRED');
       const proposal = await tx.numberProposal.findUnique({ where: { campaignId_sessionKey: { campaignId: campaign.id, sessionKey: key } } });
@@ -301,6 +306,7 @@ app.post('/api/reservations', async (request, reply) => {
     totalCrc: reservation.totalCrc,
     });
   } catch (error) {
+    if (error instanceof Error && error.message === 'PRICE_CHANGED') return reply.code(409).send({ error: 'Las tarjetas cambiaron. Revisá el precio actualizado antes de reservar.' });
     if (error instanceof Error && error.message === 'CAMPAIGN_CLOSED') return reply.code(409).send({ error: 'Esta rifa ya no está disponible.' });
     if (error instanceof Error && error.message === 'PROPOSAL_REQUIRED') return reply.code(409).send({ error: 'Generá tus números desde esta página antes de apartarlos.' });
     if (error instanceof Error && error.message === 'NUMBER_UNAVAILABLE') {
@@ -552,13 +558,21 @@ app.patch<{ Params: { id: string } }>('/api/admin/campaigns/:id', async (request
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   const current = await db.campaign.findUnique({ where: { id: request.params.id }, select: { status: true } });
   if (!current) return reply.code(404).send({ error: 'Rifa no encontrada.' });
-  const parsed = (current.status === 'DRAFT' ? campaignInput : z.object({ title: z.string().min(3).max(120), description: z.string().max(3000).default('') }).strict()).safeParse(request.body);
+  const parsed = (current.status === 'DRAFT' ? campaignInput : z.object({ title: z.string().min(3).max(120), description: z.string().max(3000).default(''), packages: z.array(z.object({quantity:z.number().int().min(1).max(100),priceCrc:z.number().int().positive().max(100_000_000)})).max(10).optional() }).strict()).safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: 'Revisá los datos de la rifa.' });
   try {
     const updated = await db.$transaction(async tx => {
-      const campaign = await tx.campaign.findUnique({ where: { id: request.params.id }, select: { status: true, numberCount: true, _count: { select: { reservations: true, winners: true } } } });
+      const campaign = await tx.campaign.findUnique({ where: { id: request.params.id }, select: { status: true, numbersPerSticker: true, numberCount: true, _count: { select: { reservations: true, winners: true } } } });
       if (!campaign || campaign.status !== current.status) throw new Error('CAMPAIGN_CHANGED');
-      if (campaign.status !== 'DRAFT') return tx.campaign.update({ where: { id: request.params.id }, data: { title: parsed.data.title, description: parsed.data.description } });
+      if (campaign.status !== 'DRAFT') {
+        const packages = parsed.data.packages;
+        if (packages !== undefined) {
+          if (campaign.status !== 'LIVE') throw new Error('CAMPAIGN_CHANGED');
+          if (new Set(packages.map(item => item.quantity)).size !== packages.length || packages.some(item => !validStickerQuantity(item.quantity, campaign.numbersPerSticker || 1))) throw new Error('INVALID_PACKAGES');
+          await tx.pricePackage.deleteMany({where:{campaignId:request.params.id}});
+        }
+        return tx.campaign.update({where:{id:request.params.id},data:{title:parsed.data.title,description:parsed.data.description,...(packages !== undefined ? {packages:{create:packages}} : {})}});
+      }
       const input = parsed.data as z.infer<typeof campaignInput>;
       if (campaign._count.reservations || campaign._count.winners) throw new Error('CAMPAIGN_CHANGED');
       if (new Set(input.packages.map(item => item.quantity)).size !== input.packages.length || input.packages.some(item => input.numbersPerSticker ? !validStickerQuantity(item.quantity, input.numbersPerSticker) : (item.quantity < 2 || item.quantity > 20 || item.priceCrc >= item.quantity * input.priceCrc))) throw new Error('INVALID_PACKAGES');

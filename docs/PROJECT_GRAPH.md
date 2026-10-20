@@ -120,3 +120,9 @@ scripts/lottery-audit.mjs prueba inventario100k, vista previa con autorización,
 - Se reutiliza `PricePackage`: `quantity` siempre representa números, también en modo stickers; UI convierte stickers × numbersPerSticker. No requiere migración.
 - Con tarjetas configuradas, propuesta y reserva solo aceptan las cantidades ofrecidas; `purchaseOffer` toma el precio exacto del servidor. Sin tarjetas se mantiene el cálculo individual para compatibilidad.
 - Rifas publicadas conservan sus reglas/precios. Pruebas en `stickers.test.mjs` y `scripts/sticker-audit.mjs` cubren precios personalizados, cantidades inválidas y manipulación del total.
+
+### Edición de tarjetas publicadas
+- PATCH admin permite reemplazar tarjetas en campañas LIVE, sin modificar números por sticker, inventario ni premios. CLOSED continúa restringida a nombre/descripción.
+- Reservas existentes guardan totalCrc, stickerCount, numbersPerSticker y selectedValues; editar tarjetas nunca escribe esos pedidos.
+- La reserva vuelve a consultar la oferta dentro de su transacción serializable y valida expectedTotalCrc del checkout. SSE actualiza tarjetas y cancela selecciones visuales antiguas para solicitar una nueva elección.
+- sticker-audit verifica edición LIVE, snapshots pendientes/confirmados, rechazo de precio anterior y retiro de cantidades.

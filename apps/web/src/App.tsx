@@ -334,7 +334,11 @@ export default function App() {
       if (view === 'raffle' && raffle) {
         try {
           const updated = await api<Raffle>(`/api/campaigns/${encodeURIComponent(raffle.slug)}`);
-          setRaffle(current => current?.id === updated.id ? { ...current, soldCount: updated.soldCount } : current);
+          setRaffle(current => current?.id === updated.id ? updated : current);
+          if (JSON.stringify(updated.packages) !== JSON.stringify(raffle.packages) && !reservation) {
+            setShowCheckout(false); setProposalReady(false); setSelected([]); setRandomQuantity(''); setIncludeInverted(false); setAvailableInverted(null);
+            setError('Las tarjetas se actualizaron. Elegí una tarjeta para continuar con el precio vigente.');
+          }
         } catch { /* Keep the last known count while offline. */ }
       }
       if (view === 'lookup' && lookupResult && lookupCode.trim().length === 48) {
@@ -347,7 +351,7 @@ export default function App() {
     }
     window.addEventListener('cifraya:update', refresh);
     return () => { stopped = true; window.removeEventListener('cifraya:update', refresh); };
-  }, [view, adminDetailId, adminUnlocked, adminToken, raffle?.slug, reservation?.token, lookupCode, lookupResult?.status, proposalReady, selectionLoading, randomQuantity, selected.length, showCheckout, selectionMode]);
+  }, [view, adminDetailId, adminUnlocked, adminToken, raffle?.slug, JSON.stringify(raffle?.packages), reservation?.token, lookupCode, lookupResult?.status, proposalReady, selectionLoading, randomQuantity, selected.length, showCheckout, selectionMode]);
 
   useEffect(() => {
     if (holdExpiresAt && holdCountdown === '00:00' && new Date(holdExpiresAt).getTime() <= currentServerTime() && !reservation) {
@@ -407,7 +411,7 @@ export default function App() {
     setBusy(true); setError('');
     try {
       const result = await api<Reservation>('/api/reservations', {
-        method: 'POST', body: JSON.stringify({ campaignId: raffle.id, values: selected, includeInverted, ...buyer }),
+        method: 'POST', body: JSON.stringify({ campaignId: raffle.id, values: selected, includeInverted, expectedTotalCrc: (selectedOffer(raffle, selected.length)?.priceCrc || 0) * (includeInverted ? 2 : 1), ...buyer }),
       });
       setReservation(result); setShowCheckout(false);
       setCodeCopied(false);

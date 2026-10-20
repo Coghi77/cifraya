@@ -19,7 +19,7 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
     priceCrc: String(raffle.priceCrc), numberCount: String(raffle.numberCount),
     invertedEnabled: raffle.invertedEnabled, invertedPrizeEnabled: raffle.invertedPrizeEnabled,
   });
-  const [cards, setCards] = useState<StickerCard[]>(raffle.numbersPerSticker ? raffle.packages.map(card => ({count: String(card.quantity / raffle.numbersPerSticker!), price: String(card.priceCrc)})) : []);
+  const [cards, setCards] = useState<StickerCard[]>(raffle.packages.map(card => ({count: String(card.quantity / (raffle.numbersPerSticker || 1)), price: String(card.priceCrc)})));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const isDraft = raffle.status === 'DRAFT';
@@ -36,7 +36,7 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
     const payload = isDraft ? {
       ...form, priceCrc: Number(form.priceCrc), numberCount: Number(form.numberCount),
       numbersPerSticker: Number(form.numbersPerSticker), packages: cardPackages(cards, Number(form.numbersPerSticker)),
-    } : { title: form.title, description: form.description };
+    } : { title: form.title, description: form.description, ...(raffle.status === 'LIVE' ? {packages:cardPackages(cards,raffle.numbersPerSticker || 1)} : {}) };
     setBusy(true); setError('');
     try {
       const response = await fetch(`/api/admin/campaigns/${raffle.id}`, { method: 'PATCH', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -53,7 +53,7 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
   return <div className="edit-raffle-backdrop" onMouseDown={event => { if (event.target === event.currentTarget && !busy) onClose(); }}>
     <section className="edit-raffle-panel" role="dialog" aria-modal="true" aria-labelledby="edit-raffle-title">
       <div className="edit-raffle-heading"><div><span className="eyebrow">CENTRO DE CONTROL</span><h2 id="edit-raffle-title">Editar rifa</h2></div><button type="button" onClick={onClose} disabled={busy} aria-label="Cerrar edición">×</button></div>
-      {!isDraft && <p className="edit-raffle-note">La rifa ya se publicó. Podés corregir el nombre y la descripción; los premios, precios y números permanecen como se anunciaron.</p>}
+      {!isDraft && <p className="edit-raffle-note">Las tarjetas nuevas se aplican a futuras reservas. Los pedidos existentes conservan su precio y sus números. Los premios y la cantidad de números por sticker no cambian.</p>}
       <form className="form-grid" onSubmit={save}>
         <label>Nombre de la rifa<input required minLength={3} maxLength={120} value={form.title} onChange={event => setForm({ ...form, title: event.target.value })}/></label>
         {isDraft && <label>Identificador URL<input required pattern="[a-z0-9]+(-[a-z0-9]+)*" maxLength={80} value={form.slug} onChange={event => setForm({ ...form, slug: event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}/></label>}
@@ -65,6 +65,7 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
           <label>Números incluidos por sticker<input required type="number" min="1" max="20" step="1" value={form.numbersPerSticker} onChange={event => setForm({ ...form, numbersPerSticker: event.target.value })}/></label>
           <StickerCardEditor cards={cards} onChange={setCards} numbersPerSticker={Number(form.numbersPerSticker)}/>
         </>}
+        {raffle.status === 'LIVE' && <StickerCardEditor cards={cards} onChange={setCards} numbersPerSticker={raffle.numbersPerSticker || 1}/>}
         {error && <p className="edit-raffle-error" role="alert">{error}</p>}
         <div className="edit-raffle-actions"><button type="button" onClick={onClose} disabled={busy}>Cancelar</button><button type="submit" disabled={busy}>{busy ? 'Guardando...' : 'Guardar cambios'}</button></div>
       </form>
