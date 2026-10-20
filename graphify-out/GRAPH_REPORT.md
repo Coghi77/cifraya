@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 388 nodes · 525 edges · 43 communities (15 shown, 9 thin omitted)
+- 390 nodes · 526 edges · 44 communities (16 shown, 9 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fe9b56e3`
+- Built from commit: `181cab46`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -34,13 +34,14 @@
 - Community 17
 - Community 18
 - Community 19
-- Community 27
+- Community 20
 - Community 28
 - Community 29
-- Community 42
+- Community 30
+- Community 43
 
 ## God Nodes (most connected - your core abstractions)
-1. `react` - 17 edges
+1. `react` - 18 edges
 2. `compilerOptions` - 15 edges
 3. `scripts` - 11 edges
 4. `reverseNumber()` - 8 edges
@@ -48,8 +49,8 @@
 6. `loadAdmin()` - 8 edges
 7. `@prisma/client` - 8 edges
 8. `compilerOptions` - 8 edges
-9. `createRaffle()` - 7 edges
-10. `"Campaign"` - 7 edges
+9. `lucide-react` - 8 edges
+10. `createRaffle()` - 7 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `createRaffle()` --calls--> `toDrawDate()`  [EXTRACTED]
@@ -66,7 +67,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (43 total, 9 thin omitted)
+## Communities (44 total, 9 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.05
@@ -77,16 +78,16 @@ Cohesion: 0.07
 Nodes (40): addPhotos(), AdminReservation, api(), ApiError, createRaffle(), currentServerTime(), expireAdminSession(), formatNumber() (+32 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.07
-Nodes (23): AdminParticipantDetail(), money(), numberLabel(), ParticipantResponse, Reservation, statusLabel(), DrawCountdown(), ManualNumbers() (+15 more)
+Cohesion: 0.06
+Nodes (21): AdminParticipantDetail(), money(), numberLabel(), ParticipantResponse, Reservation, statusLabel(), AdminReservationReview(), Detail (+13 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.06
 Nodes (29): Stream, devDependencies, prisma, @prisma/client, tsx, @types/node, typescript, name (+21 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.07
-Nodes (27): dependencies, lucide-react, react, react-dom, devDependencies, @types/react, @types/react-dom, typescript (+19 more)
+Cohesion: 0.08
+Nodes (23): dependencies, lucide-react, react, react-dom, devDependencies, @types/react, @types/react-dom, typescript (+15 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.09
@@ -125,12 +126,16 @@ Cohesion: 0.29
 Nodes (6): compilerOptions, outDir, rootDir, extends, include, ../../tsconfig.json
 
 ### Community 15 - "Community 15"
+Cohesion: 0.47
+Nodes (5): date(), labels, money(), Order, OrderDetail()
+
+### Community 16 - "Community 16"
 Cohesion: 0.50
 Nodes (3): inventory, inventorySet, times
 
 ## Knowledge Gaps
 - **132 isolated node(s):** `AdminReservation`, `LookupResult`, `NumberProposal`, `Raffle`, `Reservation` (+127 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 202 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 204 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -138,8 +143,10 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `@prisma/client` connect `Community 0` to `Community 3`, `Community 8`, `Community 11`?**
   _High betweenness centrality (0.060) - this node is a cross-community bridge._
-- **Why does `react` connect `Community 2` to `Community 9`, `Community 4`, `Community 1`, `Community 6`?**
-  _High betweenness centrality (0.044) - this node is a cross-community bridge._
+- **Why does `react` connect `Community 2` to `Community 1`, `Community 4`, `Community 6`, `Community 9`, `Community 15`?**
+  _High betweenness centrality (0.046) - this node is a cross-community bridge._
+- **Why does `lucide-react` connect `Community 2` to `Community 1`, `Community 4`, `Community 6`?**
+  _High betweenness centrality (0.019) - this node is a cross-community bridge._
 - **What connects `AdminReservation`, `LookupResult`, `NumberProposal` to the rest of the system?**
   _132 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
@@ -147,6 +154,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.06778476589797344 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.06984126984126984 - nodes in this community are weakly interconnected._
-- **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.06060606060606061 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06477732793522267 - nodes in this community are weakly interconnected._

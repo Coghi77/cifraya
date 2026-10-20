@@ -1,3 +1,4 @@
+import SiteHeader from './SiteHeader';
 import DrawCountdown from './DrawCountdown';
 import DrawScheduleEditor, {toDrawDate} from './DrawScheduleEditor';
 import CheckoutDialog from './CheckoutDialog';
@@ -588,16 +589,13 @@ export default function App() {
   const featured = raffles[0];
 
   return <div className={'app-shell ' + (view === 'admin' ? 'admin-shell' : '')}>
-    <header className="site-header">
-      <button className="brand" onClick={goHome} aria-label="Vnova TCG, ir al inicio"><img src="/vnova-logo.svg" alt="Logo de Vnova TCG" className="brand-logo"/></button>
-      <nav aria-label="Navegación principal">
+    <SiteHeader onHome={goHome}>
         {view === 'admin' ? <button onClick={goHome}>Volver al sitio <ArrowRight size={15} /></button> : <>
           <button className={view === 'home' || view === 'raffle' ? 'nav-active' : ''} onClick={goHome}>Inicio</button>
           <button className={view === 'lookup' ? 'nav-active' : ''} onClick={() => goPublic('lookup')}>Buscar boletos</button>
           <button className={view === 'winners' ? 'nav-active' : ''} onClick={() => goPublic('winners')}>Ganadores</button>
         </>}
-      </nav>
-    </header>
+    </SiteHeader>
 
     {error && <div className="alert" role="alert"><span>{error}</span><button onClick={() => setError('')} aria-label="Cerrar aviso"><X size={17} /></button></div>}
 
