@@ -1,7 +1,7 @@
 import type { Prisma, PrismaClient } from '@prisma/client';
 
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
-export function paymentEmail(order: { stickerCount?: number | null; numbersPerSticker?: number | null; orderNumber: number; buyerName: string; lookupToken: string; selectedValues: number[]; totalCrc: number; reviewNote: string | null; campaign: { title: string; numberWidth: number } }, kind: 'CONFIRMED' | 'REJECTED' | 'RESERVED' | 'PENDING_REVIEW', origin: string, diagnostic = false) {
+export function paymentEmail(order: { paymentMethod?:string; stickerCount?: number | null; numbersPerSticker?: number | null; orderNumber: number; buyerName: string; lookupToken: string; selectedValues: number[]; totalCrc: number; reviewNote: string | null; campaign: { title: string; numberWidth: number } }, kind: 'CONFIRMED' | 'REJECTED' | 'RESERVED' | 'PENDING_REVIEW', origin: string, diagnostic = false) {
   const url = new URL(origin);
   if (url.protocol !== 'https:' || url.username || url.password) throw new Error('INVALID_PUBLIC_APP_URL');
   const link = diagnostic ? url.origin : `${url.origin}/pedido#${encodeURIComponent(order.lookupToken)}`;
@@ -15,7 +15,7 @@ export function paymentEmail(order: { stickerCount?: number | null; numbersPerSt
   const heading = copy.heading;
   const numbers = order.selectedValues.map(n => String(n).padStart(order.campaign.numberWidth, '0')).join(', ');
   const stickerDetail = order.stickerCount ? `${order.stickerCount} stickers · ${order.numbersPerSticker} números por sticker` : '';
-  const lines = [stickerDetail,heading, `Hola, ${order.buyerName}.`, `Pedido: ${reference}`, `Rifa: ${order.campaign.title}`, `Total: ₡${order.totalCrc.toLocaleString('es-CR')}`, `Números: ${numbers}`, kind === 'REJECTED' ? `Motivo: ${order.reviewNote ?? ''}` : copy.description, ...(diagnostic ? [] : [`Código de consulta: ${order.lookupToken}`, `Para buscar tus boletos, copiá este código completo en ${url.origin}/buscar-boletos. Guardalo: es privado.`]), `Consultá tu pedido: ${link}`, 'Este enlace es privado. No lo compartás.'];
+  const lines = [...(order.paymentMethod==='CASH'?['Método de pago: efectivo recibido.']:[]),stickerDetail,heading, `Hola, ${order.buyerName}.`, `Pedido: ${reference}`, `Rifa: ${order.campaign.title}`, `Total: ₡${order.totalCrc.toLocaleString('es-CR')}`, `Números: ${numbers}`, kind === 'REJECTED' ? `Motivo: ${order.reviewNote ?? ''}` : copy.description, ...(diagnostic ? [] : [`Código de consulta: ${order.lookupToken}`, `Para buscar tus boletos, copiá este código completo en ${url.origin}/buscar-boletos. Guardalo: es privado.`]), `Consultá tu pedido: ${link}`, 'Este enlace es privado. No lo compartás.'];
   const approved = kind === 'CONFIRMED';
   const accent = kind === 'REJECTED' ? '#b52a28' : '#395aff';
   const tickets = order.selectedValues.map(n => '<span style="display:inline-block;margin:4px;padding:12px 16px;border:1px dashed #b6b9c5;border-radius:8px;background:#ffffff;font-size:18px;font-weight:700;letter-spacing:2px;color:#191919">' + String(n).padStart(order.campaign.numberWidth, '0') + '</span>').join('');
@@ -32,6 +32,7 @@ ${diagnostic ? '<p style="margin:0 0 22px;padding:12px;border:1px solid #dedee6;
 <h1 style="margin:0 0 18px;font-size:30px;line-height:1.15;letter-spacing:-1px;color:#191919">${copy.title}</h1>
 <p style="margin:0 0 8px;font-size:15px;line-height:1.7;color:#494954">Hola, ${escapeHtml(order.buyerName)}.</p>
 <p style="margin:0 0 24px;font-size:15px;line-height:1.7;color:#494954">${copy.description}</p>
+${order.paymentMethod==='CASH'?'<p style="color:#191919;font-size:15px"><strong>Método de pago:</strong> efectivo recibido.</p>':''}
 ${kind === 'REJECTED' ? '<div style="padding:18px;background:#fff2f0;border-left:3px solid #b52a28;border-radius:4px;margin:0 0 24px"><p style="margin:0 0 8px;font-size:12px;font-weight:700;color:#962220">MOTIVO DEL RECHAZO</p><p style="margin:0;font-size:15px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;color:#191919">' + escapeHtml(order.reviewNote ?? '') + '</p></div>' : ''}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #e6e6ec;border-bottom:1px solid #e6e6ec">
 <tr><td style="padding:16px 0 6px;font-size:12px;color:#686875">PEDIDO</td></tr><tr><td style="padding:0 0 18px;font-size:17px;font-weight:700;overflow-wrap:anywhere">${escapeHtml(reference)}</td></tr>

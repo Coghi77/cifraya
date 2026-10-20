@@ -144,6 +144,7 @@ model Reservation {
   stickerCount   Int?
   numbersPerSticker Int?
   includesInverted Boolean         @default(false)
+  paymentMethod  String            @default("SINPE")
   status         ReservationStatus @default(ACTIVE)
   expiresAt      DateTime
   totalCrc       Int               @default(0)

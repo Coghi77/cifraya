@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 402 nodes · 559 edges · 43 communities (15 shown, 9 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.85)
+- 403 nodes · 558 edges · 44 communities (15 shown, 9 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7905efb2`
+- Built from commit: `6e165946`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -37,7 +37,7 @@
 - Community 27
 - Community 28
 - Community 29
-- Community 42
+- Community 43
 
 ## God Nodes (most connected - your core abstractions)
 1. `react` - 19 edges
@@ -45,9 +45,9 @@
 3. `scripts` - 11 edges
 4. `reverseNumber()` - 9 edges
 5. `createReservation()` - 9 edges
-6. `preparePhoto()` - 9 edges
-7. `api()` - 8 edges
-8. `loadAdmin()` - 8 edges
+6. `api()` - 8 edges
+7. `loadAdmin()` - 8 edges
+8. `preparePhoto()` - 8 edges
 9. `AdminSale()` - 8 edges
 10. `compilerOptions` - 8 edges
 
@@ -66,7 +66,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (43 total, 9 thin omitted)
+## Communities (44 total, 9 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.06
@@ -130,14 +130,14 @@ Nodes (3): inventory, inventorySet, times
 
 ## Knowledge Gaps
 - **133 isolated node(s):** `AdminReservation`, `LookupResult`, `NumberProposal`, `Raffle`, `Reservation` (+128 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 205 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 206 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `@prisma/client` connect `Community 6` to `Community 0`, `Community 3`, `Community 11`?**
-  _High betweenness centrality (0.057) - this node is a cross-community bridge._
+  _High betweenness centrality (0.056) - this node is a cross-community bridge._
 - **Why does `react` connect `Community 2` to `Community 8`, `Community 1`, `Community 4`, `Community 5`?**
   _High betweenness centrality (0.050) - this node is a cross-community bridge._
 - **Why does `lucide-react` connect `Community 2` to `Community 8`, `Community 1`, `Community 5`?**

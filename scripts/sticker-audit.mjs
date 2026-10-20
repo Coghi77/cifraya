@@ -57,6 +57,21 @@ export async function auditStickers(request, db, proof, token) {
   const original=await request('/api/reservations/lookup',{token:order.data.token});
   assert.equal(original.data.totalCrc,25000);assert.equal(original.data.stickerCount,15);
   assert.equal((await request('/api/campaigns/sticker-audit/proposal',{quantity:30})).status,400);
+  const cashProposal=await request('/api/campaigns/sticker-audit/proposal',{quantity:2});
+  const cashBody={campaignId:id,values:cashProposal.data.values,buyerName:'Cash audit',buyerEmail:'audit@example.invalid',buyerPhone:'88888888',paymentMethod:'CASH',cashReceived:true,expectedTotalCrc:1800};
+  assert.equal((await request('/api/reservations',cashBody,cashProposal.cookie)).status,403);
+  assert.equal((await request('/api/reservations',cashBody,cashProposal.cookie,token)).status,403);
+  assert.equal((await request('/api/admin/reservations',{...cashBody,cashReceived:false},cashProposal.cookie,token)).status,400);
+  const cashOrder=await request('/api/admin/reservations',cashBody,cashProposal.cookie,token);
+  assert.equal(cashOrder.status,201);
+  const cashStored=await db.reservation.findUnique({where:{id:cashOrder.data.reservationId},include:{numbers:true,proofs:true,emails:true}});
+  assert.equal(cashStored.paymentMethod,'CASH');assert.equal(cashStored.status,'CONFIRMED');assert.ok(cashStored.confirmedAt);
+  assert.equal(cashStored.proofs.length,0);assert.equal(cashStored.numbers.length,2);assert.ok(cashStored.numbers.every(n=>n.status==='SOLD'));
+  assert.deepEqual(cashStored.emails.map(e=>e.kind),['CONFIRMED']);assert.match(cashStored.emails[0].html,/efectivo recibido/);
+  assert.equal((await request('/api/reservations/lookup',{token:cashOrder.data.token})).data.paymentMethod,'CASH');
+  assert.equal((await request('/api/admin/reservations',cashBody,cashProposal.cookie,token)).status,409);
+  assert.equal((await request('/api/campaigns/sticker-audit/proposal',{quantity:2,values:cashBody.values})).status,409);
+  console.log('Cash PASS: admin-only, receipt acknowledgment required, atomic SOLD without proof, one confirmation email, replay and duplicate numbers rejected');
   console.log('Live cards PASS: pending and confirmed snapshots preserved; stale total rejected; new price used; removed quantities blocked; rules immutable');
   console.log(JSON.stringify({stickers:'PASS',checks:['15 stickers / 30 unique numbers / CRC 25000','price and count tampering ignored','incomplete sticker rejected','held numbers excluded','three-photo limit','order snapshot and email']}));
 }

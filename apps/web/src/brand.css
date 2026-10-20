@@ -314,3 +314,4 @@ h1,h2,h3 { letter-spacing:-.045em; }
 .admin-sale-dialog button:disabled { opacity:.5; cursor:not-allowed; }
 .admin-sale-numbers { display:flex; flex-wrap:wrap; gap:8px; }
 .admin-sale-numbers span { border:1px solid #888; border-radius:6px; padding:8px; color:#fff; background:#303030; }
+.admin-sale-dialog .cash-received { display:flex; align-items:flex-start; gap:12px; padding:14px; background:#30241e; border:1px solid #ff9069; border-radius:10px; line-height:1.5; } .admin-sale-dialog .cash-received input { width:22px; height:22px; flex-shrink:0; accent-color:#ff4200; }

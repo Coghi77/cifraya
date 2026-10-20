@@ -506,7 +506,7 @@
       "file_type": "code",
       "norm_label": "adminauthorized()",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L101"
+      "source_location": "L103"
     },
     {
       "id": "apps_api_src_server_broadcast",
@@ -530,7 +530,7 @@
       "file_type": "code",
       "norm_label": "createreservation()",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L244"
+      "source_location": "L246"
     },
     {
       "id": "apps_api_src_server_imagelist",
@@ -542,7 +542,7 @@
       "file_type": "code",
       "norm_label": "imagelist()",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L89"
+      "source_location": "L91"
     },
     {
       "id": "apps_api_src_server_sessionkey",
@@ -554,7 +554,7 @@
       "file_type": "code",
       "norm_label": "sessionkey()",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L79"
+      "source_location": "L81"
     },
     {
       "id": "apps_api_src_server_validphoto",
@@ -566,7 +566,7 @@
       "file_type": "code",
       "norm_label": "validphoto()",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L92"
+      "source_location": "L94"
     },
     {
       "id": "apps_api_src_stickers_purchaseoffer",
@@ -1142,7 +1142,7 @@
       "file_type": "code",
       "norm_label": "createemailworker()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L62"
+      "source_location": "L63"
     },
     {
       "id": "apps_api_src_paymentemails_createemailworker_drain",
@@ -1154,7 +1154,7 @@
       "file_type": "code",
       "norm_label": "drain()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L65"
+      "source_location": "L66"
     },
     {
       "id": "apps_api_src_paymentemails_createemailworker_kick",
@@ -1166,7 +1166,7 @@
       "file_type": "code",
       "norm_label": "kick()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L94"
+      "source_location": "L95"
     },
     {
       "id": "apps_api_src_paymentemails_emailconfigured",
@@ -1178,7 +1178,7 @@
       "file_type": "code",
       "norm_label": "emailconfigured()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L59"
+      "source_location": "L60"
     },
     {
       "id": "apps_api_src_paymentemails_enqueuepaymentemail",
@@ -1190,7 +1190,7 @@
       "file_type": "code",
       "norm_label": "enqueuepaymentemail()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L52"
+      "source_location": "L53"
     },
     {
       "id": "apps_api_src_paymentemails_escapehtml",
@@ -1226,7 +1226,7 @@
       "file_type": "code",
       "norm_label": "retryableemailstatus()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L58"
+      "source_location": "L59"
     },
     {
       "id": "apps_web_src_footersocials_brandicon",
@@ -1610,7 +1610,7 @@
       "file_type": "code",
       "norm_label": "random()",
       "source_file": "apps/web/src/AdminSale.tsx",
-      "source_location": "L27"
+      "source_location": "L29"
     },
     {
       "id": "apps_web_src_adminsale_adminsale_request",
@@ -1622,7 +1622,7 @@
       "file_type": "code",
       "norm_label": "request()",
       "source_file": "apps/web/src/AdminSale.tsx",
-      "source_location": "L25"
+      "source_location": "L27"
     },
     {
       "id": "apps_web_src_adminsale_adminsale_reset",
@@ -1634,7 +1634,7 @@
       "file_type": "code",
       "norm_label": "reset()",
       "source_file": "apps/web/src/AdminSale.tsx",
-      "source_location": "L28"
+      "source_location": "L30"
     },
     {
       "id": "apps_web_src_adminsale_adminsale_select",
@@ -1646,7 +1646,7 @@
       "file_type": "code",
       "norm_label": "select()",
       "source_file": "apps/web/src/AdminSale.tsx",
-      "source_location": "L26"
+      "source_location": "L28"
     },
     {
       "id": "apps_web_src_adminsale_adminsale_submit",
@@ -1658,7 +1658,7 @@
       "file_type": "code",
       "norm_label": "submit()",
       "source_file": "apps/web/src/AdminSale.tsx",
-      "source_location": "L29"
+      "source_location": "L31"
     },
     {
       "id": "apps_web_src_adminsale_money",
@@ -2191,7 +2191,7 @@
       "file_type": "code",
       "norm_label": "expirereservations",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L129"
+      "source_location": "L131"
     },
     {
       "id": "apps_api_src_server_failedlogins",
@@ -2202,7 +2202,7 @@
       "file_type": "code",
       "norm_label": "failedlogins",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L99"
+      "source_location": "L101"
     },
     {
       "id": "apps_api_src_server_packageselect",
@@ -2213,7 +2213,7 @@
       "file_type": "code",
       "norm_label": "packageselect",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L88"
+      "source_location": "L90"
     },
     {
       "id": "apps_api_src_server_photoinput",
@@ -2224,7 +2224,7 @@
       "file_type": "code",
       "norm_label": "photoinput",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L82"
+      "source_location": "L84"
     },
     {
       "id": "apps_api_src_server_photoselect",
@@ -2235,7 +2235,7 @@
       "file_type": "code",
       "norm_label": "photoselect",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L87"
+      "source_location": "L89"
     },
     {
       "id": "apps_api_src_server_port",
@@ -2246,7 +2246,7 @@
       "file_type": "code",
       "norm_label": "port",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L872"
+      "source_location": "L879"
     },
     {
       "id": "apps_api_src_server_proposalcleanup",
@@ -2257,7 +2257,7 @@
       "file_type": "code",
       "norm_label": "proposalcleanup",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L858"
+      "source_location": "L865"
     },
     {
       "id": "apps_api_src_server_proposalinput",
@@ -2268,7 +2268,7 @@
       "file_type": "code",
       "norm_label": "proposalinput",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L78"
+      "source_location": "L80"
     },
     {
       "id": "apps_api_src_server_publiccache",
@@ -2312,7 +2312,7 @@
       "file_type": "code",
       "norm_label": "timer",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L856"
+      "source_location": "L863"
     },
     {
       "id": "apps_api_src_stickers",
@@ -3690,11 +3690,22 @@
       "source_location": null
     },
     {
-      "id": "winner",
-      "label": "\"Winner\"",
+      "id": "prisma_migrations_20261020200000_cash_payments_migration",
+      "label": "20261020200000_cash_payments/migration.sql",
       "_origin": "ast",
       "community": 42,
       "community_name": "Community 42",
+      "file_type": "code",
+      "norm_label": "20261020200000_cash_payments/migration.sql",
+      "source_file": "prisma/migrations/20261020200000_cash_payments/migration.sql",
+      "source_location": null
+    },
+    {
+      "id": "winner",
+      "label": "\"Winner\"",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "Community 43",
       "file_type": "code",
       "norm_label": "\"winner\"",
       "source_file": "",
@@ -4648,7 +4659,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L82",
+      "source_location": "L83",
       "weight": 1.0
     },
     {
@@ -4660,7 +4671,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L95",
+      "source_location": "L96",
       "weight": 1.0
     },
     {
@@ -4672,7 +4683,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L95",
+      "source_location": "L96",
       "weight": 1.0
     },
     {
@@ -4684,7 +4695,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L55",
+      "source_location": "L56",
       "weight": 1.0
     },
     {
@@ -4768,7 +4779,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L102",
+      "source_location": "L104",
       "weight": 1.0
     },
     {
@@ -4792,7 +4803,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L245",
+      "source_location": "L247",
       "weight": 1.0
     },
     {
@@ -4816,7 +4827,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L254",
+      "source_location": "L259",
       "weight": 1.0
     },
     {
@@ -4828,7 +4839,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L257",
+      "source_location": "L262",
       "weight": 1.0
     },
     {
@@ -4840,7 +4851,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L257",
+      "source_location": "L262",
       "weight": 1.0
     },
     {
@@ -4852,7 +4863,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L267",
+      "source_location": "L272",
       "weight": 1.0
     },
     {
@@ -4864,7 +4875,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L295",
+      "source_location": "L302",
       "weight": 1.0
     },
     {
@@ -4876,7 +4887,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L298",
+      "source_location": "L305",
       "weight": 1.0
     },
     {
@@ -4900,7 +4911,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L129",
+      "source_location": "L131",
       "weight": 1.0
     },
     {
@@ -4912,7 +4923,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L856",
+      "source_location": "L863",
       "weight": 1.0
     },
     {
@@ -5044,7 +5055,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminSale.tsx",
-      "source_location": "L38",
+      "source_location": "L40",
       "weight": 1.0
     },
     {
@@ -5056,7 +5067,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminSale.tsx",
-      "source_location": "L27",
+      "source_location": "L29",
       "weight": 1.0
     },
     {
@@ -5068,7 +5079,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminSale.tsx",
-      "source_location": "L28",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -5080,7 +5091,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminSale.tsx",
-      "source_location": "L30",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -5092,7 +5103,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminSale.tsx",
-      "source_location": "L33",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -5776,7 +5787,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminSale.tsx",
-      "source_location": "L26",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -5788,7 +5799,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminSale.tsx",
-      "source_location": "L27",
+      "source_location": "L29",
       "weight": 1.0
     },
     {
@@ -5800,7 +5811,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminSale.tsx",
-      "source_location": "L28",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -5812,7 +5823,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminSale.tsx",
-      "source_location": "L29",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -6353,18 +6364,6 @@
       "context": "import",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
       "source_location": "L1",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_adminsale",
-      "target": "apps_web_src_preparephoto_preparephoto",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/web/src/AdminSale.tsx",
-      "source_location": "L4",
       "weight": 1.0
     },
     {
@@ -7994,7 +7993,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L52",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -8005,7 +8004,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L58",
+      "source_location": "L59",
       "weight": 1.0
     },
     {
@@ -8016,7 +8015,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L59",
+      "source_location": "L60",
       "weight": 1.0
     },
     {
@@ -8027,7 +8026,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L62",
+      "source_location": "L63",
       "weight": 1.0
     },
     {
@@ -8038,7 +8037,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L65",
+      "source_location": "L66",
       "weight": 1.0
     },
     {
@@ -8164,7 +8163,7 @@
     },
     {
       "source": "apps_api_src_server",
-      "target": "apps_api_src_server_adminauthorized",
+      "target": "apps_api_src_server_failedlogins",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -8175,13 +8174,24 @@
     },
     {
       "source": "apps_api_src_server",
+      "target": "apps_api_src_server_adminauthorized",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
       "target": "apps_api_src_server_expirereservations",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L129",
+      "source_location": "L131",
       "weight": 1.0
     },
     {
@@ -8204,6 +8214,17 @@
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
       "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_server_createreservation",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L246",
       "weight": 1.0
     },
     {
@@ -8291,7 +8312,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L78",
+      "source_location": "L80",
       "weight": 1.0
     },
     {
@@ -8302,7 +8323,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L79",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
@@ -8313,7 +8334,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L82",
+      "source_location": "L84",
       "weight": 1.0
     },
     {
@@ -8324,7 +8345,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L856",
+      "source_location": "L863",
       "weight": 1.0
     },
     {
@@ -8335,18 +8356,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L858",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_server",
-      "target": "apps_api_src_server_photoselect",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/api/src/server.ts",
-      "source_location": "L87",
+      "source_location": "L865",
       "weight": 1.0
     },
     {
@@ -8357,23 +8367,12 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L872",
+      "source_location": "L879",
       "weight": 1.0
     },
     {
       "source": "apps_api_src_server",
-      "target": "apps_api_src_server_packageselect",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/api/src/server.ts",
-      "source_location": "L88",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_server",
-      "target": "apps_api_src_server_imagelist",
+      "target": "apps_api_src_server_photoselect",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -8384,24 +8383,35 @@
     },
     {
       "source": "apps_api_src_server",
+      "target": "apps_api_src_server_packageselect",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
+      "target": "apps_api_src_server_imagelist",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/server.ts",
+      "source_location": "L91",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_server",
       "target": "apps_api_src_server_validphoto",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L92",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_server",
-      "target": "apps_api_src_server_failedlogins",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/api/src/server.ts",
-      "source_location": "L99",
+      "source_location": "L94",
       "weight": 1.0
     },
     {
@@ -9028,7 +9038,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/AdminSale.tsx",
-      "source_location": "L25",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -10957,19 +10967,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L97",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_api_src_server",
-      "target": "apps_api_src_server_createreservation",
-      "relation": "indirect_call",
-      "_origin": "ast",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "context": "argument",
-      "source_file": "apps/api/src/server.ts",
-      "source_location": "L324",
+      "source_location": "L98",
       "weight": 1.0
     },
     {
@@ -11022,5 +11020,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "7905efb2c52b6629cddec9cde3f23b11c4ab22f8"
+  "built_at_commit": "6e165946f68e1510c351d2be21586b86b2622c12"
 }

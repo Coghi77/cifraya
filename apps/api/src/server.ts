@@ -66,6 +66,8 @@ const campaignInput = z.preprocess(normalizePrizeInput, z.object({
 }).refine(data => validPrizeSources(data.prizes, data.prizeSources), { message: 'Cada premio inverso debe apuntar a un premio directo anterior.', path: ['prizeSources'] }).refine(data => data.prizes.length <= data.numberCount, { message: 'No puede haber más premios que números.', path: ['prizes'] }).transform(data => ({ ...data, invertedPrizeEnabled: data.prizeSources.some(source => source > 0), prize: data.prizes[0], prizeCount: data.prizes.length, secondPrize: data.prizes[1], thirdPrize: data.prizes[2] })));
 
 const reservationInput = z.object({
+  paymentMethod:z.enum(['SINPE','CASH']).default('SINPE'),
+  cashReceived:z.boolean().optional(),
   expectedTotalCrc: z.number().int().positive().optional(),
   campaignId: z.string(),
   values: z.array(z.number().int().nonnegative()).min(1).max(100),
@@ -241,11 +243,14 @@ app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal/change', a
   }
 });
 
-async function createReservation(request:FastifyRequest,reply:FastifyReply) {
+async function createReservation(request:FastifyRequest,reply:FastifyReply,allowCash=false) {
   await expireReservations();
   const parsed = reservationInput.safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: 'Datos inválidos', details: parsed.error.flatten() });
   const input = parsed.data;
+  const cash=input.paymentMethod==='CASH';
+  if(cash && (!allowCash || !adminAuthorized(request.headers.authorization)))return reply.code(403).send({error:'El efectivo solo se registra desde administración.'});
+  if(cash && input.cashReceived!==true)return reply.code(400).send({error:'Confirmá que recibiste el dinero en efectivo.'});
   const uniqueValues = [...new Set(input.values)];
   if (uniqueValues.length !== input.values.length) return reply.code(400).send({ error: 'Hay números repetidos en la selección' });
   const campaign = await db.campaign.findUnique({ where: { id: input.campaignId }, include: { packages: packageSelect } });
@@ -272,6 +277,8 @@ async function createReservation(request:FastifyRequest,reply:FastifyReply) {
       if (consumed.count !== 1) throw new Error('PROPOSAL_REQUIRED');
       const created = await tx.reservation.create({
         data: {
+          paymentMethod:input.paymentMethod,
+          ...(cash?{status:'CONFIRMED' as const,confirmedAt:new Date()}:{}),
           lookupToken: randomBytes(24).toString('hex'),
           campaignId: campaign.id,
           buyerName: input.buyerName,
@@ -288,11 +295,11 @@ async function createReservation(request:FastifyRequest,reply:FastifyReply) {
       });
       const claimed = await tx.entryNumber.updateMany({
         where: { campaignId: campaign.id, value: { in: allValues }, status: 'AVAILABLE', holdKey: key, holdExpiresAt: { gt: new Date() } },
-        data: { status: 'RESERVED', reservationId: created.id, holdKey: null, holdExpiresAt: null },
+        data: { status: cash?'SOLD':'RESERVED', reservationId: created.id, holdKey: null, holdExpiresAt: null },
       });
       if (claimed.count !== allValues.length) throw new Error('NUMBER_UNAVAILABLE');
       await tx.entryNumber.updateMany({ where: { campaignId: campaign.id, holdKey: key }, data: { holdKey: null, holdExpiresAt: null } });
-      await enqueuePaymentEmail(tx, created.id, 'RESERVED');
+      await enqueuePaymentEmail(tx, created.id, cash?'CONFIRMED':'RESERVED');
       return created;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
     broadcast('reservations');
@@ -321,10 +328,10 @@ async function createReservation(request:FastifyRequest,reply:FastifyReply) {
     throw error;
   }
 }
-app.post('/api/reservations',createReservation);
+app.post('/api/reservations',(request,reply)=>createReservation(request,reply));
 app.post('/api/admin/reservations',async(request,reply)=>{
  if(!adminAuthorized(request.headers.authorization))return reply.code(401).send({error:'Acceso no autorizado'});
- return createReservation(request,reply);
+ return createReservation(request,reply,true);
 });
 
 app.get<{ Params: { token: string } }>('/api/reservations/:token', async (request, reply) => {
@@ -337,7 +344,7 @@ app.get<{ Params: { token: string } }>('/api/reservations/:token', async (reques
   return {
     status: reservation.status,
     expiresAt: reservation.expiresAt,
-    orderNumber: reservation.orderNumber, createdAt: reservation.createdAt, confirmedAt: reservation.confirmedAt,
+    paymentMethod:reservation.paymentMethod, orderNumber: reservation.orderNumber, createdAt: reservation.createdAt, confirmedAt: reservation.confirmedAt,
     buyerName: reservation.buyerName,
     stickerCount: reservation.stickerCount, numbersPerSticker: reservation.numbersPerSticker,
     totalCrc: reservation.totalCrc,
@@ -358,7 +365,7 @@ app.post('/api/reservations/lookup', async (request, reply) => {
   const reservation = await db.reservation.findUnique({
     where: { lookupToken: parsed.data.token },
     select: {
-      orderNumber: true, createdAt: true, confirmedAt: true, stickerCount: true, numbersPerSticker: true,
+      paymentMethod:true, orderNumber: true, createdAt: true, confirmedAt: true, stickerCount: true, numbersPerSticker: true,
       buyerName: true,
       status: true,
       expiresAt: true,
@@ -375,7 +382,7 @@ app.post('/api/reservations/lookup', async (request, reply) => {
   });
   if (!reservation) return reply.code(404).send({ error: 'No encontramos una reserva con ese código.' });
   return {
-    orderNumber: reservation.orderNumber, createdAt: reservation.createdAt, confirmedAt: reservation.confirmedAt,
+    paymentMethod:reservation.paymentMethod, orderNumber: reservation.orderNumber, createdAt: reservation.createdAt, confirmedAt: reservation.confirmedAt,
     buyerName: reservation.buyerName,
     status: reservation.status,
     stickerCount: reservation.stickerCount, numbersPerSticker: reservation.numbersPerSticker,
