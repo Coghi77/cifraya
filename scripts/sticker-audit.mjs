@@ -18,10 +18,15 @@ export async function auditStickers(request, db, proof, token) {
   assert.equal(proposal.status,200);assert.equal(proposal.data.values.length,30);
   const competing=await request('/api/campaigns/sticker-audit/proposal',{quantity:2,values:proposal.data.values.slice(0,2)});
   assert.equal(competing.status,409);
-  const order=await request('/api/reservations',{campaignId:id,values:proposal.data.values,buyerName:'Sticker audit',buyerEmail:'audit@example.invalid',buyerPhone:'00000000',totalCrc:1,stickerCount:1},proposal.cookie);
+  assert.equal((await request('/api/admin/reservations',{})).status,401);
+  assert.equal((await request('/api/admin/reservations',{},'','forged')).status,401);
+  const order=await request('/api/admin/reservations',{campaignId:id,values:proposal.data.values,buyerName:'Sticker audit',buyerEmail:'audit@example.invalid',buyerPhone:'00000000',totalCrc:1,stickerCount:1},proposal.cookie,token);
   assert.equal(order.status,201);assert.equal(order.data.totalCrc,25000);
   const lookup=await request('/api/reservations/lookup',{token:order.data.token});
   assert.equal(lookup.data.stickerCount,15);assert.equal(lookup.data.numbersPerSticker,2);
+  assert.ok(order.data.reservationId);
+  assert.equal((await request(`/api/reservations/${order.data.token}/proofs`,proof)).status,201);
+  assert.equal((await request('/api/reservations/lookup',{token:order.data.token})).data.status,'PENDING_REVIEW');
   const stored=await db.reservation.findUnique({where:{lookupToken:order.data.token}});
   const email=await db.emailNotification.findFirst({where:{reservationId:stored.id,kind:'RESERVED'}});
   assert.match(email.html,/15 stickers/);

@@ -290,3 +290,27 @@ h1,h2,h3 { letter-spacing:-.045em; }
 
 /* Reservation status must remain readable over the legacy active background. */
 .admin-shell .reservation-row .state.active { background:#ff4200; color:#191919; }
+
+/* Explicit foreground/background pairs throughout administrator status badges. */
+.admin-shell .state { background:#111; color:#fff; }
+.admin-shell .state.draft { background:#e5e5e5; color:#191919; }
+.admin-shell .state.active { background:#ff4200; color:#191919; }
+.admin-shell .state.expired,.admin-shell .state.cancelled { background:#555; color:#fff; }
+.admin-sale-launch,.admin-sale-primary { background:#ff4200; color:#191919; border:1px solid #ff4200; border-radius:10px; padding:12px 18px; min-height:48px; font-weight:800; cursor:pointer; }
+.admin-sale-launch { margin:0 0 20px; }
+.admin-sale-dialog { width:min(640px,calc(100vw - 24px)); max-height:90svh; overflow:auto; padding:24px; border:1px solid #666; border-radius:18px; background:#202020; color:#fff; }
+.admin-sale-dialog::backdrop { background:#000a; }
+.admin-sale-heading { display:flex; justify-content:space-between; gap:12px; }
+.admin-sale-heading h2 { margin:8px 0; }
+.admin-sale-heading span { color:#ff9069; font-size:12px; }
+.admin-sale-heading button { width:44px; height:44px; border:1px solid #888; border-radius:8px; background:#303030; color:#fff; font-size:26px; }
+.admin-sale-dialog form,.admin-sale-dialog fieldset { display:grid; gap:16px; min-width:0; }
+.admin-sale-dialog fieldset { padding:0; border:0; margin:0; }
+.admin-sale-dialog legend { padding:8px 0; }
+.admin-sale-dialog label { display:grid; gap:8px; }
+.admin-sale-dialog input { width:100%; min-width:0; padding:12px; border:1px solid #888; border-radius:8px; background:#303030; color:#fff; font-size:16px; }
+.admin-sale-dialog small { color:#ccc; line-height:1.5; }
+.admin-sale-dialog fieldset>button { min-height:44px; background:#eee; color:#191919; border:0; border-radius:8px; }
+.admin-sale-dialog button:disabled { opacity:.5; cursor:not-allowed; }
+.admin-sale-numbers { display:flex; flex-wrap:wrap; gap:8px; }
+.admin-sale-numbers span { border:1px solid #888; border-radius:6px; padding:8px; color:#fff; background:#303030; }

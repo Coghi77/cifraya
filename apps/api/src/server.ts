@@ -6,7 +6,7 @@ import { createEmailWorker, enqueuePaymentEmail, emailConfigured, paymentEmail }
 import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import Fastify from 'fastify';
+import Fastify, {type FastifyRequest,type FastifyReply} from 'fastify';
 import cors from '@fastify/cors';
 import fastifyStatic from '@fastify/static';
 import { Prisma, PrismaClient } from '@prisma/client';
@@ -241,7 +241,7 @@ app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal/change', a
   }
 });
 
-app.post('/api/reservations', async (request, reply) => {
+async function createReservation(request:FastifyRequest,reply:FastifyReply) {
   await expireReservations();
   const parsed = reservationInput.safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: 'Datos inválidos', details: parsed.error.flatten() });
@@ -298,6 +298,7 @@ app.post('/api/reservations', async (request, reply) => {
     broadcast('reservations');
     emailWorker.kick();
     return reply.code(201).send({
+      ...(adminAuthorized(request.headers.authorization) ? {reservationId:reservation.id} : {}),
       token: reservation.lookupToken,
       orderNumber: reservation.orderNumber,
       expiresAt: reservation.expiresAt,
@@ -319,6 +320,11 @@ app.post('/api/reservations', async (request, reply) => {
     }
     throw error;
   }
+}
+app.post('/api/reservations',createReservation);
+app.post('/api/admin/reservations',async(request,reply)=>{
+ if(!adminAuthorized(request.headers.authorization))return reply.code(401).send({error:'Acceso no autorizado'});
+ return createReservation(request,reply);
 });
 
 app.get<{ Params: { token: string } }>('/api/reservations/:token', async (request, reply) => {
@@ -658,7 +664,7 @@ app.get('/api/winners', async () => {
 app.get<{ Params: { id: string }; Querystring: { page?: string; search?: string; status?: string } }>('/api/admin/campaigns/:id/overview', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   await expireReservations();
-  const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, title: true, numberCount: true, numberWidth: true, prizeCount: true, prizes: true, prizeSources: true, drawResults: true, drawReference: true, prize: true, secondPrize: true, thirdPrize: true, invertedPrizeEnabled: true, winners: { select: { position: true, numberValue: true, reservationId: true }, orderBy: { position: 'asc' } } } });
+  const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, slug:true,status:true,numbersPerSticker:true,priceCrc:true,packages:packageSelect, title: true, numberCount: true, numberWidth: true, prizeCount: true, prizes: true, prizeSources: true, drawResults: true, drawReference: true, prize: true, secondPrize: true, thirdPrize: true, invertedPrizeEnabled: true, winners: { select: { position: true, numberValue: true, reservationId: true }, orderBy: { position: 'asc' } } } });
   if (!campaign) return reply.code(404).send({ error: 'Rifa no encontrada' });
   const page = Math.max(1, Math.min(1000, Number(request.query.page) || 1));
   const search = request.query.search?.trim() || '';

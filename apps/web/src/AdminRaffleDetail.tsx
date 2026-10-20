@@ -1,3 +1,4 @@
+import AdminSale, {type SaleCampaign} from './AdminSale';
 import LotteryDrawPanel from './LotteryDrawPanel';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import AdminParticipantDetail from './AdminParticipantDetail';
@@ -9,7 +10,7 @@ type NumberRow = {
   reservation: null | { id: string; buyerName: string };
 };
 type Overview = {
-  campaign: { drawResults: string[]; drawReference: string; title: string; numberWidth: number; numberCount: number; prizeCount: number; prizes: string[]; prizeSources: number[]; prize: string; secondPrize: string | null; thirdPrize: string | null; winners: { position: number; numberValue: number; reservationId: string | null }[] };
+  campaign: SaleCampaign & { drawResults: string[]; drawReference: string; title: string; numberWidth: number; numberCount: number; prizeCount: number; prizes: string[]; prizeSources: number[]; prize: string; secondPrize: string | null; thirdPrize: string | null; winners: { position: number; numberValue: number; reservationId: string | null }[] };
   nextInverse: null | { value: number; buyerName: string | null; sold: boolean };
   counts: Record<string, number>;
   page: number;
@@ -54,6 +55,7 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange, onRevie
   const requestSequence = useRef(0);
   const [selectedTicket, setSelectedTicket] = useState<NumberRow | null>(null);
   const [participantReservationId, setParticipantReservationId] = useState<string | null>(null);
+  const [saleOpen,setSaleOpen]=useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
@@ -110,6 +112,8 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange, onRevie
   return <section className="admin-raffle-detail">
     <button className="admin-back" type="button" onClick={onBack}>← Todas las rifas</button>
     <div className="admin-detail-heading"><div><span className="eyebrow">INVENTARIO Y RESULTADO</span><h2>{overview?.campaign.title || 'Cargando rifa...'}</h2></div><button type="button" onClick={() => void reload()} disabled={busy}>Actualizar</button></div>
+    {overview?.campaign.status==='LIVE' && <button type="button" className="admin-sale-launch" onClick={()=>setSaleOpen(true)}>+ Registrar venta</button>}
+    {saleOpen && overview && <AdminSale campaign={overview.campaign} token={token} onClose={()=>{setSaleOpen(false);void reload();onChange();}} onReview={reservationId=>{setSaleOpen(false);void reload();onChange();onReview(reservationId);}}/>}
     {error && <p className="admin-detail-error" role="alert">{error}</p>}
     {overview && <>
       <div className="admin-detail-stats"><div><strong>{overview.counts.AVAILABLE || 0}</strong><span>Disponibles</span></div><div><strong>{overview.counts.RESERVED || 0}</strong><span>Apartados</span></div><div><strong>{overview.counts.SOLD || 0}</strong><span>Vendidos</span></div></div>

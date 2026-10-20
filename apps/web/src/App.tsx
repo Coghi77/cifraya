@@ -1,3 +1,4 @@
+import preparePhoto from './preparePhoto';
 import SiteHeader from './SiteHeader';
 import DrawCountdown from './DrawCountdown';
 import DrawScheduleEditor, {toDrawDate} from './DrawScheduleEditor';
@@ -100,27 +101,6 @@ function InvertedChoice({ raffle, values, inverted, selected, disabled, onToggle
   return <div className="inverted-choice"><div><strong>Sumá los invertidos</strong><span>{inverted ? `${values.length} números más por el mismo precio del paquete` : 'Los invertidos de esta selección no están todos disponibles.'}</span></div>{inverted && <><div className="random-values">{inverted.map(value => <span key={value}>{formatNumber(value, raffle.numberWidth)}</span>)}</div><button type="button" className="inverted-toggle" aria-pressed={selected} disabled={disabled} onClick={() => onToggle(!selected)}>{selected ? 'Quitar invertidos' : `Agregar invertidos · +${money(selectedOffer(raffle, values.length)?.priceCrc || 0)}`}</button><small>Cada número agregado es un boleto. Los premios para el inverso se indican en esta rifa.</small></>}</div>;
 }
 
-async function preparePhoto(file: File) {
-  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 15_000_000) {
-    throw new Error('Elegí fotos JPG, PNG o WebP de hasta 15 MB.');
-  }
-  const bitmap = await createImageBitmap(file);
-  const canvas = document.createElement('canvas');
-  const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
-  canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-  canvas.height = Math.max(1, Math.round(bitmap.height * scale));
-  const context = canvas.getContext('2d');
-  if (!context) throw new Error('No se pudo preparar la foto.');
-  context.fillStyle = '#fff';
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-  bitmap.close();
-  for (const quality of [0.82, 0.68, 0.5]) {
-    const base64 = canvas.toDataURL('image/jpeg', quality).split(',')[1];
-    if (base64.length <= 2_666_668) return { mimeType: 'image/jpeg', base64 };
-  }
-  throw new Error('Esta foto es demasiado grande incluso después de comprimirla.');
-}
 
 class ApiError extends Error {
   constructor(message: string, readonly status: number) { super(message); }
