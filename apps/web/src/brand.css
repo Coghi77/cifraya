@@ -199,3 +199,39 @@ h1,h2,h3 { letter-spacing:-.045em; }
   .current-raffle-content .current-prize { margin-bottom:12px; }
   .current-raffle-content .raffle-progress { width:100%; margin:8px 0 20px; }
 }
+
+/* Mobile purchase: compact photos, readable inputs and comfortable touch targets. */
+.mobile-buy-link { display:none; }
+.checkout-dialog { border:0; padding:0; background:transparent; width:min(490px,calc(100% - 24px)); max-width:none; max-height:calc(100dvh - 24px); color:#191919; border-radius:20px; }
+.checkout-dialog::backdrop { background:#121212c9; }
+.checkout-dialog .modal { width:100%; max-height:calc(100dvh - 24px); overscroll-behavior:contain; }
+.checkout-error { padding:12px; border:1px solid #b3261e; border-radius:8px; color:#9d1610!important; background:#fff0ee; }
+@media(max-width:800px) {
+  .current-raffle-image,.detail-image { height:clamp(230px,35svh,320px); padding:12px; }
+  .current-raffle-content .sticker-picker { width:100%; color:#fff; }
+  .current-raffle-content { padding:20px 16px 28px; }
+  .current-prize { margin-bottom:12px; }
+  .current-raffle-content .raffle-progress { width:100%; margin:8px 0 18px; }
+  .detail-page { padding:24px 16px 40px; }
+  .detail-side { padding:16px; min-width:0; scroll-margin-top:16px; }
+  .detail-side-top { margin-bottom:16px; }
+  .mobile-buy-link { display:inline-flex; margin:8px 0 16px; }
+  .sticker-cards { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  .sticker-cards .sticker-card { padding:12px; gap:14px; }
+  .sticker-card-heading b { font-size:16px; }
+  .sticker-cards .sticker-card .sticker-card-includes { padding:10px; }
+  .selection-modes button { flex:1; padding:10px 8px; }
+  .site-header nav button,.button,.modal-close,.manual-pagination button,.selection-modes button,.manual-grid button { min-height:44px; }
+  .modal-close { min-width:44px; top:12px; right:12px; }
+  .form-grid input,.form-grid textarea,.manual-numbers input,.sticker-picker input { font-size:16px; }
+  .checkout-dialog .modal { padding:24px 18px; }
+  .modal h2 { padding-right:32px; font-size:27px; }
+  .modal-numbers { max-height:120px; overflow:auto; }
+  .order-card,.order-facts dd,.reservation-result { overflow-wrap:anywhere; min-width:0; }
+  .manual-grid { grid-template-columns:repeat(auto-fill,minmax(54px,1fr)); }
+}
+@media(max-width:800px) { .selection-result,.manual-numbers,.reservation-result { scroll-margin-top:16px; } }
+@media(max-width:800px) { #rifa-compra,.selection-result,.manual-numbers,.reservation-result { scroll-margin-top:156px; } }
+@media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+@media(max-width:800px) { .detail-side .random-picker { padding:10px; gap:12px; } }
+@media(max-width:359px) { .sticker-cards { grid-template-columns:minmax(0,1fr); } .detail-heading h1 { font-size:34px; } }
