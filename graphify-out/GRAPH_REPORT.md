@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 403 nodes · 558 edges · 44 communities (15 shown, 9 thin omitted)
+- 403 nodes · 557 edges · 44 communities (15 shown, 9 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6e165946`
+- Built from commit: `bc5ed063`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -48,8 +48,8 @@
 6. `api()` - 8 edges
 7. `loadAdmin()` - 8 edges
 8. `preparePhoto()` - 8 edges
-9. `AdminSale()` - 8 edges
-10. `compilerOptions` - 8 edges
+9. `compilerOptions` - 8 edges
+10. `lucide-react` - 8 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `createReservation()` --calls--> `enqueuePaymentEmail()`  [EXTRACTED]
@@ -139,7 +139,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `@prisma/client` connect `Community 6` to `Community 0`, `Community 3`, `Community 11`?**
   _High betweenness centrality (0.056) - this node is a cross-community bridge._
 - **Why does `react` connect `Community 2` to `Community 8`, `Community 1`, `Community 4`, `Community 5`?**
-  _High betweenness centrality (0.050) - this node is a cross-community bridge._
+  _High betweenness centrality (0.052) - this node is a cross-community bridge._
 - **Why does `lucide-react` connect `Community 2` to `Community 8`, `Community 1`, `Community 5`?**
   _High betweenness centrality (0.018) - this node is a cross-community bridge._
 - **What connects `AdminReservation`, `LookupResult`, `NumberProposal` to the rest of the system?**

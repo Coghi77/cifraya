@@ -315,3 +315,14 @@ h1,h2,h3 { letter-spacing:-.045em; }
 .admin-sale-numbers { display:flex; flex-wrap:wrap; gap:8px; }
 .admin-sale-numbers span { border:1px solid #888; border-radius:6px; padding:8px; color:#fff; background:#303030; }
 .admin-sale-dialog .cash-received { display:flex; align-items:flex-start; gap:12px; padding:14px; background:#30241e; border:1px solid #ff9069; border-radius:10px; line-height:1.5; } .admin-sale-dialog .cash-received input { width:22px; height:22px; flex-shrink:0; accent-color:#ff4200; }
+
+.admin-sales-summary{margin:24px 0;color:#fff}
+.admin-sales-summary h3{margin:0 0 8px}
+.admin-sales-summary>p{color:#c4c4c4;font-size:14px;line-height:1.5}
+.admin-sales-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.admin-sales-grid>div{display:flex;flex-direction:column;gap:8px;padding:20px;background:#242424;border:1px solid #555;border-radius:14px;min-width:0}
+.admin-sales-grid strong{color:#fff;font-size:clamp(20px,2.3vw,30px);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.admin-sales-grid small{color:#c4c4c4}
+.admin-sales-grid .admin-sales-total{border-color:#ff4200}
+.admin-sales-total>span{color:#ff784a}
+@media(max-width:600px){.admin-sales-grid{grid-template-columns:1fr}.admin-sales-grid>div{padding:16px}}

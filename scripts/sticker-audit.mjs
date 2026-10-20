@@ -72,6 +72,16 @@ export async function auditStickers(request, db, proof, token) {
   assert.equal((await request('/api/reservations/lookup',{token:cashOrder.data.token})).data.paymentMethod,'CASH');
   assert.equal((await request('/api/admin/reservations',cashBody,cashProposal.cookie,token)).status,409);
   assert.equal((await request('/api/campaigns/sticker-audit/proposal',{quantity:2,values:cashBody.values})).status,409);
+  const summaryPath='/api/admin/campaigns/'+id+'/overview';
+  assert.equal((await request(summaryPath)).status,401);
+  const expectedSales={cashCrc:1800,sinpeCrc:25000,cashOrders:1,sinpeOrders:1,totalCrc:26800};
+  assert.deepEqual((await request(summaryPath,undefined,'',token)).data.sales,expectedSales);
+  assert.deepEqual((await request(summaryPath+'?status=AVAILABLE&search=unmatched&page=2',undefined,'',token)).data.sales,expectedSales);
+  for(const status of ['PENDING_REVIEW','CANCELLED','EXPIRED']) {
+    await db.reservation.update({where:{lookupToken:updatedOrder.data.token},data:{status}});
+    assert.deepEqual((await request(summaryPath,undefined,'',token)).data.sales,expectedSales);
+  }
+  console.log('Sales summary PASS: historical prices, cash/SINPE split, unconfirmed excluded, filter-independent, admin-only');
   console.log('Cash PASS: admin-only, receipt acknowledgment required, atomic SOLD without proof, one confirmation email, replay and duplicate numbers rejected');
   console.log('Live cards PASS: pending and confirmed snapshots preserved; stale total rejected; new price used; removed quantities blocked; rules immutable');
   console.log(JSON.stringify({stickers:'PASS',checks:['15 stickers / 30 unique numbers / CRC 25000','price and count tampering ignored','incomplete sticker rejected','held numbers excluded','three-photo limit','order snapshot and email']}));

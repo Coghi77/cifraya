@@ -209,7 +209,7 @@
       "file_type": "code",
       "norm_label": "history",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L20"
+      "source_location": "L21"
     },
     {
       "id": "apps_web_src_adminraffledetail_numberrow",
@@ -1538,7 +1538,7 @@
       "file_type": "code",
       "norm_label": "adminraffledetail()",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L42"
+      "source_location": "L43"
     },
     {
       "id": "apps_web_src_adminraffledetail_adminraffledetail_publishwinner",
@@ -1550,7 +1550,7 @@
       "file_type": "code",
       "norm_label": "publishwinner()",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L102"
+      "source_location": "L103"
     },
     {
       "id": "apps_web_src_adminraffledetail_adminrequest",
@@ -1562,7 +1562,7 @@
       "file_type": "code",
       "norm_label": "adminrequest()",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L26"
+      "source_location": "L27"
     },
     {
       "id": "apps_web_src_adminraffledetail_currency",
@@ -1574,7 +1574,7 @@
       "file_type": "code",
       "norm_label": "currency()",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L34"
+      "source_location": "L35"
     },
     {
       "id": "apps_web_src_adminraffledetail_numberlabel",
@@ -1586,7 +1586,7 @@
       "file_type": "code",
       "norm_label": "numberlabel()",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L33"
+      "source_location": "L34"
     },
     {
       "id": "apps_web_src_adminsale_adminsale",
@@ -2246,7 +2246,7 @@
       "file_type": "code",
       "norm_label": "port",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L879"
+      "source_location": "L887"
     },
     {
       "id": "apps_api_src_server_proposalcleanup",
@@ -2257,7 +2257,7 @@
       "file_type": "code",
       "norm_label": "proposalcleanup",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L865"
+      "source_location": "L873"
     },
     {
       "id": "apps_api_src_server_proposalinput",
@@ -2312,7 +2312,7 @@
       "file_type": "code",
       "norm_label": "timer",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L863"
+      "source_location": "L871"
     },
     {
       "id": "apps_api_src_stickers",
@@ -3621,7 +3621,7 @@
       "file_type": "code",
       "norm_label": "statusoptions",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L35"
+      "source_location": "L36"
     },
     {
       "id": "apps_web_src_adminsale",
@@ -4923,7 +4923,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L863",
+      "source_location": "L871",
       "weight": 1.0
     },
     {
@@ -4988,18 +4988,6 @@
     },
     {
       "source": "apps_web_src_adminraffledetail_adminraffledetail",
-      "target": "apps_web_src_adminraffledetail_numberlabel",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L121",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_adminraffledetail_adminraffledetail",
       "target": "apps_web_src_adminraffledetail_currency",
       "relation": "calls",
       "_origin": "ast",
@@ -5007,7 +4995,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L128",
+      "source_location": "L124",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_adminraffledetail_adminraffledetail",
+      "target": "apps_web_src_adminraffledetail_numberlabel",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "apps/web/src/AdminRaffleDetail.tsx",
+      "source_location": "L131",
       "weight": 1.0
     },
     {
@@ -5019,7 +5019,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L74",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -5031,7 +5031,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L106",
+      "source_location": "L107",
       "weight": 1.0
     },
     {
@@ -5763,7 +5763,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L102",
+      "source_location": "L103",
       "weight": 1.0
     },
     {
@@ -6340,18 +6340,6 @@
       "context": "import",
       "source_file": "apps/web/package.json",
       "source_location": "L22",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_adminraffledetail",
-      "target": "apps_web_src_adminsale_adminsale",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L1",
       "weight": 1.0
     },
     {
@@ -8345,7 +8333,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L863",
+      "source_location": "L871",
       "weight": 1.0
     },
     {
@@ -8356,7 +8344,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L865",
+      "source_location": "L873",
       "weight": 1.0
     },
     {
@@ -8367,7 +8355,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/server.ts",
-      "source_location": "L879",
+      "source_location": "L887",
       "weight": 1.0
     },
     {
@@ -8873,7 +8861,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -8884,7 +8872,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -8895,7 +8883,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L33",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
@@ -8906,7 +8894,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L34",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -8917,7 +8905,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L35",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -8928,7 +8916,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/AdminRaffleDetail.tsx",
-      "source_location": "L42",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -11020,5 +11008,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6e165946f68e1510c351d2be21586b86b2622c12"
+  "built_at_commit": "bc5ed06337d1b8dbaa8f077dbc0feac986ebc0f1"
 }

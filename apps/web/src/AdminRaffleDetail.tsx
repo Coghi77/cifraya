@@ -12,6 +12,7 @@ type NumberRow = {
 type Overview = {
   campaign: SaleCampaign & { drawResults: string[]; drawReference: string; title: string; numberWidth: number; numberCount: number; prizeCount: number; prizes: string[]; prizeSources: number[]; prize: string; secondPrize: string | null; thirdPrize: string | null; winners: { position: number; numberValue: number; reservationId: string | null }[] };
   nextInverse: null | { value: number; buyerName: string | null; sold: boolean };
+  sales: { cashCrc: number; sinpeCrc: number; totalCrc: number; cashOrders: number; sinpeOrders: number };
   counts: Record<string, number>;
   page: number;
   pageCount: number;
@@ -116,6 +117,15 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange, onRevie
     {saleOpen && overview && <AdminSale campaign={overview.campaign} token={token} onClose={()=>{setSaleOpen(false);void reload();onChange();}} onReview={reservationId=>{setSaleOpen(false);void reload();onChange();onReview(reservationId);}}/>}
     {error && <p className="admin-detail-error" role="alert">{error}</p>}
     {overview && <>
+      <section className="admin-sales-summary" aria-label="Resumen de ventas">
+        <h3>Ventas confirmadas</h3>
+        <p>Solo pagos aprobados. No incluye apartados, pagos en revisión ni pedidos cancelados o vencidos.</p>
+        <div className="admin-sales-grid">
+          <div><span>Efectivo</span><strong>{currency(overview.sales.cashCrc)}</strong><small>{overview.sales.cashOrders} pedidos</small></div>
+          <div><span>SINPE</span><strong>{currency(overview.sales.sinpeCrc)}</strong><small>{overview.sales.sinpeOrders} pedidos</small></div>
+          <div className="admin-sales-total"><span>Total cobrado</span><strong>{currency(overview.sales.totalCrc)}</strong><small>En esta rifa</small></div>
+        </div>
+      </section>
       <div className="admin-detail-stats"><div><strong>{overview.counts.AVAILABLE || 0}</strong><span>Disponibles</span></div><div><strong>{overview.counts.RESERVED || 0}</strong><span>Apartados</span></div><div><strong>{overview.counts.SOLD || 0}</strong><span>Vendidos</span></div></div>
       {(overview.campaign.prizeSources[overview.campaign.winners.length] || 0) < 0 && <LotteryDrawPanel key={overview.campaign.winners.length} id={id} token={token} position={overview.campaign.winners.length + 1} width={overview.campaign.numberWidth} start={-overview.campaign.prizeSources[overview.campaign.winners.length]} requiredCount={Math.max(...overview.campaign.prizeSources.filter(n => n < 0).map(n => -n - 1 + Math.ceil(overview.campaign.numberWidth / 2)))} savedResults={overview.campaign.drawResults} savedReference={overview.campaign.drawReference} onSaved={() => { void reload(); onChange(); }}/>}
       <div className="admin-winner-banner">{Array.from({ length: overview.campaign.prizeCount }, (_, index) => { const winner = overview.campaign.winners.find(item => item.position === index + 1); const prize = overview.campaign.prizes[index]; return <span key={index}><strong>{index + 1}.º premio · {prize}{overview.campaign.prizeSources[index] > 0 ? ` · Inverso del ${overview.campaign.prizeSources[index]}.º` : overview.campaign.prizeSources[index] < 0 ? ` · JPS desde ${-overview.campaign.prizeSources[index]}.º` : ' · Directo'}</strong><span>{winner ? `${winner.reservationId ? 'Ganador' : 'Sin boleto vendido'} ${numberLabel(winner.numberValue, overview.campaign.numberWidth)}` : 'Pendiente'}</span></span>; })}</div>

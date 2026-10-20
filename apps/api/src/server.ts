@@ -678,16 +678,24 @@ app.get<{ Params: { id: string }; Querystring: { page?: string; search?: string;
   if (search.length > 100) return reply.code(400).send({ error: 'La búsqueda es demasiado larga.' });
   const status = ['AVAILABLE', 'RESERVED', 'SOLD'].includes(request.query.status || '') ? request.query.status as 'AVAILABLE' | 'RESERVED' | 'SOLD' : undefined;
   const where = { campaignId: campaign.id, ...(ticketSearchWhere(search, campaign.numberWidth) || {}), ...(status ? { status } : {}) };
-  const [counts, total, numbers] = await Promise.all([
+  const [counts, total, numbers, payments] = await Promise.all([
     db.entryNumber.groupBy({ by: ['status'], where: { campaignId: campaign.id }, _count: { _all: true } }),
     db.entryNumber.count({ where }),
     db.entryNumber.findMany({ where, orderBy: { value: 'asc' }, skip: (page - 1) * 100, take: 100,
       select: { value: true, status: true, reservation: { select: { id: true, buyerName: true, includesInverted: true, baseValues: true } } } }),
+    db.reservation.groupBy({ by: ['paymentMethod'], where: { campaignId: campaign.id, status: 'CONFIRMED' }, _sum: { totalCrc: true }, _count: { _all: true } }),
   ]);
+  const sales = { cashCrc: 0, sinpeCrc: 0, cashOrders: 0, sinpeOrders: 0, totalCrc: 0 };
+  for (const payment of payments) {
+    const amount = payment._sum.totalCrc ?? 0;
+    if (payment.paymentMethod === 'CASH') { sales.cashCrc += amount; sales.cashOrders += payment._count._all; }
+    else { sales.sinpeCrc += amount; sales.sinpeOrders += payment._count._all; }
+    sales.totalCrc += amount;
+  }
   const inverseValue = inversePrizeNumber(campaign.prizeSources, campaign.winners.length + 1, campaign.numberWidth, campaign.winners);
   const inverseTicket = inverseValue === null ? null : await db.entryNumber.findUnique({ where: { campaignId_value: { campaignId: campaign.id, value: inverseValue } }, select: { status: true, reservation: { select: { buyerName: true } } } });
   const nextInverse = inverseValue === null ? null : { value: inverseValue, buyerName: inverseTicket?.status === 'SOLD' ? inverseTicket.reservation?.buyerName : null, sold: inverseTicket?.status === 'SOLD' };
-  return { campaign, nextInverse, counts: Object.fromEntries(counts.map(item => [item.status, item._count._all])), page, pageCount: Math.ceil(total / 100), numbers: numbers.map(item => ({ value: item.value, status: item.status, reservation: item.reservation ? { id: item.reservation.id, buyerName: item.reservation.buyerName } : null, prizeEligible: nextInverse === null && (campaign.prizeSources[campaign.winners.length] || 0) === 0 })) };
+  return { campaign, sales, nextInverse, counts: Object.fromEntries(counts.map(item => [item.status, item._count._all])), page, pageCount: Math.ceil(total / 100), numbers: numbers.map(item => ({ value: item.value, status: item.status, reservation: item.reservation ? { id: item.reservation.id, buyerName: item.reservation.buyerName } : null, prizeEligible: nextInverse === null && (campaign.prizeSources[campaign.winners.length] || 0) === 0 })) };
 });
 
 app.get<{ Params: { id: string }; Querystring: { page?: string } }>('/api/admin/campaigns/:id/history', async (request, reply) => {
