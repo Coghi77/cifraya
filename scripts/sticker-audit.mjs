@@ -81,6 +81,16 @@ export async function auditStickers(request, db, proof, token) {
     await db.reservation.update({where:{lookupToken:updatedOrder.data.token},data:{status}});
     assert.deepEqual((await request(summaryPath,undefined,'',token)).data.sales,expectedSales);
   }
+  const exportUrl='http://127.0.0.1:4199/api/admin/campaigns/'+id+'/sales.xlsx';
+  assert.equal((await fetch(exportUrl)).status,401);
+  assert.equal((await fetch(exportUrl,{headers:{Authorization:'Bearer forged'}})).status,401);
+  const exported=await fetch(exportUrl,{headers:{Authorization:'Bearer '+token}});
+  assert.equal(exported.status,200);assert.match(exported.headers.get('content-type'),/spreadsheetml/);assert.match(exported.headers.get('cache-control'),/no-store/);
+  const {default:ExcelJS}=await import('../apps/api/node_modules/exceljs/excel.js');
+  const workbook=new ExcelJS.Workbook();await workbook.xlsx.load(Buffer.from(await exported.arrayBuffer()));
+  const sheet=workbook.getWorksheet('Resumen de ventas');
+  assert.equal(sheet.getCell('C6').value,1800);assert.equal(sheet.getCell('C7').value,25000);assert.equal(sheet.getCell('C8').value,26800);
+  console.log('Excel export PASS: authenticated XLSX matches summary, pending excluded, numeric currency cells');
   console.log('Sales summary PASS: historical prices, cash/SINPE split, unconfirmed excluded, filter-independent, admin-only');
   console.log('Cash PASS: admin-only, receipt acknowledgment required, atomic SOLD without proof, one confirmation email, replay and duplicate numbers rejected');
   console.log('Live cards PASS: pending and confirmed snapshots preserved; stale total rejected; new price used; removed quantities blocked; rules immutable');

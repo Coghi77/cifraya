@@ -41,6 +41,8 @@ const statusOptions = [
 ];
 
 export default function AdminRaffleDetail({ id, token, onBack, onChange, onReview }: { id: string; token: string; onBack: () => void; onChange: () => void; onReview: (id: string) => void }) {
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState('');
   const [overview, setOverview] = useState<Overview | null>(null);
   const [history, setHistory] = useState<History | null>(null);
   const [page, setPage] = useState(1);
@@ -100,6 +102,19 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange, onRevie
     return () => document.removeEventListener('keydown', closeEscape);
   }, [selectedWinner, busy]);
 
+  async function downloadSales() {
+    setExporting(true); setExportError('');
+    try {
+      const response = await fetch('/api/admin/campaigns/' + id + '/sales.xlsx', { headers: { Authorization: 'Bearer ' + token } });
+      if (!response.ok) throw new Error(response.status === 401 ? 'Tu sesión venció. Volvé a ingresar para descargar.' : 'No se pudo descargar el resumen. Intentá de nuevo.');
+      const url = URL.createObjectURL(await response.blob());
+      const link = document.createElement('a'); link.href = url; link.download = 'ventas-' + (overview?.campaign.slug || id) + '.xlsx';
+      document.body.appendChild(link); link.click(); link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    } catch (cause) { setExportError((cause as Error).message); }
+    finally { setExporting(false); }
+  }
+
   async function publishWinner() {
     if (!selectedWinner) return;
     setBusy(true);
@@ -119,6 +134,8 @@ export default function AdminRaffleDetail({ id, token, onBack, onChange, onRevie
     {overview && <>
       <section className="admin-sales-summary" aria-label="Resumen de ventas">
         <h3>Ventas confirmadas</h3>
+        <button type="button" disabled={exporting} onClick={() => void downloadSales()}>{exporting ? 'Preparando Excel...' : 'Descargar Excel'}</button>
+        {exportError && <p role="alert">{exportError}</p>}
         <p>Solo pagos aprobados. No incluye apartados, pagos en revisión ni pedidos cancelados o vencidos.</p>
         <div className="admin-sales-grid">
           <div><span>Efectivo</span><strong>{currency(overview.sales.cashCrc)}</strong><small>{overview.sales.cashOrders} pedidos</small></div>

@@ -1,3 +1,4 @@
+import { raffleSales, salesWorkbook } from './salesExport.js';
 import {drawFields,resolveDrawSchedule} from './drawSchedule.js';
 import { composeLotteryNumber } from './lotteryResults.js';
 import { purchaseOffer, validStickerQuantity } from './stickers.js';
@@ -668,6 +669,14 @@ app.get('/api/winners', async () => {
   });
 });
 
+app.get<{ Params: { id: string } }>('/api/admin/campaigns/:id/sales.xlsx', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
+  const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { title: true } });
+  if (!campaign) return reply.code(404).send({ error: 'Rifa no encontrada' });
+  const buffer = await salesWorkbook(campaign.title, await raffleSales(db, request.params.id));
+  return reply.header('Cache-Control', 'private, no-store').header('Content-Disposition', 'attachment; filename="ventas-rifa.xlsx"').type('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet').send(buffer);
+});
+
 app.get<{ Params: { id: string }; Querystring: { page?: string; search?: string; status?: string } }>('/api/admin/campaigns/:id/overview', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   await expireReservations();
@@ -678,20 +687,13 @@ app.get<{ Params: { id: string }; Querystring: { page?: string; search?: string;
   if (search.length > 100) return reply.code(400).send({ error: 'La búsqueda es demasiado larga.' });
   const status = ['AVAILABLE', 'RESERVED', 'SOLD'].includes(request.query.status || '') ? request.query.status as 'AVAILABLE' | 'RESERVED' | 'SOLD' : undefined;
   const where = { campaignId: campaign.id, ...(ticketSearchWhere(search, campaign.numberWidth) || {}), ...(status ? { status } : {}) };
-  const [counts, total, numbers, payments] = await Promise.all([
+  const [counts, total, numbers, sales] = await Promise.all([
     db.entryNumber.groupBy({ by: ['status'], where: { campaignId: campaign.id }, _count: { _all: true } }),
     db.entryNumber.count({ where }),
     db.entryNumber.findMany({ where, orderBy: { value: 'asc' }, skip: (page - 1) * 100, take: 100,
       select: { value: true, status: true, reservation: { select: { id: true, buyerName: true, includesInverted: true, baseValues: true } } } }),
-    db.reservation.groupBy({ by: ['paymentMethod'], where: { campaignId: campaign.id, status: 'CONFIRMED' }, _sum: { totalCrc: true }, _count: { _all: true } }),
+    raffleSales(db, campaign.id),
   ]);
-  const sales = { cashCrc: 0, sinpeCrc: 0, cashOrders: 0, sinpeOrders: 0, totalCrc: 0 };
-  for (const payment of payments) {
-    const amount = payment._sum.totalCrc ?? 0;
-    if (payment.paymentMethod === 'CASH') { sales.cashCrc += amount; sales.cashOrders += payment._count._all; }
-    else { sales.sinpeCrc += amount; sales.sinpeOrders += payment._count._all; }
-    sales.totalCrc += amount;
-  }
   const inverseValue = inversePrizeNumber(campaign.prizeSources, campaign.winners.length + 1, campaign.numberWidth, campaign.winners);
   const inverseTicket = inverseValue === null ? null : await db.entryNumber.findUnique({ where: { campaignId_value: { campaignId: campaign.id, value: inverseValue } }, select: { status: true, reservation: { select: { buyerName: true } } } });
   const nextInverse = inverseValue === null ? null : { value: inverseValue, buyerName: inverseTicket?.status === 'SOLD' ? inverseTicket.reservation?.buyerName : null, sold: inverseTicket?.status === 'SOLD' };
