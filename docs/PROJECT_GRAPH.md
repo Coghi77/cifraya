@@ -140,3 +140,5 @@ scripts/lottery-audit.mjs prueba inventario100k, vista previa con autorización,
 - Galería pública: PrizePhoto.tsx abre las fotos del premio en un dialog modal nativo desde Inicio y detalle, con anterior/siguiente circular, teclado, gesto horizontal y ajuste contain. Restaura el foco y el scroll al cerrar; no modifica reservas.
 
 - Revisión móvil: CheckoutDialog.tsx usa dialog nativo con foco y scroll controlados. Autocompletado y teclado telefónico, tarjetas en dos columnas y acceso directo a compra. Resultados y límites de la auditoría en docs/MOBILE_SECURITY_REVIEW.md.
+
+- Todos los correos nuevos del pedido incluyen el lookupToken completo como código copiable (HTML y texto), más el enlace privado existente. Diagnósticos no incluyen códigos reales; no se reescriben mensajes ya encolados. Pruebas en paymentEmails.test.mjs. Buscar boletos separa botón, pase y comprobantes con gap de 20 px.

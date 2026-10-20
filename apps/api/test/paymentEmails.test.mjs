@@ -53,3 +53,18 @@ test('reservation and proof receipt have distinct pending statuses without appro
   assert.match(email.html,/https:\/\/vnovatcg.com\/pedido#abc/);
  }
 });
+
+test('every order email includes the exact reusable lookup code in HTML and text', () => {
+ const lookupToken='0123456789abcdef'.repeat(3);
+ for(const kind of ['RESERVED','PENDING_REVIEW','CONFIRMED','REJECTED']) {
+  const email=paymentEmail({...order,lookupToken},kind,'https://vnovatcg.com');
+  assert.ok(email.text.includes('Código de consulta: '+lookupToken));
+  assert.ok(email.html.includes('>'+lookupToken+'</p>'));
+  assert.match(email.html,/https:\/\/vnovatcg.com\/buscar-boletos/);
+  assert.ok(email.html.includes('/pedido#'+lookupToken));
+  const diagnostic=paymentEmail({...order,lookupToken},kind,'https://vnovatcg.com',true);
+  assert.ok(!diagnostic.html.includes(lookupToken));assert.ok(!diagnostic.text.includes(lookupToken));
+ }
+ const escaped=paymentEmail({...order,lookupToken:'<script>&"'},'RESERVED','https://vnovatcg.com');
+ assert.ok(escaped.html.includes('&lt;script&gt;&amp;&quot;'));
+});

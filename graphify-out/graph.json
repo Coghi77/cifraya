@@ -1139,7 +1139,7 @@
       "file_type": "code",
       "norm_label": "createemailworker()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L61"
+      "source_location": "L62"
     },
     {
       "id": "apps_api_src_paymentemails_createemailworker_drain",
@@ -1151,7 +1151,7 @@
       "file_type": "code",
       "norm_label": "drain()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L64"
+      "source_location": "L65"
     },
     {
       "id": "apps_api_src_paymentemails_createemailworker_kick",
@@ -1163,7 +1163,7 @@
       "file_type": "code",
       "norm_label": "kick()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L93"
+      "source_location": "L94"
     },
     {
       "id": "apps_api_src_paymentemails_emailconfigured",
@@ -1175,7 +1175,7 @@
       "file_type": "code",
       "norm_label": "emailconfigured()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L58"
+      "source_location": "L59"
     },
     {
       "id": "apps_api_src_paymentemails_enqueuepaymentemail",
@@ -1187,7 +1187,7 @@
       "file_type": "code",
       "norm_label": "enqueuepaymentemail()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L51"
+      "source_location": "L52"
     },
     {
       "id": "apps_api_src_paymentemails_escapehtml",
@@ -1223,7 +1223,7 @@
       "file_type": "code",
       "norm_label": "retryableemailstatus()",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L57"
+      "source_location": "L58"
     },
     {
       "id": "apps_web_src_footersocials_brandicon",
@@ -4342,7 +4342,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L81",
+      "source_location": "L82",
       "weight": 1.0
     },
     {
@@ -4354,7 +4354,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L94",
+      "source_location": "L95",
       "weight": 1.0
     },
     {
@@ -4366,7 +4366,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L94",
+      "source_location": "L95",
       "weight": 1.0
     },
     {
@@ -4378,7 +4378,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L54",
+      "source_location": "L55",
       "weight": 1.0
     },
     {
@@ -7090,7 +7090,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L51",
+      "source_location": "L52",
       "weight": 1.0
     },
     {
@@ -7101,7 +7101,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L57",
+      "source_location": "L58",
       "weight": 1.0
     },
     {
@@ -7112,7 +7112,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L58",
+      "source_location": "L59",
       "weight": 1.0
     },
     {
@@ -7123,7 +7123,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L61",
+      "source_location": "L62",
       "weight": 1.0
     },
     {
@@ -7134,7 +7134,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L64",
+      "source_location": "L65",
       "weight": 1.0
     },
     {
@@ -9932,7 +9932,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "apps/api/src/paymentEmails.ts",
-      "source_location": "L96",
+      "source_location": "L97",
       "weight": 1.0
     },
     {
@@ -9985,5 +9985,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "05df4bb68897401005d40534bbe63b1ebeb7a44c"
+  "built_at_commit": "48ea8dc5b887e88f814cb16709067484a632fa3e"
 }
