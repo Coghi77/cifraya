@@ -730,18 +730,18 @@ app.get<{ Params: { id: string }; Querystring: { page?: string } }>('/api/admin/
 app.post('/api/admin/email-tests', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   if (!emailConfigured()) return reply.code(503).send({ error: 'Resend no está configurado.' });
-  const parsed = z.object({ email: z.string().email().max(200), requestId: z.string().uuid(), group: z.enum(['payment', 'reservation']).default('payment') }).strict().safeParse(request.body);
+  const parsed = z.object({ email: z.string().email().max(200), requestId: z.string().uuid(), group: z.enum(['payment', 'reservation', 'cash']).default('payment') }).strict().safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: 'Correo o identificador inválido.' });
   const { email, requestId } = parsed.data;
-  const kinds = parsed.data.group === 'reservation' ? ['RESERVED', 'PENDING_REVIEW'] as const : ['CONFIRMED', 'REJECTED'] as const;
+  const kinds = parsed.data.group === 'cash' ? ['CONFIRMED'] as const : parsed.data.group === 'reservation' ? ['RESERVED', 'PENDING_REVIEW'] as const : ['CONFIRMED', 'REJECTED'] as const;
   const ids = kinds.map(kind => 'email-test-' + requestId + '-' + kind);
   try {
     await db.$transaction(async tx => {
-      if (await tx.emailNotification.count({ where: { id: { in: ids } } }) === 2) return;
+      if (await tx.emailNotification.count({ where: { id: { in: ids } } }) === ids.length) return;
       const recent = await tx.emailNotification.count({ where: { kind: { startsWith: 'TEST_' }, createdAt: { gte: new Date(Date.now() - 60 * 60_000) } } });
       if (recent >= 10) throw new Error('TEST_LIMIT');
       for (const [index, kind] of kinds.entries()) {
-        const content = paymentEmail({ orderNumber: 0, buyerName: 'Prueba de correo', lookupToken: '', selectedValues: [12, 34, 56], totalCrc: 4000, reviewNote: 'Rechazo de prueba solicitado para comprobar la notificación; no se realizó ningún cobro.', campaign: { title: 'Prueba técnica de notificaciones', numberWidth: 4 } }, kind, process.env.PUBLIC_APP_URL || 'https://vnovatcg.com', true);
+        const content = paymentEmail({ paymentMethod:parsed.data.group==='cash'?'CASH':'SINPE', orderNumber: 0, buyerName: 'Prueba de correo', lookupToken: '', selectedValues: [12, 34, 56], totalCrc: 4000, reviewNote: 'Rechazo de prueba solicitado para comprobar la notificación; no se realizó ningún cobro.', campaign: { title: 'Prueba técnica de notificaciones', numberWidth: 4 } }, kind, process.env.PUBLIC_APP_URL || 'https://vnovatcg.com', true);
         await tx.emailNotification.create({ data: { id: ids[index], kind: 'TEST_' + kind, recipient: email, ...content } });
       }
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
