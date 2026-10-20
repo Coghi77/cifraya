@@ -92,6 +92,7 @@ try {
  assert.equal((await request('/api/reservations',{campaignId:campaign.id,values:[23],includeInverted:true,...buyer},inv.cookie)).status,201);
  const search=await request('/api/campaigns/local-audit/numbers?search=0');assert.equal(search.data.numbers.length,10);assert.ok(search.data.numbers.every(n=>n.value<10));
  const {auditStickers}=await import('./sticker-audit.mjs');await auditStickers(request,db,proof,login.data.token);
+ const {auditLottery}=await import('./lottery-audit.mjs');await auditLottery(request,db,login.data.token);
  const {auditSecurity}=await import('./security-audit.mjs');await auditSecurity(root,db,proof);
  console.log(JSON.stringify({result:'PASS',simultaneousRequests:12,successfulReservations:1,concurrencyMilliseconds:Math.round(elapsed),apiProcesses:2,mixedSelectionRequests:30,uniqueHeldNumbers:granted.length,checks:['mixed manual/random uniqueness','partial selection lock','deselection release','fixed five-minute expiry','expired owner rejected','expired hold reclaimed','inverse hold exclusivity','30-minute duration','manual unavailable rejection','random excludes reserved','single review email','proof preserves hold','sold exclusion','expired proof rejection','expired release','overlapping package rollback','manual duplicates and range','leading-zero search']}));
 }finally{if(api2)api2.kill();if(api){api.kill();await wait(300);}if(db)await db.$disconnect();await database.stop();}

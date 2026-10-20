@@ -1,3 +1,4 @@
+import { composeLotteryNumber } from './lotteryResults.js';
 import { purchaseOffer, validStickerQuantity } from './stickers.js';
 import { selectNumbers } from './selectionHolds.js';
 import { createEmailWorker, enqueuePaymentEmail, emailConfigured, paymentEmail } from './paymentEmails.js';
@@ -51,11 +52,11 @@ const campaignInput = z.preprocess(normalizePrizeInput, z.object({
   slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(80),
   description: z.string().max(3000).default(''),
   prizes: prizeList,
-  prizeSources: z.array(z.number().int().min(0).max(10_000)).max(10_000),
+  prizeSources: z.array(z.number().int().min(-2).max(10_000)).max(10_000),
   imageUrl: z.string().url().refine(value => new URL(value).protocol === 'https:', 'La imagen debe usar HTTPS.').optional(),
   priceCrc: z.number().int().positive().max(100_000_000),
   numbersPerSticker: z.number().int().min(1).max(20).nullable().default(null),
-  numberCount: z.union([z.literal(100), z.literal(1000), z.literal(10000)]),
+  numberCount: z.union([z.literal(100), z.literal(1000), z.literal(10000), z.literal(100000)]),
   invertedEnabled: z.boolean().default(false),
   invertedPrizeEnabled: z.boolean().default(false),
   packages: z.array(z.object({ quantity: z.number().int().min(2).max(20), priceCrc: z.number().int().positive().max(100_000_000) })).max(10).default([]),
@@ -71,7 +72,7 @@ const reservationInput = z.object({
   buyerPhone: z.string().min(8).max(25),
 });
 
-const proposalInput = z.object({ quantity: z.number().int().min(1).max(100), includeInverted: z.boolean().optional(), values: z.array(z.number().int().min(0).max(9999)).max(100).optional() }).refine(data => !data.values || (data.values.length <= data.quantity && new Set(data.values).size === data.values.length));
+const proposalInput = z.object({ quantity: z.number().int().min(1).max(100), includeInverted: z.boolean().optional(), values: z.array(z.number().int().min(0).max(99999)).max(100).optional() }).refine(data => !data.values || (data.values.length <= data.quantity && new Set(data.values).size === data.values.length));
 function sessionKey(cookie: string | undefined) {
   return cookie?.match(/(?:^|;\s*)cifraya_selection=([a-f0-9]{48})(?:;|$)/)?.[1];
 }
@@ -604,7 +605,7 @@ app.get('/api/winners', async () => {
   return publicCache.get('winners', async () => {
   const campaigns = await db.campaign.findMany({
     where: { winners: { some: {} } },
-    select: { id: true, title: true, prize: true, prizeCount: true, prizes: true, prizeSources: true, numberWidth: true,
+    select: { id: true, title: true, prize: true, prizeCount: true, prizes: true, prizeSources: true, drawResults: true, drawReference: true, numberWidth: true,
       winners: { select: { position: true, numberValue: true, publishedAt: true, reservation: { select: { buyerName: true } } } } },
   });
   return campaigns.flatMap(({ winners, prizes, prizeSources, ...campaign }) => winners.map(({ reservation, ...winner }) => ({
@@ -617,7 +618,7 @@ app.get('/api/winners', async () => {
 app.get<{ Params: { id: string }; Querystring: { page?: string; search?: string; status?: string } }>('/api/admin/campaigns/:id/overview', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   await expireReservations();
-  const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, title: true, numberCount: true, numberWidth: true, prizeCount: true, prizes: true, prizeSources: true, prize: true, secondPrize: true, thirdPrize: true, invertedPrizeEnabled: true, winners: { select: { position: true, numberValue: true, reservationId: true }, orderBy: { position: 'asc' } } } });
+  const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, title: true, numberCount: true, numberWidth: true, prizeCount: true, prizes: true, prizeSources: true, drawResults: true, drawReference: true, prize: true, secondPrize: true, thirdPrize: true, invertedPrizeEnabled: true, winners: { select: { position: true, numberValue: true, reservationId: true }, orderBy: { position: 'asc' } } } });
   if (!campaign) return reply.code(404).send({ error: 'Rifa no encontrada' });
   const page = Math.max(1, Math.min(1000, Number(request.query.page) || 1));
   const search = request.query.search?.trim() || '';
@@ -633,7 +634,7 @@ app.get<{ Params: { id: string }; Querystring: { page?: string; search?: string;
   const inverseValue = inversePrizeNumber(campaign.prizeSources, campaign.winners.length + 1, campaign.numberWidth, campaign.winners);
   const inverseTicket = inverseValue === null ? null : await db.entryNumber.findUnique({ where: { campaignId_value: { campaignId: campaign.id, value: inverseValue } }, select: { status: true, reservation: { select: { buyerName: true } } } });
   const nextInverse = inverseValue === null ? null : { value: inverseValue, buyerName: inverseTicket?.status === 'SOLD' ? inverseTicket.reservation?.buyerName : null, sold: inverseTicket?.status === 'SOLD' };
-  return { campaign, nextInverse, counts: Object.fromEntries(counts.map(item => [item.status, item._count._all])), page, pageCount: Math.ceil(total / 100), numbers: numbers.map(item => ({ value: item.value, status: item.status, reservation: item.reservation ? { id: item.reservation.id, buyerName: item.reservation.buyerName } : null, prizeEligible: nextInverse === null })) };
+  return { campaign, nextInverse, counts: Object.fromEntries(counts.map(item => [item.status, item._count._all])), page, pageCount: Math.ceil(total / 100), numbers: numbers.map(item => ({ value: item.value, status: item.status, reservation: item.reservation ? { id: item.reservation.id, buyerName: item.reservation.buyerName } : null, prizeEligible: nextInverse === null && (campaign.prizeSources[campaign.winners.length] || 0) === 0 })) };
 });
 
 app.get<{ Params: { id: string }; Querystring: { page?: string } }>('/api/admin/campaigns/:id/history', async (request, reply) => {
@@ -751,21 +752,44 @@ app.post<{ Params: { id: string } }>('/api/admin/reservations/:id/reject', async
   }
 });
 
+app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/draw-preview', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
+  const parsed = z.object({position:z.number().int().positive(),drawResults:z.array(z.string().regex(/^\d{2}$/)).min(1).max(4),drawReference:z.string().trim().min(3).max(120)}).safeParse(request.body);
+  if (!parsed.success) return reply.code(400).send({error:'Revisá los resultados oficiales.'});
+  const campaign = await db.campaign.findUnique({where:{id:request.params.id},include:{winners:{select:{position:true}}}});
+  if (!campaign || campaign.status !== 'LIVE' || parsed.data.position !== campaign.winners.length+1) return reply.code(409).send({error:'La posición no está disponible.'});
+  const source = campaign.prizeSources[parsed.data.position-1] || 0;
+  try {
+    const value=composeLotteryNumber(campaign.numberWidth,-source,parsed.data.drawResults);
+    if (campaign.drawResults.length && (JSON.stringify(campaign.drawResults)!==JSON.stringify(parsed.data.drawResults) || campaign.drawReference!==parsed.data.drawReference)) throw Error('INVALID_DRAW');
+    const number=await db.entryNumber.findUnique({where:{campaignId_value:{campaignId:campaign.id,value}},select:{status:true,reservation:{select:{buyerName:true}}}});
+    return {value,sold:number?.status==='SOLD',buyerName:number?.status==='SOLD'?number.reservation?.buyerName:null};
+  } catch { return reply.code(400).send({error:'La composición o los resultados no son válidos.'}); }
+});
+
 app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/winner', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
-  const parsed = z.object({ numberValue: z.number().int().nonnegative().optional(), position: z.number().int().min(1).max(10_000), expectedSold: z.boolean().optional() }).safeParse(request.body);
+  const parsed = z.object({ numberValue: z.number().int().nonnegative().optional(), position: z.number().int().min(1).max(10_000), expectedSold: z.boolean().optional(), drawResults: z.array(z.string().regex(/^\d{2}$/)).min(1).max(4).optional(), drawReference: z.string().trim().min(3).max(120).optional() }).safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: 'Número inválido.' });
   try {
     const winner = await db.$transaction(async tx => {
-      const campaign = await tx.campaign.findUnique({ where: { id: request.params.id }, select: { status: true, prizeCount: true, numberWidth: true, prizeSources: true, winners: { select: { position: true, numberValue: true, reservationId: true } } } });
+      const campaign = await tx.campaign.findUnique({ where: { id: request.params.id }, select: { status: true, prizeCount: true, numberWidth: true, prizeSources: true, drawResults: true, drawReference: true, winners: { select: { position: true, numberValue: true, reservationId: true } } } });
       if (!campaign || campaign.status !== 'LIVE' || parsed.data.position !== campaign.winners.length + 1 || parsed.data.position > campaign.prizeCount) throw new Error('WINNER_NOT_ALLOWED');
       const inverseValue = inversePrizeNumber(campaign.prizeSources, parsed.data.position, campaign.numberWidth, campaign.winners);
-      const value = inverseValue ?? parsed.data.numberValue;
-      if (value === undefined || (inverseValue !== null && parsed.data.numberValue !== undefined && parsed.data.numberValue !== inverseValue)) throw new Error('INVERSE_MISMATCH');
-      if (inverseValue === null && campaign.winners.some(item => !campaign.prizeSources[item.position - 1] && item.numberValue === value)) throw new Error('WINNER_NOT_ALLOWED');
+      const source = campaign.prizeSources[parsed.data.position - 1] || 0;
+      const calculated = source < 0 ? composeLotteryNumber(campaign.numberWidth, -source, campaign.drawResults.length ? campaign.drawResults : parsed.data.drawResults || []) : inverseValue;
+      if (source < 0) {
+        const needed = Math.max(...campaign.prizeSources.filter(n => n < 0).map(n => -n - 1 + Math.ceil(campaign.numberWidth / 2)));
+        if (!parsed.data.drawReference || !parsed.data.drawResults || parsed.data.drawResults.length < needed) throw Error('INVALID_DRAW');
+        if (campaign.drawResults.length && (JSON.stringify(campaign.drawResults) !== JSON.stringify(parsed.data.drawResults) || campaign.drawReference !== parsed.data.drawReference)) throw Error('INVALID_DRAW');
+        if (!campaign.drawResults.length) await tx.campaign.update({where:{id:request.params.id},data:{drawResults:parsed.data.drawResults,drawReference:parsed.data.drawReference}});
+      }
+      const value = calculated ?? parsed.data.numberValue;
+      if (value === undefined || (calculated !== null && parsed.data.numberValue !== undefined && parsed.data.numberValue !== calculated)) throw new Error('INVERSE_MISMATCH');
+      if (source === 0 && campaign.winners.some(item => campaign.prizeSources[item.position - 1] <= 0 && item.numberValue === value)) throw new Error('WINNER_NOT_ALLOWED');
       const number = await tx.entryNumber.findUnique({ where: { campaignId_value: { campaignId: request.params.id, value } }, select: { status: true, reservationId: true } });
-      if (inverseValue !== null && parsed.data.expectedSold !== undefined && parsed.data.expectedSold !== (number?.status === 'SOLD')) throw new Error('INVERSE_CHANGED');
-      if (inverseValue === null && (number?.status !== 'SOLD' || !number.reservationId)) throw new Error('NUMBER_NOT_SOLD');
+      if (calculated !== null && parsed.data.expectedSold !== undefined && parsed.data.expectedSold !== (number?.status === 'SOLD')) throw new Error('INVERSE_CHANGED');
+      if (calculated === null && (number?.status !== 'SOLD' || !number.reservationId)) throw new Error('NUMBER_NOT_SOLD');
       const winner = await tx.winner.create({ data: { campaignId: request.params.id, reservationId: number?.status === 'SOLD' ? number.reservationId : null, numberValue: value, position: parsed.data.position } });
       if (parsed.data.position === campaign.prizeCount) await tx.campaign.update({ where: { id: request.params.id }, data: { status: 'CLOSED' } });
       return winner;
@@ -773,6 +797,7 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/winner', async (r
     broadcast('winners');
     return reply.code(201).send(winner);
   } catch (error) {
+    if (error instanceof Error && error.message === 'INVALID_DRAW') return reply.code(400).send({ error: 'Revisá los resultados y el sorteo. Una vez publicado, no se pueden cambiar.' });
     if (error instanceof Error && error.message === 'WINNER_NOT_ALLOWED') return reply.code(409).send({ error: 'La posición no está disponible o este número ya ganó.' });
     if (error instanceof Error && error.message === 'NUMBER_NOT_SOLD') return reply.code(409).send({ error: 'Solo puede ganar un boleto vendido y confirmado.' });
     if (error instanceof Error && error.message === 'INVERSE_CHANGED') return reply.code(409).send({ error: 'El estado del boleto cambió. Actualizá el resultado antes de publicarlo.' });

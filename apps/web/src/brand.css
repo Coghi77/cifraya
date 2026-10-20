@@ -122,3 +122,22 @@ h1,h2,h3 { letter-spacing:-.045em; }
 
 .random-picker .package-offers > .sticker-picker { grid-template-columns: 1fr; gap: 12px; }
 .sticker-picker > .button { background: #ff4200; color: #191919; border-color: #ff4200; }
+
+.random-picker .package-offers > .sticker-card-picker, .sticker-card-picker { padding: 0; border: 0; background: transparent; }
+.sticker-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.sticker-cards .sticker-card { display: grid; gap: 24px; padding: 16px; border: 1px solid #d9dce5; border-radius: 12px; background: #fff; color: #191919; text-align: left; cursor: pointer; }
+.sticker-cards .sticker-card[aria-pressed="true"] { border-color: #ff4200; box-shadow: 0 0 0 2px #ff420030; background: #fff7f3; }
+.sticker-cards .sticker-card:hover:not(:disabled) { border-color: #ff4200; }
+.sticker-cards .sticker-card:focus-visible { outline: 3px solid #395aff; outline-offset: 3px; }
+.sticker-cards .sticker-card span { padding: 0; border-radius: 0; background: transparent; font-size: 13px; }
+.sticker-card .sticker-card-heading { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.sticker-card-heading strong { font-size: 23px; }
+.sticker-card-heading b { font-size: 18px; }
+.sticker-card-heading i { display: inline-block; width: 14px; height: 14px; border: 2px solid #b7bdca; border-radius: 50%; margin-right: 8px; }
+.sticker-card[aria-pressed="true"] i { border-color: #ff4200; background: #ff4200; box-shadow: inset 0 0 0 2px white; }
+.sticker-cards .sticker-card .sticker-card-includes { display: grid; gap: 3px; padding: 12px; border-radius: 9px; background: linear-gradient(110deg, #ff4200, #ff8a18); color: #191919; }
+.sticker-card-includes small { font-size: 9px; letter-spacing: 1px; font-weight: 800; }
+.sticker-other { margin-top: 6px; } .sticker-other summary { cursor: pointer; padding: 10px 0; font-weight: 700; }
+@media(max-width: 380px) { .sticker-cards { grid-template-columns: 1fr; } }
+
+.lottery-panel { padding:24px; border:1px solid #ff4200; border-radius:16px; margin:24px 0; display:grid; gap:16px; } .lottery-panel p { margin:0; line-height:1.6; } .lottery-panel label { display:grid; gap:8px; } .lottery-inputs { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:12px; } .lottery-preview > strong { font-size:36px; color:#ff4200; letter-spacing:4px; }

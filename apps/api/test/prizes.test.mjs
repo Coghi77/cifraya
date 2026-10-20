@@ -23,7 +23,7 @@ test('rejects empty positions and invalid lists', () => {
 test('inverse prizes must reference an earlier direct prize', () => {
   const prizes = ['Principal', 'Inverso', 'Segundo directo', 'Segundo inverso'];
   assert.equal(validPrizeSources(prizes, [0, 1, 0, 3]), true);
-  for (const sources of [[1, 0, 0, 0], [0, 2, 0, 0], [0, 1, 2, 0], [0], [0, -1, 0, 0]]) {
+  for (const sources of [[1, 0, 0, 0], [0, 2, 0, 0], [0, 1, 2, 0], [0], [0, -3, 0, 0]]) {
     assert.equal(validPrizeSources(prizes, sources), false);
   }
 });

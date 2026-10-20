@@ -36,4 +36,5 @@ export const numberCountOptions = [
   { value: '100', label: '100 · del 00 al 99' },
   { value: '1000', label: '1 000 · del 000 al 999' },
   { value: '10000', label: '10 000 · del 0000 al 9999' },
+  { value: '100000', label: '100 000 · del 00000 al 99999' },
 ];

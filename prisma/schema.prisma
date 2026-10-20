@@ -37,6 +37,8 @@ model Campaign {
   prizeCount     Int            @default(1)
   prizes         String[]       @default([])
   prizeSources   Int[]          @default([])
+  drawResults    String[]       @default([])
+  drawReference  String         @default("")
   secondPrize    String?
   thirdPrize     String?
   imageUrl       String?
