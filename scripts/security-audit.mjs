@@ -12,6 +12,8 @@ export async function auditSecurity(root, db, proof) {
  const spec={title:'Security fixture',slug:'security-fixture',description:'Only local test',prizes:Array.from({length:10},(_,i)=>'Premio '+(i+1)),prizeSources:Array(10).fill(0),numberCount:100,priceCrc:2000,packages:[{quantity:2,priceCrc:3000}]};
  const created=await call('POST','/api/admin/campaigns',spec,auth);assert.equal(created.status,201);assert.equal(created.data.prizes.length,10);const id=created.data.id;
  const duplicate=await call('POST','/api/admin/campaigns',spec,auth);assert.equal(duplicate.status,409);assert.ok(!JSON.stringify(duplicate.data).match(/Prisma|INSERT|node_modules|schema/i));
+ assert.equal((await call('POST','/api/admin/campaigns/'+id+'/finish-test',{},auth)).status,409);
+ assert.equal((await db.campaign.findUnique({where:{id}})).status,'DRAFT');
  const larger={...spec,prizes:Array.from({length:20},(_,i)=>'Premio '+(i+1)),prizeSources:Array(20).fill(0)};
  assert.equal((await call('PATCH','/api/admin/campaigns/'+id,larger,auth)).status,200);
  assert.equal((await call('POST','/api/admin/campaigns/'+id+'/publish',{},auth)).status,200);

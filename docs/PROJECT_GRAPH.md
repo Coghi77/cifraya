@@ -126,3 +126,9 @@ scripts/lottery-audit.mjs prueba inventario100k, vista previa con autorización,
 - Reservas existentes guardan totalCrc, stickerCount, numbersPerSticker y selectedValues; editar tarjetas nunca escribe esos pedidos.
 - La reserva vuelve a consultar la oferta dentro de su transacción serializable y valida expectedTotalCrc del checkout. SSE actualiza tarjetas y cancela selecciones visuales antiguas para solicitar una nueva elección.
 - sticker-audit verifica edición LIVE, snapshots pendientes/confirmados, rechazo de precio anterior y retiro de cantidades.
+
+### Pruebas aisladas en el servidor publicado
+- Campaign.isTest (false por defecto) solo se fija al crear desde API admin. Las rifas técnicas no aparecen en catálogo ni ganadores públicos; sus rutas de campaña, números, selección y reserva requieren sesión admin.
+- enqueuePaymentEmail omite por completo la cola de notificaciones para isTest.
+- finish-test solo admite isTest, pausa la campaña y cancela sus pedidos/libera números en una transacción. Conserva montos y selecciones como evidencia; rechaza campañas reales.
+- scripts/published-price-audit.mjs usa las rutas normales de producción con una rifa técnica y finaliza en finally; se prueba primero en la base aislada. No imprime tokens ni credenciales.

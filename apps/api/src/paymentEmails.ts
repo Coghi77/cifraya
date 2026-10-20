@@ -49,7 +49,8 @@ ${stickerDetail ? `<tr><td style="padding:0 0 18px;font-size:15px">${escapeHtml(
 }
 
 export async function enqueuePaymentEmail(tx: Prisma.TransactionClient, reservationId: string, kind: 'CONFIRMED' | 'REJECTED' | 'RESERVED' | 'PENDING_REVIEW') {
-  const order = await tx.reservation.findUniqueOrThrow({ where: { id: reservationId }, include: { campaign: { select: { title: true, numberWidth: true } } } });
+  const order = await tx.reservation.findUniqueOrThrow({ where: { id: reservationId }, include: { campaign: { select: { title: true, numberWidth: true, isTest: true } } } });
+  if (order.campaign.isTest) return;
   await tx.emailNotification.create({ data: { reservationId, kind, recipient: order.buyerEmail, ...paymentEmail(order, kind, process.env.PUBLIC_APP_URL || 'https://vnovatcg.com') } });
 }
 

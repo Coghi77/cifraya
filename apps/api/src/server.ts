@@ -48,6 +48,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const campaignInput = z.preprocess(normalizePrizeInput, z.object({
+  isTest: z.boolean().default(false),
   title: z.string().min(3).max(120),
   slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(80),
   description: z.string().max(3000).default(''),
@@ -151,7 +152,7 @@ app.get('/api/campaigns', async () => {
   await expireReservations();
   return publicCache.get('campaigns', async () => {
   const campaigns = await db.campaign.findMany({
-    where: { status: 'LIVE' },
+    where: { status: 'LIVE', isTest: false },
     orderBy: { createdAt: 'desc' },
     include: { photos: photoSelect, packages: packageSelect, _count: { select: { numbers: { where: { status: 'SOLD' } } } } },
   });
@@ -161,7 +162,7 @@ app.get('/api/campaigns', async () => {
 
 app.get<{ Params: { slug: string } }>('/api/campaigns/:slug', async (request, reply) => {
   const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, include: { photos: photoSelect, packages: packageSelect, _count: { select: { numbers: { where: { status: 'SOLD' } } } } } });
-  if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible' });
+  if (!campaign || campaign.status !== 'LIVE' || (campaign.isTest && !adminAuthorized(request.headers.authorization))) return reply.code(404).send({ error: 'Rifa no disponible' });
   const { photos, _count, ...data } = campaign;
   return { ...data, photos: imageList(photos), soldCount: _count.numbers };
 });
@@ -169,16 +170,16 @@ app.get<{ Params: { slug: string } }>('/api/campaigns/:slug', async (request, re
 app.get<{ Params: { id: string } }>('/api/campaign-photos/:id', async (request, reply) => {
   const photo = await db.campaignPhoto.findUnique({
     where: { id: request.params.id },
-    select: { mimeType: true, data: true, campaign: { select: { status: true } } },
+    select: { mimeType: true, data: true, campaign: { select: { status: true, isTest: true } } },
   });
-  if (!photo || photo.campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Foto no disponible' });
+  if (!photo || photo.campaign.status !== 'LIVE' || photo.campaign.isTest) return reply.code(404).send({ error: 'Foto no disponible' });
   return reply.type(photo.mimeType).header('Cache-Control', 'public, max-age=3600').send(Buffer.from(photo.data));
 });
 
 app.get<{ Params: { slug: string }; Querystring: { page?: string; search?: string } }>('/api/campaigns/:slug/numbers', async (request, reply) => {
   await expireReservations();
   const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug } });
-  if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible' });
+  if (!campaign || campaign.status !== 'LIVE' || (campaign.isTest && !adminAuthorized(request.headers.authorization))) return reply.code(404).send({ error: 'Rifa no disponible' });
   const page = Math.max(1, Math.min(1000, Number(request.query.page) || 1));
   const search = request.query.search?.trim() || '';
   if (search && (!/^[0-9]+$/.test(search) || search.length > campaign.numberWidth)) return reply.code(400).send({ error: 'Buscá por número o por sus primeros dígitos.' });
@@ -194,8 +195,8 @@ app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal', async (r
   await expireReservations();
   const parsed = proposalInput.safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: 'Seleccioná un paquete válido.' });
-  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, select: { id: true, status: true, numberWidth: true, invertedEnabled: true, numbersPerSticker: true, packages: { select: { quantity: true } } } });
-  if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible.' });
+  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, select: { id: true, status: true, isTest: true, numberWidth: true, invertedEnabled: true, numbersPerSticker: true, packages: { select: { quantity: true } } } });
+  if (!campaign || campaign.status !== 'LIVE' || (campaign.isTest && !adminAuthorized(request.headers.authorization))) return reply.code(404).send({ error: 'Rifa no disponible.' });
   const offeredQuantities = campaign.packages.length ? campaign.packages.map(item => item.quantity) : [1];
   if (campaign.numbersPerSticker ? (!validStickerQuantity(parsed.data.quantity, campaign.numbersPerSticker) || (campaign.packages.length > 0 && !offeredQuantities.includes(parsed.data.quantity))) : !offeredQuantities.includes(parsed.data.quantity)) return reply.code(400).send({ error: 'Esa cantidad no está disponible para esta rifa.' });
   let key = sessionKey(request.headers.cookie);
@@ -222,8 +223,8 @@ app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal/change', a
   await expireReservations();
   const key = sessionKey(request.headers.cookie);
   if (!key) return reply.code(400).send({ error: 'Primero seleccioná un paquete.' });
-  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, select: { id: true, status: true, numberWidth: true, invertedEnabled: true } });
-  if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible.' });
+  const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, select: { id: true, status: true, isTest: true, numberWidth: true, invertedEnabled: true } });
+  if (!campaign || campaign.status !== 'LIVE' || (campaign.isTest && !adminAuthorized(request.headers.authorization))) return reply.code(404).send({ error: 'Rifa no disponible.' });
   try {
     const proposal = await selectNumbers(db, campaign, key, { quantity: 0, change: true });
     broadcast('numbers');
@@ -247,7 +248,7 @@ app.post('/api/reservations', async (request, reply) => {
   const uniqueValues = [...new Set(input.values)];
   if (uniqueValues.length !== input.values.length) return reply.code(400).send({ error: 'Hay números repetidos en la selección' });
   const campaign = await db.campaign.findUnique({ where: { id: input.campaignId }, include: { packages: packageSelect } });
-  if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible' });
+  if (!campaign || campaign.status !== 'LIVE' || (campaign.isTest && !adminAuthorized(request.headers.authorization))) return reply.code(404).send({ error: 'Rifa no disponible' });
   if (uniqueValues.some(value => value >= campaign.numberCount)) return reply.code(400).send({ error: 'Número fuera del rango' });
   const selectedPackage = purchaseOffer(campaign, uniqueValues.length);
   if (!selectedPackage) return reply.code(400).send({ error: 'Elegí una cantidad válida para esta rifa.' });
@@ -522,6 +523,7 @@ app.post('/api/admin/campaigns', async (request, reply) => {
   const campaign = await db.$transaction(async tx => {
     const created = await tx.campaign.create({
       data: {
+        isTest: input.isTest,
         title: input.title,
         slug: input.slug,
         description: input.description,
@@ -605,6 +607,23 @@ app.patch<{ Params: { id: string } }>('/api/admin/campaigns/:id', async (request
   }
 });
 
+// Only explicitly marked diagnostic campaigns can be retired this way.
+app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/finish-test', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({error:'Acceso no autorizado'});
+  const result = await db.$transaction(async tx => {
+    const campaign = await tx.campaign.findUnique({where:{id:request.params.id},select:{isTest:true}});
+    if (!campaign?.isTest) return false;
+    await tx.campaign.update({where:{id:request.params.id},data:{status:'PAUSED'}});
+    await tx.reservation.updateMany({where:{campaignId:request.params.id},data:{status:'CANCELLED',reviewNote:'Prueba técnica finalizada. Sin compra ni pago real.'}});
+    await tx.entryNumber.updateMany({where:{campaignId:request.params.id},data:{status:'AVAILABLE',reservationId:null,holdKey:null,holdExpiresAt:null}});
+    await tx.numberProposal.deleteMany({where:{campaignId:request.params.id}});
+    return true;
+  }, {isolationLevel:Prisma.TransactionIsolationLevel.Serializable});
+  if (!result) return reply.code(409).send({error:'Solo se puede finalizar una rifa de prueba.'});
+  broadcast('campaigns');
+  return {ok:true};
+});
+
 app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/publish', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   const campaign = await db.campaign.findUnique({ where: { id: request.params.id } });
@@ -618,7 +637,7 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/publish', async (
 app.get('/api/winners', async () => {
   return publicCache.get('winners', async () => {
   const campaigns = await db.campaign.findMany({
-    where: { winners: { some: {} } },
+    where: { isTest: false, winners: { some: {} } },
     select: { id: true, title: true, prize: true, prizeCount: true, prizes: true, prizeSources: true, drawResults: true, drawReference: true, numberWidth: true,
       winners: { select: { position: true, numberValue: true, publishedAt: true, reservation: { select: { buyerName: true } } } } },
   });

@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 367 nodes · 487 edges · 42 communities (17 shown, 9 thin omitted)
+- 370 nodes · 489 edges · 42 communities (16 shown, 9 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d6eec6f7`
+- Built from commit: `6beb34de`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -35,10 +35,9 @@
 - Community 18
 - Community 19
 - Community 20
-- Community 21
+- Community 27
 - Community 28
 - Community 29
-- Community 30
 - Community 41
 
 ## God Nodes (most connected - your core abstractions)
@@ -87,12 +86,12 @@ Cohesion: 0.08
 Nodes (23): dependencies, lucide-react, react, react-dom, devDependencies, @types/react, @types/react-dom, typescript (+15 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.11
-Nodes (11): BrandSelect(), numberCountOptions, Option, EditableRaffle, EditRaffle(), save(), ManualNumbers(), NumberRow (+3 more)
-
-### Community 5 - "Community 5"
 Cohesion: 0.09
 Nodes (21): dependencies, fastify, @fastify/cors, @fastify/static, @prisma/client, zod, devDependencies, tsx (+13 more)
+
+### Community 5 - "Community 5"
+Cohesion: 0.12
+Nodes (13): ManualNumbers(), NumberRow, date(), labels, money(), Order, OrderDetail(), MoreWinners() (+5 more)
 
 ### Community 6 - "Community 6"
 Cohesion: 0.12
@@ -100,56 +99,52 @@ Nodes (16): compilerOptions, allowImportingTsExtensions, isolatedModules, jsx, l
 
 ### Community 7 - "Community 7"
 Cohesion: 0.17
-Nodes (11): AdminParticipantDetail(), money(), numberLabel(), ParticipantResponse, Reservation, statusLabel(), AdminReservationReview(), Detail (+3 more)
+Nodes (8): BrandSelect(), numberCountOptions, Option, EditableRaffle, EditRaffle(), save(), cardPackages(), StickerCard
 
 ### Community 8 - "Community 8"
+Cohesion: 0.17
+Nodes (11): AdminParticipantDetail(), money(), numberLabel(), ParticipantResponse, Reservation, statusLabel(), AdminReservationReview(), Detail (+3 more)
+
+### Community 9 - "Community 9"
+Cohesion: 0.14
+Nodes (3): database, proof, require
+
+### Community 10 - "Community 10"
 Cohesion: 0.22
 Nodes (10): AdminRaffleDetail(), publishWinner(), adminRequest(), currency(), History, numberLabel(), NumberRow, Overview (+2 more)
 
-### Community 9 - "Community 9"
+### Community 11 - "Community 11"
 Cohesion: 0.26
 Nodes (8): "Campaign", "EntryNumber", "Reservation", "CampaignPhoto", "PricePackage", "Winner", "NumberProposal", "PaymentProof"
 
-### Community 10 - "Community 10"
-Cohesion: 0.17
-Nodes (3): database, proof, require
-
-### Community 11 - "Community 11"
+### Community 12 - "Community 12"
 Cohesion: 0.36
 Nodes (8): createEmailWorker(), drain(), kick(), emailConfigured(), enqueuePaymentEmail(), escapeHtml(), paymentEmail(), retryableEmailStatus()
 
-### Community 12 - "Community 12"
+### Community 13 - "Community 13"
 Cohesion: 0.22
 Nodes (8): compilerOptions, esModuleInterop, module, moduleResolution, resolveJsonModule, skipLibCheck, strict, target
 
-### Community 13 - "Community 13"
+### Community 14 - "Community 14"
 Cohesion: 0.29
 Nodes (6): compilerOptions, outDir, rootDir, extends, include, ../../tsconfig.json
 
-### Community 15 - "Community 15"
-Cohesion: 0.47
-Nodes (5): date(), labels, money(), Order, OrderDetail()
-
 ### Community 16 - "Community 16"
-Cohesion: 0.47
-Nodes (5): MoreWinners(), positionName, prizeFor(), WinnerResult, WinnersPodium()
-
-### Community 17 - "Community 17"
 Cohesion: 0.50
 Nodes (3): inventory, inventorySet, times
 
 ## Knowledge Gaps
 - **130 isolated node(s):** `AdminReservation`, `LookupResult`, `NumberProposal`, `Raffle`, `Reservation` (+125 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 194 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 196 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `@prisma/client` connect `Community 0` to `Community 10`, `Community 2`, `Community 11`?**
-  _High betweenness centrality (0.061) - this node is a cross-community bridge._
-- **Why does `react` connect `Community 4` to `Community 1`, `Community 3`, `Community 7`, `Community 8`, `Community 15`, `Community 16`?**
-  _High betweenness centrality (0.043) - this node is a cross-community bridge._
+- **Why does `@prisma/client` connect `Community 0` to `Community 9`, `Community 2`, `Community 12`?**
+  _High betweenness centrality (0.064) - this node is a cross-community bridge._
+- **Why does `react` connect `Community 5` to `Community 1`, `Community 3`, `Community 7`, `Community 8`, `Community 10`?**
+  _High betweenness centrality (0.042) - this node is a cross-community bridge._
 - **What connects `AdminReservation`, `LookupResult`, `NumberProposal` to the rest of the system?**
   _130 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
