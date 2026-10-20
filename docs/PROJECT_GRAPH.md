@@ -136,3 +136,5 @@ scripts/lottery-audit.mjs prueba inventario100k, vista previa con autorización,
 ### Fotos adaptables del premio
 - brand.css limita la altura de portada y detalle, usa object-fit:contain y centra la imagen completa. En móvil la foto precede al contenido de compra; la portada ya no estira la foto con la altura de las tarjetas.
 - Verificación visual de portada con foto real en escritorio y viewport 390×844; compilación web correcta.
+
+- Galería pública: PrizePhoto.tsx abre las fotos del premio en un dialog modal nativo desde Inicio y detalle, con anterior/siguiente circular, teclado, gesto horizontal y ajuste contain. Restaura el foco y el scroll al cerrar; no modifica reservas.

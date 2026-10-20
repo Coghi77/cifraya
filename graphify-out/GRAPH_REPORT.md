@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 370 nodes · 489 edges · 42 communities (16 shown, 9 thin omitted)
+- 374 nodes · 495 edges · 42 communities (16 shown, 9 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6beb34de`
+- Built from commit: `11a68454`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -41,8 +41,8 @@
 - Community 41
 
 ## God Nodes (most connected - your core abstractions)
-1. `compilerOptions` - 15 edges
-2. `react` - 14 edges
+1. `react` - 15 edges
+2. `compilerOptions` - 15 edges
 3. `scripts` - 11 edges
 4. `reverseNumber()` - 8 edges
 5. `api()` - 8 edges
@@ -78,80 +78,80 @@ Cohesion: 0.07
 Nodes (40): addPhotos(), AdminReservation, api(), ApiError, createRaffle(), currentServerTime(), expireAdminSession(), formatNumber() (+32 more)
 
 ### Community 2 - "Community 2"
+Cohesion: 0.07
+Nodes (18): AdminReservationReview(), Detail, money(), BrandSelect(), numberCountOptions, Option, EditableRaffle, EditRaffle() (+10 more)
+
+### Community 3 - "Community 3"
 Cohesion: 0.06
 Nodes (29): Stream, devDependencies, prisma, @prisma/client, tsx, @types/node, typescript, name (+21 more)
 
-### Community 3 - "Community 3"
+### Community 4 - "Community 4"
 Cohesion: 0.08
 Nodes (23): dependencies, lucide-react, react, react-dom, devDependencies, @types/react, @types/react-dom, typescript (+15 more)
 
-### Community 4 - "Community 4"
+### Community 5 - "Community 5"
 Cohesion: 0.09
 Nodes (21): dependencies, fastify, @fastify/cors, @fastify/static, @prisma/client, zod, devDependencies, tsx (+13 more)
 
-### Community 5 - "Community 5"
-Cohesion: 0.12
-Nodes (13): ManualNumbers(), NumberRow, date(), labels, money(), Order, OrderDetail(), MoreWinners() (+5 more)
-
 ### Community 6 - "Community 6"
+Cohesion: 0.14
+Nodes (16): AdminParticipantDetail(), money(), numberLabel(), ParticipantResponse, Reservation, statusLabel(), AdminRaffleDetail(), publishWinner() (+8 more)
+
+### Community 7 - "Community 7"
 Cohesion: 0.12
 Nodes (16): compilerOptions, allowImportingTsExtensions, isolatedModules, jsx, lib, module, moduleResolution, noEmit (+8 more)
 
-### Community 7 - "Community 7"
-Cohesion: 0.17
-Nodes (8): BrandSelect(), numberCountOptions, Option, EditableRaffle, EditRaffle(), save(), cardPackages(), StickerCard
-
 ### Community 8 - "Community 8"
-Cohesion: 0.17
-Nodes (11): AdminParticipantDetail(), money(), numberLabel(), ParticipantResponse, Reservation, statusLabel(), AdminReservationReview(), Detail (+3 more)
-
-### Community 9 - "Community 9"
 Cohesion: 0.14
 Nodes (3): database, proof, require
 
-### Community 10 - "Community 10"
-Cohesion: 0.22
-Nodes (10): AdminRaffleDetail(), publishWinner(), adminRequest(), currency(), History, numberLabel(), NumberRow, Overview (+2 more)
-
-### Community 11 - "Community 11"
+### Community 9 - "Community 9"
 Cohesion: 0.26
 Nodes (8): "Campaign", "EntryNumber", "Reservation", "CampaignPhoto", "PricePackage", "Winner", "NumberProposal", "PaymentProof"
 
-### Community 12 - "Community 12"
+### Community 10 - "Community 10"
 Cohesion: 0.36
 Nodes (8): createEmailWorker(), drain(), kick(), emailConfigured(), enqueuePaymentEmail(), escapeHtml(), paymentEmail(), retryableEmailStatus()
 
-### Community 13 - "Community 13"
+### Community 11 - "Community 11"
 Cohesion: 0.22
 Nodes (8): compilerOptions, esModuleInterop, module, moduleResolution, resolveJsonModule, skipLibCheck, strict, target
 
-### Community 14 - "Community 14"
+### Community 12 - "Community 12"
 Cohesion: 0.29
 Nodes (6): compilerOptions, outDir, rootDir, extends, include, ../../tsconfig.json
+
+### Community 14 - "Community 14"
+Cohesion: 0.47
+Nodes (5): date(), labels, money(), Order, OrderDetail()
+
+### Community 15 - "Community 15"
+Cohesion: 0.47
+Nodes (5): MoreWinners(), positionName, prizeFor(), WinnerResult, WinnersPodium()
 
 ### Community 16 - "Community 16"
 Cohesion: 0.50
 Nodes (3): inventory, inventorySet, times
 
 ## Knowledge Gaps
-- **130 isolated node(s):** `AdminReservation`, `LookupResult`, `NumberProposal`, `Raffle`, `Reservation` (+125 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 196 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **131 isolated node(s):** `AdminReservation`, `LookupResult`, `NumberProposal`, `Raffle`, `Reservation` (+126 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 198 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `@prisma/client` connect `Community 0` to `Community 9`, `Community 2`, `Community 12`?**
-  _High betweenness centrality (0.064) - this node is a cross-community bridge._
-- **Why does `react` connect `Community 5` to `Community 1`, `Community 3`, `Community 7`, `Community 8`, `Community 10`?**
-  _High betweenness centrality (0.042) - this node is a cross-community bridge._
+- **Why does `@prisma/client` connect `Community 0` to `Community 8`, `Community 10`, `Community 3`?**
+  _High betweenness centrality (0.063) - this node is a cross-community bridge._
+- **Why does `react` connect `Community 2` to `Community 1`, `Community 4`, `Community 6`, `Community 14`, `Community 15`?**
+  _High betweenness centrality (0.043) - this node is a cross-community bridge._
 - **What connects `AdminReservation`, `LookupResult`, `NumberProposal` to the rest of the system?**
-  _130 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _131 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.052083333333333336 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.06778476589797344 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.06060606060606061 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07142857142857142 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.08333333333333333 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06060606060606061 - nodes in this community are weakly interconnected._
