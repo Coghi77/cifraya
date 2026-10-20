@@ -11,6 +11,7 @@ export function purchaseOffer(campaign: {
 }, quantity: number) {
   if (campaign.numbersPerSticker) {
     if (!validStickerQuantity(quantity, campaign.numbersPerSticker)) return undefined;
+    if (campaign.packages.length) return campaign.packages.find(item => item.quantity === quantity);
     const priceCrc = quantity / campaign.numbersPerSticker * campaign.priceCrc;
     // Includes headroom for the optional inverted purchase in a PostgreSQL Int.
     return priceCrc <= 1_000_000_000 ? { quantity, priceCrc } : undefined;

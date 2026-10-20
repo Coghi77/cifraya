@@ -59,7 +59,7 @@ const campaignInput = z.preprocess(normalizePrizeInput, z.object({
   numberCount: z.union([z.literal(100), z.literal(1000), z.literal(10000), z.literal(100000)]),
   invertedEnabled: z.boolean().default(false),
   invertedPrizeEnabled: z.boolean().default(false),
-  packages: z.array(z.object({ quantity: z.number().int().min(2).max(20), priceCrc: z.number().int().positive().max(100_000_000) })).max(10).default([]),
+  packages: z.array(z.object({ quantity: z.number().int().min(1).max(100), priceCrc: z.number().int().positive().max(100_000_000) })).max(10).default([]),
   drawDate: z.string().datetime().optional(),
 }).refine(data => validPrizeSources(data.prizes, data.prizeSources), { message: 'Cada premio inverso debe apuntar a un premio directo anterior.', path: ['prizeSources'] }).refine(data => data.prizes.length <= data.numberCount, { message: 'No puede haber más premios que números.', path: ['prizes'] }).transform(data => ({ ...data, invertedPrizeEnabled: data.prizeSources.some(source => source > 0), prize: data.prizes[0], prizeCount: data.prizes.length, secondPrize: data.prizes[1], thirdPrize: data.prizes[2] })));
 
@@ -196,7 +196,7 @@ app.post<{ Params: { slug: string } }>('/api/campaigns/:slug/proposal', async (r
   const campaign = await db.campaign.findUnique({ where: { slug: request.params.slug }, select: { id: true, status: true, numberWidth: true, invertedEnabled: true, numbersPerSticker: true, packages: { select: { quantity: true } } } });
   if (!campaign || campaign.status !== 'LIVE') return reply.code(404).send({ error: 'Rifa no disponible.' });
   const offeredQuantities = campaign.packages.length ? campaign.packages.map(item => item.quantity) : [1];
-  if (campaign.numbersPerSticker ? !validStickerQuantity(parsed.data.quantity, campaign.numbersPerSticker) : !offeredQuantities.includes(parsed.data.quantity)) return reply.code(400).send({ error: 'Esa cantidad no está disponible para esta rifa.' });
+  if (campaign.numbersPerSticker ? (!validStickerQuantity(parsed.data.quantity, campaign.numbersPerSticker) || (campaign.packages.length > 0 && !offeredQuantities.includes(parsed.data.quantity))) : !offeredQuantities.includes(parsed.data.quantity)) return reply.code(400).send({ error: 'Esa cantidad no está disponible para esta rifa.' });
   let key = sessionKey(request.headers.cookie);
   if (!key) {
     key = randomBytes(24).toString('hex');
@@ -510,8 +510,8 @@ app.post('/api/admin/campaigns', async (request, reply) => {
   const parsed = campaignInput.safeParse(request.body);
   if (!parsed.success) return reply.code(400).send({ error: 'Datos inválidos', details: parsed.error.flatten() });
   const input = parsed.data;
-  if (new Set(input.packages.map(item => item.quantity)).size !== input.packages.length || input.packages.some(item => item.priceCrc >= item.quantity * input.priceCrc)) {
-    return reply.code(400).send({ error: 'Cada paquete debe tener una cantidad distinta y un precio menor al total individual.' });
+  if (new Set(input.packages.map(item => item.quantity)).size !== input.packages.length || input.packages.some(item => input.numbersPerSticker ? !validStickerQuantity(item.quantity, input.numbersPerSticker) : (item.quantity < 2 || item.quantity > 20 || item.priceCrc >= item.quantity * input.priceCrc))) {
+    return reply.code(400).send({ error: 'Revisá las tarjetas: las cantidades deben ser distintas, incluir stickers completos y respetar los límites.' });
   }
   const campaign = await db.$transaction(async tx => {
     const created = await tx.campaign.create({
@@ -531,7 +531,7 @@ app.post('/api/admin/campaigns', async (request, reply) => {
         invertedEnabled: input.invertedEnabled,
         invertedPrizeEnabled: input.invertedPrizeEnabled,
         drawDate: input.drawDate ? new Date(input.drawDate) : undefined,
-        packages: { create: input.numbersPerSticker ? [] : input.packages },
+        packages: { create: input.packages },
       },
     });
     for (let start = 0; start < input.numberCount; start += 1000) {
@@ -561,7 +561,7 @@ app.patch<{ Params: { id: string } }>('/api/admin/campaigns/:id', async (request
       if (campaign.status !== 'DRAFT') return tx.campaign.update({ where: { id: request.params.id }, data: { title: parsed.data.title, description: parsed.data.description } });
       const input = parsed.data as z.infer<typeof campaignInput>;
       if (campaign._count.reservations || campaign._count.winners) throw new Error('CAMPAIGN_CHANGED');
-      if (new Set(input.packages.map(item => item.quantity)).size !== input.packages.length || input.packages.some(item => item.priceCrc >= item.quantity * input.priceCrc)) throw new Error('INVALID_PACKAGES');
+      if (new Set(input.packages.map(item => item.quantity)).size !== input.packages.length || input.packages.some(item => input.numbersPerSticker ? !validStickerQuantity(item.quantity, input.numbersPerSticker) : (item.quantity < 2 || item.quantity > 20 || item.priceCrc >= item.quantity * input.priceCrc))) throw new Error('INVALID_PACKAGES');
       if (input.numberCount !== campaign.numberCount) {
         await tx.entryNumber.deleteMany({ where: { campaignId: request.params.id } });
         for (let start = 0; start < input.numberCount; start += 1000) await tx.entryNumber.createMany({
@@ -575,7 +575,7 @@ app.patch<{ Params: { id: string } }>('/api/admin/campaigns/:id', async (request
         thirdPrize: input.prizes[2] ?? null, priceCrc: input.priceCrc, numbersPerSticker: input.numbersPerSticker,
         numberCount: input.numberCount, numberWidth: String(input.numberCount - 1).length,
         invertedEnabled: input.invertedEnabled, invertedPrizeEnabled: input.invertedPrizeEnabled,
-        packages: { create: input.numbersPerSticker ? [] : input.packages },
+        packages: { create: input.packages },
       } });
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, timeout: 60_000 });
     broadcast('campaigns');
@@ -584,7 +584,7 @@ app.patch<{ Params: { id: string } }>('/api/admin/campaigns/:id', async (request
     if (error instanceof Error && error.message === 'CAMPAIGN_CHANGED') return reply.code(409).send({ error: 'La rifa cambió. Actualizá el panel antes de editarla.' });
     if (error instanceof Error && error.message === 'INVALID_PRIZES') return reply.code(400).send({ error: 'Indicá el premio de cada posición.' });
     if (error instanceof Error && error.message === 'INVALID_INVERTED') return reply.code(400).send({ error: 'Activá los invertidos antes de darles premio.' });
-    if (error instanceof Error && error.message === 'INVALID_PACKAGES') return reply.code(400).send({ error: 'Revisá cantidad y precio de los paquetes.' });
+    if (error instanceof Error && error.message === 'INVALID_PACKAGES') return reply.code(400).send({ error: 'Revisá las cantidades y precios de las tarjetas.' });
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') return reply.code(409).send({ error: 'Ese identificador URL ya existe.' });
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2034') return reply.code(409).send({ error: 'La rifa cambió. Intentá de nuevo.' });
     throw error;

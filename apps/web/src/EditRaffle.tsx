@@ -1,3 +1,4 @@
+import StickerCardEditor, { cardPackages, type StickerCard } from './StickerCardEditor';
 import BrandSelect, { numberCountOptions } from './BrandSelect';
 import PrizeEditor from './PrizeEditor';
 import { useEffect, useState, type FormEvent } from 'react';
@@ -18,6 +19,7 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
     priceCrc: String(raffle.priceCrc), numberCount: String(raffle.numberCount),
     invertedEnabled: raffle.invertedEnabled, invertedPrizeEnabled: raffle.invertedPrizeEnabled,
   });
+  const [cards, setCards] = useState<StickerCard[]>(raffle.numbersPerSticker ? raffle.packages.map(card => ({count: String(card.quantity / raffle.numbersPerSticker!), price: String(card.priceCrc)})) : []);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const isDraft = raffle.status === 'DRAFT';
@@ -33,7 +35,7 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
     if (isDraft && (form.prizes.length > Number(form.numberCount) || form.prizes.some(prize => prize.trim().length < 3))) { setError('Completá cada premio y verificá que no haya más premios que números.'); return; }
     const payload = isDraft ? {
       ...form, priceCrc: Number(form.priceCrc), numberCount: Number(form.numberCount),
-      numbersPerSticker: Number(form.numbersPerSticker), packages: [],
+      numbersPerSticker: Number(form.numbersPerSticker), packages: cardPackages(cards, Number(form.numbersPerSticker)),
     } : { title: form.title, description: form.description };
     setBusy(true); setError('');
     try {
@@ -61,6 +63,7 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
           <div className="form-row"><label>Precio por sticker (₡)<input required inputMode="numeric" pattern="[0-9]+" value={form.priceCrc} onChange={event => setForm({ ...form, priceCrc: event.target.value.replace(/\D/g, '') })}/></label><div className="select-field"><span>Cantidad de números</span><BrandSelect label="Cantidad de números" required value={form.numberCount} onChange={value => setForm({ ...form, numberCount: value })} options={numberCountOptions}/></div></div>
           <div className="inverted-settings"><label><input type="checkbox" checked={form.invertedEnabled} onChange={event => setForm({ ...form, invertedEnabled: event.target.checked, invertedPrizeEnabled: event.target.checked && form.invertedPrizeEnabled })}/> Ofrecer números invertidos adicionales por el doble del precio</label></div>
           <label>Números incluidos por sticker<input required type="number" min="1" max="20" step="1" value={form.numbersPerSticker} onChange={event => setForm({ ...form, numbersPerSticker: event.target.value })}/></label>
+          <StickerCardEditor cards={cards} onChange={setCards} numbersPerSticker={Number(form.numbersPerSticker)}/>
         </>}
         {error && <p className="edit-raffle-error" role="alert">{error}</p>}
         <div className="edit-raffle-actions"><button type="button" onClick={onClose} disabled={busy}>Cancelar</button><button type="submit" disabled={busy}>{busy ? 'Guardando...' : 'Guardar cambios'}</button></div>

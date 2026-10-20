@@ -141,3 +141,9 @@ h1,h2,h3 { letter-spacing:-.045em; }
 @media(max-width: 380px) { .sticker-cards { grid-template-columns: 1fr; } }
 
 .lottery-panel { padding:24px; border:1px solid #ff4200; border-radius:16px; margin:24px 0; display:grid; gap:16px; } .lottery-panel p { margin:0; line-height:1.6; } .lottery-panel label { display:grid; gap:8px; } .lottery-inputs { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:12px; } .lottery-preview > strong { font-size:36px; color:#ff4200; letter-spacing:4px; }
+.sticker-card-editor { border:1px solid #555; border-radius:14px; padding:20px; min-width:0; }
+.sticker-card-editor legend { color:#ff4e17; font-weight:800; padding:0 8px; }
+.sticker-card-editor p { font-size:13px; line-height:1.5; }
+.sticker-card-row { display:grid; grid-template-columns:1fr 1fr auto; gap:12px; align-items:end; margin:16px 0; }
+.sticker-card-editor button { border:1px solid #777; border-radius:8px; padding:12px; color:inherit; background:transparent; cursor:pointer; }
+@media(max-width:540px) { .sticker-card-row {grid-template-columns:1fr 1fr} .sticker-card-row button {grid-column:1/-1} }

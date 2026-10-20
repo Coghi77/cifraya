@@ -114,3 +114,9 @@ prizeSources: 0 manual; -1 composición desde primer premio JPS; -2 desde segund
 LotteryDrawPanel pide referencia del sorteo y resultados necesarios, calcula por API autenticada draw-preview y requiere confirmación separada. winner vuelve a calcular y guarda drawResults/drawReference en la misma transacción; tras primera publicación no admite cambios. Resultado calculado no vendido se publica sin ganador, sin sustituirlo. Premios JPS pueden coincidir por fórmula; manuales conservan restricción de repetición. Rifas publicadas conservan reglas inmutables. No hay lectura automática de JPS: administrador verifica datos.
 
 scripts/lottery-audit.mjs prueba inventario100k, vista previa con autorización, manipulación del resultado, inversión, inmutabilidad de resultados, cierre. Pruebas unitarias de composición incluyen ceros iniciales.
+
+### Tarjetas de stickers configurables
+- `StickerCardEditor` compartido entre creación y edición de borradores: cantidad de stickers y precio total por tarjeta (máximo 10).
+- Se reutiliza `PricePackage`: `quantity` siempre representa números, también en modo stickers; UI convierte stickers × numbersPerSticker. No requiere migración.
+- Con tarjetas configuradas, propuesta y reserva solo aceptan las cantidades ofrecidas; `purchaseOffer` toma el precio exacto del servidor. Sin tarjetas se mantiene el cálculo individual para compatibilidad.
+- Rifas publicadas conservan sus reglas/precios. Pruebas en `stickers.test.mjs` y `scripts/sticker-audit.mjs` cubren precios personalizados, cantidades inválidas y manipulación del total.

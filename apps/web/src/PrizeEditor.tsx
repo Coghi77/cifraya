@@ -7,7 +7,7 @@ export default function PrizeEditor({ prizes, sources, onChange }: { prizes: str
   const [count, setCount] = useState(String(prizes.length));
   const [page, setPage] = useState(0);
   const [error, setError] = useState('');
-  useEffect(() => { setCount(String(prizes.length)); setPage(current => Math.min(current, Math.floor((prizes.length - 1) / 10))); }, [prizes.length]);
+  useEffect(() => { setCount(String(prizes.length)); setPage(current => Math.max(0, Math.min(current, Math.floor((prizes.length - 1) / 10)))); }, [prizes.length]);
   return <div className="prize-editor">
     <label htmlFor={id}>Cantidad de premios</label>
     <div className="prize-quantity"><input ref={input} id={id} required inputMode="numeric" pattern="[0-9]+" value={count} onInvalid={event => { event.preventDefault(); setError(event.currentTarget.validationMessage); }} onChange={event => {
