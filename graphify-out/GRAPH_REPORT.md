@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 413 nodes · 575 edges · 50 communities (21 shown, 9 thin omitted)
+- 416 nodes · 577 edges · 50 communities (21 shown, 9 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1be3bfcf`
+- Built from commit: `16015fb5`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -46,7 +46,7 @@
 - Community 49
 
 ## God Nodes (most connected - your core abstractions)
-1. `react` - 19 edges
+1. `react` - 20 edges
 2. `compilerOptions` - 15 edges
 3. `scripts` - 11 edges
 4. `@prisma/client` - 10 edges
@@ -75,11 +75,11 @@
 ## Communities (50 total, 9 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.06
-Nodes (44): addPhotos(), AdminReservation, api(), ApiError, createRaffle(), currentServerTime(), expireAdminSession(), formatNumber() (+36 more)
+Cohesion: 0.05
+Nodes (43): addPhotos(), AdminReservation, api(), ApiError, createRaffle(), currentServerTime(), expireAdminSession(), formatNumber() (+35 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.08
+Cohesion: 0.07
 Nodes (18): AdminParticipantDetail(), money(), numberLabel(), ParticipantResponse, Reservation, statusLabel(), AdminReservationReview(), Detail (+10 more)
 
 ### Community 2 - "Community 2"
@@ -160,22 +160,22 @@ Nodes (3): inventory, inventorySet, times
 
 ## Knowledge Gaps
 - **137 isolated node(s):** `AdminReservation`, `LookupResult`, `NumberProposal`, `Raffle`, `Reservation` (+132 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 209 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 212 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `@prisma/client` connect `Community 11` to `Community 2`, `Community 4`, `Community 5`, `Community 9`, `Community 12`, `Community 16`, `Community 21`?**
-  _High betweenness centrality (0.064) - this node is a cross-community bridge._
+  _High betweenness centrality (0.063) - this node is a cross-community bridge._
 - **Why does `react` connect `Community 1` to `Community 0`, `Community 3`, `Community 6`, `Community 7`, `Community 18`?**
-  _High betweenness centrality (0.049) - this node is a cross-community bridge._
+  _High betweenness centrality (0.050) - this node is a cross-community bridge._
 - **What connects `AdminReservation`, `LookupResult`, `NumberProposal` to the rest of the system?**
   _137 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.05605499735589635 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05427547363031234 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.07954545454545454 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07394957983193277 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.06060606060606061 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**

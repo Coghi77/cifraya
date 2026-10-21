@@ -14,7 +14,7 @@
       "file_type": "code",
       "norm_label": "adminreservation",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L60"
+      "source_location": "L61"
     },
     {
       "id": "apps_web_src_app_apierror",
@@ -27,7 +27,7 @@
       "file_type": "code",
       "norm_label": "apierror",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L105"
+      "source_location": "L106"
     },
     {
       "id": "apps_web_src_app_lookupresult",
@@ -40,7 +40,7 @@
       "file_type": "code",
       "norm_label": "lookupresult",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L48"
+      "source_location": "L49"
     },
     {
       "id": "apps_web_src_app_numberproposal",
@@ -53,7 +53,7 @@
       "file_type": "code",
       "norm_label": "numberproposal",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L72"
+      "source_location": "L73"
     },
     {
       "id": "apps_web_src_app_raffle",
@@ -66,7 +66,7 @@
       "file_type": "code",
       "norm_label": "raffle",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L22"
+      "source_location": "L23"
     },
     {
       "id": "apps_web_src_app_reservation",
@@ -79,7 +79,7 @@
       "file_type": "code",
       "norm_label": "reservation",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L47"
+      "source_location": "L48"
     },
     {
       "id": "apps_web_src_app_view",
@@ -92,7 +92,7 @@
       "file_type": "code",
       "norm_label": "view",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L73"
+      "source_location": "L74"
     },
     {
       "id": "apps_web_src_adminparticipantdetail_participantresponse",
@@ -351,7 +351,7 @@
       "file_type": "code",
       "norm_label": "addphotos()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L519"
+      "source_location": "L520"
     },
     {
       "id": "apps_web_src_app_adminphoto",
@@ -363,7 +363,7 @@
       "file_type": "code",
       "norm_label": "adminphoto()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L153"
+      "source_location": "L154"
     },
     {
       "id": "apps_web_src_app_api",
@@ -375,7 +375,7 @@
       "file_type": "code",
       "norm_label": "api()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L111"
+      "source_location": "L112"
     },
     {
       "id": "apps_web_src_app_apierror_constructor",
@@ -387,7 +387,7 @@
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L106"
+      "source_location": "L107"
     },
     {
       "id": "apps_web_src_app_changerandomnumbers",
@@ -399,7 +399,7 @@
       "file_type": "code",
       "norm_label": "changerandomnumbers()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L384"
+      "source_location": "L385"
     },
     {
       "id": "apps_web_src_app_choosemanually",
@@ -411,7 +411,7 @@
       "file_type": "code",
       "norm_label": "choosemanually()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L365"
+      "source_location": "L366"
     },
     {
       "id": "apps_web_src_app_closeadminraffle",
@@ -423,7 +423,7 @@
       "file_type": "code",
       "norm_label": "closeadminraffle()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L560"
+      "source_location": "L561"
     },
     {
       "id": "apps_web_src_app_coverof",
@@ -435,7 +435,7 @@
       "file_type": "code",
       "norm_label": "coverof()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L90"
+      "source_location": "L91"
     },
     {
       "id": "apps_web_src_app_createraffle",
@@ -447,7 +447,7 @@
       "file_type": "code",
       "norm_label": "createraffle()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L478"
+      "source_location": "L479"
     },
     {
       "id": "apps_web_src_app_currentservertime",
@@ -459,7 +459,7 @@
       "file_type": "code",
       "norm_label": "currentservertime()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L110"
+      "source_location": "L111"
     },
     {
       "id": "apps_web_src_app_expireadminsession",
@@ -471,7 +471,7 @@
       "file_type": "code",
       "norm_label": "expireadminsession()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L457"
+      "source_location": "L458"
     },
     {
       "id": "apps_web_src_app_formatnumber",
@@ -483,7 +483,7 @@
       "file_type": "code",
       "norm_label": "formatnumber()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L89"
+      "source_location": "L90"
     },
     {
       "id": "apps_web_src_app_generatenumbers",
@@ -495,7 +495,7 @@
       "file_type": "code",
       "norm_label": "generatenumbers()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L355"
+      "source_location": "L356"
     },
     {
       "id": "apps_web_src_app_gohome",
@@ -507,7 +507,7 @@
       "file_type": "code",
       "norm_label": "gohome()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L289"
+      "source_location": "L290"
     },
     {
       "id": "apps_web_src_app_gopublic",
@@ -519,7 +519,7 @@
       "file_type": "code",
       "norm_label": "gopublic()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L280"
+      "source_location": "L281"
     },
     {
       "id": "apps_web_src_app_invertedchoice",
@@ -531,7 +531,7 @@
       "file_type": "code",
       "norm_label": "invertedchoice()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L99"
+      "source_location": "L100"
     },
     {
       "id": "apps_web_src_app_loadadmin",
@@ -543,7 +543,7 @@
       "file_type": "code",
       "norm_label": "loadadmin()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L441"
+      "source_location": "L442"
     },
     {
       "id": "apps_web_src_app_loadraffles",
@@ -555,7 +555,7 @@
       "file_type": "code",
       "norm_label": "loadraffles()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L257"
+      "source_location": "L258"
     },
     {
       "id": "apps_web_src_app_loadwinners",
@@ -567,7 +567,7 @@
       "file_type": "code",
       "norm_label": "loadwinners()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L262"
+      "source_location": "L263"
     },
     {
       "id": "apps_web_src_app_lookuptickets",
@@ -579,7 +579,7 @@
       "file_type": "code",
       "norm_label": "lookuptickets()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L430"
+      "source_location": "L431"
     },
     {
       "id": "apps_web_src_app_money",
@@ -591,7 +591,7 @@
       "file_type": "code",
       "norm_label": "money()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L88"
+      "source_location": "L89"
     },
     {
       "id": "apps_web_src_app_offersfor",
@@ -603,7 +603,7 @@
       "file_type": "code",
       "norm_label": "offersfor()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L91"
+      "source_location": "L92"
     },
     {
       "id": "apps_web_src_app_onpopstate",
@@ -615,7 +615,7 @@
       "file_type": "code",
       "norm_label": "onpopstate()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L296"
+      "source_location": "L297"
     },
     {
       "id": "apps_web_src_app_openadminraffle",
@@ -627,7 +627,7 @@
       "file_type": "code",
       "norm_label": "openadminraffle()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L554"
+      "source_location": "L555"
     },
     {
       "id": "apps_web_src_app_openraffle",
@@ -639,7 +639,7 @@
       "file_type": "code",
       "norm_label": "openraffle()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L267"
+      "source_location": "L268"
     },
     {
       "id": "apps_web_src_app_pendingphoto",
@@ -651,7 +651,7 @@
       "file_type": "code",
       "norm_label": "pendingphoto()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L181"
+      "source_location": "L182"
     },
     {
       "id": "apps_web_src_app_photopicker",
@@ -663,7 +663,7 @@
       "file_type": "code",
       "norm_label": "photopicker()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L167"
+      "source_location": "L168"
     },
     {
       "id": "apps_web_src_app_progressof",
@@ -675,7 +675,7 @@
       "file_type": "code",
       "norm_label": "progressof()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L93"
+      "source_location": "L94"
     },
     {
       "id": "apps_web_src_app_proofuploader",
@@ -687,7 +687,7 @@
       "file_type": "code",
       "norm_label": "proofuploader()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L194"
+      "source_location": "L195"
     },
     {
       "id": "apps_web_src_app_proofuploader_upload",
@@ -699,7 +699,7 @@
       "file_type": "code",
       "norm_label": "upload()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L197"
+      "source_location": "L198"
     },
     {
       "id": "apps_web_src_app_publish",
@@ -711,7 +711,7 @@
       "file_type": "code",
       "norm_label": "publish()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L541"
+      "source_location": "L542"
     },
     {
       "id": "apps_web_src_app_raffleprogress",
@@ -723,7 +723,7 @@
       "file_type": "code",
       "norm_label": "raffleprogress()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L95"
+      "source_location": "L96"
     },
     {
       "id": "apps_web_src_app_refresh",
@@ -735,7 +735,7 @@
       "file_type": "code",
       "norm_label": "refresh()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L311"
+      "source_location": "L312"
     },
     {
       "id": "apps_web_src_app_refreshreservation",
@@ -747,7 +747,7 @@
       "file_type": "code",
       "norm_label": "refreshreservation()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L394"
+      "source_location": "L395"
     },
     {
       "id": "apps_web_src_app_removephoto",
@@ -759,7 +759,7 @@
       "file_type": "code",
       "norm_label": "removephoto()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L532"
+      "source_location": "L533"
     },
     {
       "id": "apps_web_src_app_reserve",
@@ -771,7 +771,7 @@
       "file_type": "code",
       "norm_label": "reserve()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L400"
+      "source_location": "L401"
     },
     {
       "id": "apps_web_src_app_selectedoffer",
@@ -783,7 +783,7 @@
       "file_type": "code",
       "norm_label": "selectedoffer()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L92"
+      "source_location": "L93"
     },
     {
       "id": "apps_web_src_app_selectionspinner",
@@ -795,7 +795,7 @@
       "file_type": "code",
       "norm_label": "selectionspinner()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L94"
+      "source_location": "L95"
     },
     {
       "id": "apps_web_src_app_ticketpass",
@@ -807,7 +807,7 @@
       "file_type": "code",
       "norm_label": "ticketpass()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L134"
+      "source_location": "L135"
     },
     {
       "id": "apps_web_src_app_toggleinverted",
@@ -819,7 +819,7 @@
       "file_type": "code",
       "norm_label": "toggleinverted()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L375"
+      "source_location": "L376"
     },
     {
       "id": "apps_web_src_app_unlockadmin",
@@ -831,7 +831,7 @@
       "file_type": "code",
       "norm_label": "unlockadmin()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L466"
+      "source_location": "L467"
     },
     {
       "id": "apps_web_src_app_usecountdown",
@@ -843,7 +843,7 @@
       "file_type": "code",
       "norm_label": "usecountdown()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L122"
+      "source_location": "L123"
     },
     {
       "id": "apps_web_src_app_viewfrompath",
@@ -855,7 +855,7 @@
       "file_type": "code",
       "norm_label": "viewfrompath()",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L80"
+      "source_location": "L81"
     },
     {
       "id": "apps_web_src_footersocials_brandicon",
@@ -918,16 +918,28 @@
       "source_location": "L2"
     },
     {
-      "id": "apps_web_src_stickerpicker_stickerpicker",
-      "label": "StickerPicker()",
+      "id": "apps_web_src_sinpepaymentinfo_sinpepaymentinfo",
+      "label": "SinpePaymentInfo()",
       "_callable": true,
       "_origin": "ast",
       "community": 0,
       "community_name": "Community 0",
       "file_type": "code",
-      "norm_label": "stickerpicker()",
-      "source_file": "apps/web/src/StickerPicker.tsx",
+      "norm_label": "sinpepaymentinfo()",
+      "source_file": "apps/web/src/SinpePaymentInfo.tsx",
       "source_location": "L3"
+    },
+    {
+      "id": "apps_web_src_sinpepaymentinfo_sinpepaymentinfo_copy",
+      "label": "copy()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "file_type": "code",
+      "norm_label": "copy()",
+      "source_file": "apps/web/src/SinpePaymentInfo.tsx",
+      "source_location": "L5"
     },
     {
       "id": "apps_web_src_adminparticipantdetail_adminparticipantdetail",
@@ -1120,6 +1132,18 @@
       "norm_label": "siteheader()",
       "source_file": "apps/web/src/SiteHeader.tsx",
       "source_location": "L4"
+    },
+    {
+      "id": "apps_web_src_stickerpicker_stickerpicker",
+      "label": "StickerPicker()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "Community 1",
+      "file_type": "code",
+      "norm_label": "stickerpicker()",
+      "source_file": "apps/web/src/StickerPicker.tsx",
+      "source_location": "L3"
     },
     {
       "id": "apps_api_src_reservationexpiry_createreservationexpirer",
@@ -2089,14 +2113,14 @@
       "source_location": "L1"
     },
     {
-      "id": "apps_web_src_stickerpicker",
-      "label": "StickerPicker.tsx",
+      "id": "apps_web_src_sinpepaymentinfo",
+      "label": "SinpePaymentInfo.tsx",
       "_origin": "ast",
       "community": 0,
       "community_name": "Community 0",
       "file_type": "code",
-      "norm_label": "stickerpicker.tsx",
-      "source_file": "apps/web/src/StickerPicker.tsx",
+      "norm_label": "sinpepaymentinfo.tsx",
+      "source_file": "apps/web/src/SinpePaymentInfo.tsx",
       "source_location": "L1"
     },
     {
@@ -2196,6 +2220,17 @@
       "file_type": "code",
       "norm_label": "siteheader.tsx",
       "source_file": "apps/web/src/SiteHeader.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_web_src_stickerpicker",
+      "label": "StickerPicker.tsx",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "Community 1",
+      "file_type": "code",
+      "norm_label": "stickerpicker.tsx",
+      "source_file": "apps/web/src/StickerPicker.tsx",
       "source_location": "L1"
     },
     {
@@ -5230,7 +5265,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L524",
+      "source_location": "L525",
       "weight": 1.0
     },
     {
@@ -5242,7 +5277,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L525",
+      "source_location": "L526",
       "weight": 1.0
     },
     {
@@ -5254,7 +5289,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L527",
+      "source_location": "L528",
       "weight": 1.0
     },
     {
@@ -5266,7 +5301,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L527",
+      "source_location": "L528",
       "weight": 1.0
     },
     {
@@ -5278,7 +5313,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L528",
+      "source_location": "L529",
       "weight": 1.0
     },
     {
@@ -5290,7 +5325,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L118",
+      "source_location": "L119",
       "weight": 1.0
     },
     {
@@ -5302,7 +5337,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L494",
+      "source_location": "L495",
       "weight": 1.0
     },
     {
@@ -5314,24 +5349,12 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L494",
+      "source_location": "L495",
       "weight": 1.0
     },
     {
       "source": "apps_web_src_app_createraffle",
       "target": "apps_web_src_preparephoto_preparephoto",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "apps/web/src/App.tsx",
-      "source_location": "L503",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_app_createraffle",
-      "target": "apps_web_src_app_api",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5343,6 +5366,18 @@
     },
     {
       "source": "apps_web_src_app_createraffle",
+      "target": "apps_web_src_app_api",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L505",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_app_createraffle",
       "target": "apps_web_src_app_loadadmin",
       "relation": "calls",
       "_origin": "ast",
@@ -5350,7 +5385,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L506",
+      "source_location": "L507",
       "weight": 1.0
     },
     {
@@ -5362,7 +5397,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L509",
+      "source_location": "L510",
       "weight": 1.0
     },
     {
@@ -5374,7 +5409,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L289",
+      "source_location": "L290",
       "weight": 1.0
     },
     {
@@ -5386,7 +5421,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L284",
+      "source_location": "L285",
       "weight": 1.0
     },
     {
@@ -5398,7 +5433,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L285",
+      "source_location": "L286",
       "weight": 1.0
     },
     {
@@ -5410,7 +5445,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L101",
+      "source_location": "L102",
       "weight": 1.0
     },
     {
@@ -5422,7 +5457,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L101",
+      "source_location": "L102",
       "weight": 1.0
     },
     {
@@ -5434,7 +5469,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L101",
+      "source_location": "L102",
       "weight": 1.0
     },
     {
@@ -5446,7 +5481,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L447",
+      "source_location": "L448",
       "weight": 1.0
     },
     {
@@ -5458,7 +5493,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L452",
+      "source_location": "L453",
       "weight": 1.0
     },
     {
@@ -5470,7 +5505,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L298",
+      "source_location": "L299",
       "weight": 1.0
     },
     {
@@ -5482,7 +5517,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L299",
+      "source_location": "L300",
       "weight": 1.0
     },
     {
@@ -5494,7 +5529,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L299",
+      "source_location": "L300",
       "weight": 1.0
     },
     {
@@ -5506,7 +5541,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L275",
+      "source_location": "L276",
       "weight": 1.0
     },
     {
@@ -5518,7 +5553,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L203",
+      "source_location": "L204",
       "weight": 1.0
     },
     {
@@ -5530,7 +5565,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L204",
+      "source_location": "L205",
       "weight": 1.0
     },
     {
@@ -5542,7 +5577,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L547",
+      "source_location": "L548",
       "weight": 1.0
     },
     {
@@ -5554,7 +5589,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L549",
+      "source_location": "L550",
       "weight": 1.0
     },
     {
@@ -5566,24 +5601,12 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L96",
+      "source_location": "L97",
       "weight": 1.0
     },
     {
       "source": "apps_web_src_app_refresh",
       "target": "apps_web_src_app_loadraffles",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "apps/web/src/App.tsx",
-      "source_location": "L317",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_app_refresh",
-      "target": "apps_web_src_app_loadwinners",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5595,7 +5618,7 @@
     },
     {
       "source": "apps_web_src_app_refresh",
-      "target": "apps_web_src_app_loadadmin",
+      "target": "apps_web_src_app_loadwinners",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5607,6 +5630,18 @@
     },
     {
       "source": "apps_web_src_app_refresh",
+      "target": "apps_web_src_app_loadadmin",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L320",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_app_refresh",
       "target": "apps_web_src_app_refreshreservation",
       "relation": "calls",
       "_origin": "ast",
@@ -5614,7 +5649,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L331",
+      "source_location": "L332",
       "weight": 1.0
     },
     {
@@ -5626,7 +5661,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L535",
+      "source_location": "L536",
       "weight": 1.0
     },
     {
@@ -5638,7 +5673,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L536",
+      "source_location": "L537",
       "weight": 1.0
     },
     {
@@ -5650,7 +5685,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L536",
+      "source_location": "L537",
       "weight": 1.0
     },
     {
@@ -5662,7 +5697,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L537",
+      "source_location": "L538",
       "weight": 1.0
     },
     {
@@ -5674,7 +5709,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L406",
+      "source_location": "L407",
       "weight": 1.0
     },
     {
@@ -5686,7 +5721,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L414",
+      "source_location": "L415",
       "weight": 1.0
     },
     {
@@ -5698,7 +5733,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L415",
+      "source_location": "L416",
       "weight": 1.0
     },
     {
@@ -5710,7 +5745,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L416",
+      "source_location": "L417",
       "weight": 1.0
     },
     {
@@ -5722,7 +5757,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L92",
+      "source_location": "L93",
       "weight": 1.0
     },
     {
@@ -5734,7 +5769,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L146",
+      "source_location": "L147",
       "weight": 1.0
     },
     {
@@ -5746,7 +5781,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L473",
+      "source_location": "L474",
       "weight": 1.0
     },
     {
@@ -5758,7 +5793,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L126",
+      "source_location": "L127",
       "weight": 1.0
     },
     {
@@ -5950,7 +5985,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L197",
+      "source_location": "L198",
       "weight": 1.0
     },
     {
@@ -5999,6 +6034,18 @@
       "context": "call",
       "source_file": "apps/web/src/ManualNumbers.tsx",
       "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_sinpepaymentinfo_sinpepaymentinfo",
+      "target": "apps_web_src_sinpepaymentinfo_sinpepaymentinfo_copy",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "apps/web/src/SinpePaymentInfo.tsx",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -6531,110 +6578,14 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_orderdetail_orderdetail",
+      "target": "apps_web_src_sinpepaymentinfo_sinpepaymentinfo",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L11",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_app",
-      "target": "apps_web_src_editraffle_editraffle",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/web/src/App.tsx",
-      "source_location": "L18",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_app",
-      "target": "apps_web_src_footersocials_footersocials",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/web/src/App.tsx",
-      "source_location": "L19",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_app",
-      "target": "apps_web_src_winnerspodium_winnerresult",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/web/src/App.tsx",
-      "source_location": "L20",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_app",
-      "target": "apps_web_src_drawscheduleeditor_todrawdate",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/web/src/App.tsx",
-      "source_location": "L4",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_app",
-      "target": "apps_web_src_stickercardeditor_cardpackages",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/web/src/App.tsx",
-      "source_location": "L7",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_app",
-      "target": "apps_web_src_stickercardeditor_stickercard",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/web/src/App.tsx",
-      "source_location": "L7",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_app",
-      "target": "apps_web_src_stickercardeditor_stickercardeditor",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/web/src/App.tsx",
-      "source_location": "L7",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_app",
-      "target": "apps_web_src_stickerpicker_stickerpicker",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/web/src/App.tsx",
-      "source_location": "L8",
+      "source_location": "L1",
       "weight": 1.0
     },
     {
@@ -6646,7 +6597,79 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L9",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_app",
+      "target": "apps_web_src_manualnumbers_manualnumbers",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_app",
+      "target": "apps_web_src_orderdetail_orderdetail",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_app",
+      "target": "apps_web_src_winnerspodium_winnerresult",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_app",
+      "target": "apps_web_src_drawscheduleeditor_todrawdate",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_app",
+      "target": "apps_web_src_stickercardeditor_cardpackages",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_app",
+      "target": "apps_web_src_stickercardeditor_stickercard",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -7327,7 +7350,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_preparephoto",
+      "target": "apps_web_src_sinpepaymentinfo",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7339,7 +7362,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_manualnumbers",
+      "target": "apps_web_src_brandselect",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7351,7 +7374,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_orderdetail",
+      "target": "apps_web_src_manualnumbers",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7363,7 +7386,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_realtime",
+      "target": "apps_web_src_orderdetail",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7375,7 +7398,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_prizeeditor",
+      "target": "apps_web_src_realtime",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7387,7 +7410,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "ref_react",
+      "target": "apps_web_src_prizeeditor",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7399,7 +7422,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "ref_lucide_react",
+      "target": "ref_react",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7411,7 +7434,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_adminraffledetail",
+      "target": "ref_lucide_react",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7423,7 +7446,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_adminreservationreview",
+      "target": "apps_web_src_adminraffledetail",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7435,7 +7458,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_editraffle",
+      "target": "apps_web_src_adminreservationreview",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7447,7 +7470,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_footersocials",
+      "target": "apps_web_src_editraffle",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7459,7 +7482,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_siteheader",
+      "target": "apps_web_src_preparephoto",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7471,7 +7494,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_winnerspodium",
+      "target": "apps_web_src_footersocials",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7483,7 +7506,19 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_drawcountdown",
+      "target": "apps_web_src_winnerspodium",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_app",
+      "target": "apps_web_src_siteheader",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7495,7 +7530,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_drawscheduleeditor",
+      "target": "apps_web_src_drawcountdown",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7507,7 +7542,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_checkoutdialog",
+      "target": "apps_web_src_drawscheduleeditor",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7519,7 +7554,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_prizephoto",
+      "target": "apps_web_src_checkoutdialog",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7531,7 +7566,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_stickercardeditor",
+      "target": "apps_web_src_prizephoto",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7543,7 +7578,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_stickerpicker",
+      "target": "apps_web_src_stickercardeditor",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7555,7 +7590,7 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_brandselect",
+      "target": "apps_web_src_stickerpicker",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7803,6 +7838,18 @@
       "context": "import",
       "source_file": "apps/web/src/PrizePhoto.tsx",
       "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_sinpepaymentinfo",
+      "target": "ref_react",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/src/SinpePaymentInfo.tsx",
+      "source_location": "L1",
       "weight": 1.0
     },
     {
@@ -9356,13 +9403,24 @@
     },
     {
       "source": "apps_web_src_app",
+      "target": "apps_web_src_app_invertedchoice",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_app",
       "target": "apps_web_src_app_apierror",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L105",
+      "source_location": "L106",
       "weight": 1.0
     },
     {
@@ -9373,7 +9431,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L110",
+      "source_location": "L111",
       "weight": 1.0
     },
     {
@@ -9384,7 +9442,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L111",
+      "source_location": "L112",
       "weight": 1.0
     },
     {
@@ -9395,7 +9453,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L122",
+      "source_location": "L123",
       "weight": 1.0
     },
     {
@@ -9406,7 +9464,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L134",
+      "source_location": "L135",
       "weight": 1.0
     },
     {
@@ -9417,7 +9475,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L153",
+      "source_location": "L154",
       "weight": 1.0
     },
     {
@@ -9428,7 +9486,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L167",
+      "source_location": "L168",
       "weight": 1.0
     },
     {
@@ -9439,7 +9497,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L181",
+      "source_location": "L182",
       "weight": 1.0
     },
     {
@@ -9450,7 +9508,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L194",
+      "source_location": "L195",
       "weight": 1.0
     },
     {
@@ -9461,7 +9519,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -9472,7 +9530,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L257",
+      "source_location": "L258",
       "weight": 1.0
     },
     {
@@ -9483,7 +9541,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L262",
+      "source_location": "L263",
       "weight": 1.0
     },
     {
@@ -9494,7 +9552,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L267",
+      "source_location": "L268",
       "weight": 1.0
     },
     {
@@ -9505,7 +9563,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L280",
+      "source_location": "L281",
       "weight": 1.0
     },
     {
@@ -9516,7 +9574,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L289",
+      "source_location": "L290",
       "weight": 1.0
     },
     {
@@ -9527,7 +9585,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L296",
+      "source_location": "L297",
       "weight": 1.0
     },
     {
@@ -9538,7 +9596,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L311",
+      "source_location": "L312",
       "weight": 1.0
     },
     {
@@ -9549,7 +9607,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L355",
+      "source_location": "L356",
       "weight": 1.0
     },
     {
@@ -9560,7 +9618,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L365",
+      "source_location": "L366",
       "weight": 1.0
     },
     {
@@ -9571,7 +9629,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L375",
+      "source_location": "L376",
       "weight": 1.0
     },
     {
@@ -9582,7 +9640,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L384",
+      "source_location": "L385",
       "weight": 1.0
     },
     {
@@ -9593,7 +9651,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L394",
+      "source_location": "L395",
       "weight": 1.0
     },
     {
@@ -9604,7 +9662,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L400",
+      "source_location": "L401",
       "weight": 1.0
     },
     {
@@ -9615,7 +9673,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L430",
+      "source_location": "L431",
       "weight": 1.0
     },
     {
@@ -9626,7 +9684,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L441",
+      "source_location": "L442",
       "weight": 1.0
     },
     {
@@ -9637,7 +9695,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L457",
+      "source_location": "L458",
       "weight": 1.0
     },
     {
@@ -9648,18 +9706,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L466",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_app",
-      "target": "apps_web_src_app_reservation",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/src/App.tsx",
-      "source_location": "L47",
+      "source_location": "L467",
       "weight": 1.0
     },
     {
@@ -9670,12 +9717,12 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L478",
+      "source_location": "L479",
       "weight": 1.0
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_app_lookupresult",
+      "target": "apps_web_src_app_reservation",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9686,13 +9733,24 @@
     },
     {
       "source": "apps_web_src_app",
+      "target": "apps_web_src_app_lookupresult",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_app",
       "target": "apps_web_src_app_addphotos",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L519",
+      "source_location": "L520",
       "weight": 1.0
     },
     {
@@ -9703,7 +9761,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L532",
+      "source_location": "L533",
       "weight": 1.0
     },
     {
@@ -9714,7 +9772,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L541",
+      "source_location": "L542",
       "weight": 1.0
     },
     {
@@ -9725,7 +9783,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L554",
+      "source_location": "L555",
       "weight": 1.0
     },
     {
@@ -9736,7 +9794,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L560",
+      "source_location": "L561",
       "weight": 1.0
     },
     {
@@ -9747,7 +9805,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L60",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -9758,7 +9816,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L72",
+      "source_location": "L73",
       "weight": 1.0
     },
     {
@@ -9769,7 +9827,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L73",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -9780,7 +9838,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L80",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
@@ -9791,7 +9849,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L88",
+      "source_location": "L89",
       "weight": 1.0
     },
     {
@@ -9802,7 +9860,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 1.0
     },
     {
@@ -9813,7 +9871,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L90",
+      "source_location": "L91",
       "weight": 1.0
     },
     {
@@ -9824,7 +9882,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L91",
+      "source_location": "L92",
       "weight": 1.0
     },
     {
@@ -9835,7 +9893,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L92",
+      "source_location": "L93",
       "weight": 1.0
     },
     {
@@ -9846,7 +9904,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L93",
+      "source_location": "L94",
       "weight": 1.0
     },
     {
@@ -9857,7 +9915,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L94",
+      "source_location": "L95",
       "weight": 1.0
     },
     {
@@ -9868,18 +9926,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L95",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_app",
-      "target": "apps_web_src_app_invertedchoice",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/src/App.tsx",
-      "source_location": "L99",
+      "source_location": "L96",
       "weight": 1.0
     },
     {
@@ -10221,6 +10268,17 @@
       "confidence_score": 1.0,
       "source_file": "apps/web/src/realtime.ts",
       "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_sinpepaymentinfo",
+      "target": "apps_web_src_sinpepaymentinfo_sinpepaymentinfo",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/web/src/SinpePaymentInfo.tsx",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -11136,7 +11194,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L106",
+      "source_location": "L107",
       "weight": 1.0
     },
     {
@@ -11316,7 +11374,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L305",
+      "source_location": "L306",
       "weight": 1.0
     },
     {
@@ -11328,10 +11386,10 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "scripts/reservation-audit.mjs",
-      "source_location": "L94",
+      "source_location": "L95",
       "weight": 1.0
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "1be3bfcf7a3650dd73d506c901fe017ff168849a"
+  "built_at_commit": "16015fb51747778e7db6f56d1a6f0abb73605b2c"
 }

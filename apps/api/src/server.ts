@@ -415,7 +415,7 @@ app.post<{ Params: { token: string } }>('/api/reservations/:token/proofs', { bod
       if (reservation.status === 'ACTIVE') {
         const updated = await tx.reservation.updateMany({ where: { id: reservation.id, status: 'ACTIVE', expiresAt: { gt: new Date() } }, data: { status: 'PENDING_REVIEW', proofSubmittedAt: new Date() } });
         if (updated.count !== 1) throw new Error('RESERVATION_CLOSED');
-        await enqueuePaymentEmail(tx, reservation.id, 'PENDING_REVIEW');
+        // The initial reservation email includes proof-upload instructions and review status guidance.
       }
       return created;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });

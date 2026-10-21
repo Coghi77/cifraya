@@ -43,11 +43,13 @@ export default function OrderDetail({ renderProof }: { renderProof: (token: stri
     {order && <section className="order-card" aria-label="Detalle del pedido"><div className="order-heading"><h2>{order.campaign.title}</h2><span role="status">{labels[order.status] || order.status}</span></div>
       <dl className="order-facts"><div><dt>A nombre de</dt><dd>{order.buyerName}</dd></div><div><dt>Total</dt><dd>{money(order.totalCrc)}</dd></div><div><dt>Fecha del pedido</dt><dd>{date(order.createdAt)}</dd></div><div><dt>Método de pago</dt><dd>{order.paymentMethod==='CASH'?'Efectivo':'SINPE Móvil'}</dd></div><div><dt>{order.stickerCount ? 'Boletos' : 'Selección'}</dt><dd>{order.stickerCount && `${order.stickerCount} boletos de ${order.numbersPerSticker} números · `}{order.baseValues.length || order.values.length} números{order.includesInverted ? ' + invertidos' : ''}</dd></div><div><dt>Números del pedido</dt><dd>{order.values.length}</dd></div>{order.confirmedAt && <div><dt>Pago confirmado</dt><dd>{date(order.confirmedAt)}</dd></div>}</dl>
       <div className="order-tickets"><h3>Números de tu pedido</h3><div>{order.values.map(value => <span key={value}>{String(value).padStart(order.campaign.numberWidth, '0')}{order.includesInverted && !order.baseValues.includes(value) && <small>Inverso</small>}</span>)}</div></div>
+      <p className="order-link-help"><strong>¿Para qué sirve este enlace?</strong><br/>Guardalo para volver a este pedido, consultar tus números y revisar si el pago fue aprobado. También te permite adjuntar el comprobante mientras tu reserva esté vigente. Es privado: no lo compartás.</p>
       {order.status === 'ACTIVE' && <p>Adjuntá tu comprobante antes del {date(order.expiresAt)} para que revisemos el pago.</p>}
       {order.status === 'PENDING_REVIEW' && <p>Tu comprobante está en revisión. El estado se actualiza automáticamente al resolver el pago.</p>}
       {order.status === 'CANCELLED' && <div className="order-notice"><strong>Motivo del rechazo</strong><p>{order.reviewNote || 'Consultá con administración.'}</p></div>}
       {order.status === 'EXPIRED' && <p>El pedido venció. Estos números ya no están reservados a tu nombre.</p>}
       {['ACTIVE', 'PENDING_REVIEW'].includes(order.status) && renderProof(token, order.proofCount, refresh)}
+
       <button className="button dark" onClick={async () => { try { await navigator.clipboard.writeText(`${window.location.origin}/pedido#${token}`); setCopied(true); } catch { setError('No se pudo copiar. Podés guardar la dirección de esta página.'); } }}>{copied ? 'Enlace copiado' : 'Copiar enlace privado'}</button>
     </section>}
   </main>;

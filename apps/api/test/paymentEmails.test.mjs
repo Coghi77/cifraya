@@ -44,7 +44,9 @@ test('diagnostic emails are explicitly labeled and contain no private order link
 test('reservation and proof receipt have distinct pending statuses without approval or rejection claims', () => {
  const reserved=paymentEmail(order,'RESERVED','https://vnovatcg.com');
  const review=paymentEmail(order,'PENDING_REVIEW','https://vnovatcg.com');
- assert.match(reserved.text,/Adjuntá el comprobante/);
+ assert.match(reserved.text,/Si ya adjuntaste el comprobante/);
+ assert.match(reserved.text,/Si todavía no lo adjuntaste/);
+ assert.match(reserved.text,/30 minutos/);
  assert.match(review.text,/pendiente de revisión/);
  for(const email of [reserved,review]) {
   assert.match(email.text,/CY-000012/);assert.match(email.text,/0001, 0120/);

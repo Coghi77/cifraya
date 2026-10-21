@@ -38,7 +38,8 @@ try {
  const random=await request('/api/campaigns/local-audit/proposal',{quantity:1});assert.ok(!random.data.values.includes(42));await request('/api/campaigns/local-audit/proposal',{quantity:1,values:[]},random.cookie);
  assert.equal((await request('/api/reservations/'+winner.token+'/proofs',proof)).status,201);
  assert.equal((await request('/api/reservations/'+winner.token+'/proofs',proof)).status,201);
- assert.equal(await db.emailNotification.count({where:{reservationId:reservation.id,kind:'PENDING_REVIEW'}}),1);
+ assert.equal(await db.emailNotification.count({where:{reservationId:reservation.id,kind:'PENDING_REVIEW'}}),0);
+ assert.equal(await db.emailNotification.count({where:{reservationId:reservation.id,kind:'RESERVED'}}),1);
  await db.reservation.update({where:{id:reservation.id},data:{expiresAt:new Date(Date.now()-1000)}});
  await wait(5100);await request('/api/campaigns/local-audit/numbers');
  assert.equal((await db.entryNumber.findUnique({where:{campaignId_value:{campaignId:campaign.id,value:42}}})).status,'RESERVED');
@@ -95,5 +96,5 @@ try {
  const {auditLottery}=await import('./lottery-audit.mjs');await auditLottery(request,db,login.data.token);
  const {auditPublishedPrices}=await import('./published-price-audit.mjs');const priceReport=await auditPublishedPrices(root,login.data.token);assert.equal(await db.emailNotification.count({where:{reservation:{campaignId:priceReport.campaignId}}}),0);console.log(JSON.stringify(priceReport));
  const {auditSecurity}=await import('./security-audit.mjs');await auditSecurity(root,db,proof);
- console.log(JSON.stringify({result:'PASS',simultaneousRequests:12,successfulReservations:1,concurrencyMilliseconds:Math.round(elapsed),apiProcesses:2,mixedSelectionRequests:30,uniqueHeldNumbers:granted.length,checks:['mixed manual/random uniqueness','partial selection lock','deselection release','fixed five-minute expiry','expired owner rejected','expired hold reclaimed','inverse hold exclusivity','30-minute duration','manual unavailable rejection','random excludes reserved','single review email','proof preserves hold','sold exclusion','expired proof rejection','expired release','overlapping package rollback','manual duplicates and range','leading-zero search']}));
+ console.log(JSON.stringify({result:'PASS',simultaneousRequests:12,successfulReservations:1,concurrencyMilliseconds:Math.round(elapsed),apiProcesses:2,mixedSelectionRequests:30,uniqueHeldNumbers:granted.length,checks:['mixed manual/random uniqueness','partial selection lock','deselection release','fixed five-minute expiry','expired owner rejected','expired hold reclaimed','inverse hold exclusivity','30-minute duration','manual unavailable rejection','random excludes reserved','no duplicate review email','proof preserves hold','sold exclusion','expired proof rejection','expired release','overlapping package rollback','manual duplicates and range','leading-zero search']}));
 }finally{if(api2)api2.kill();if(api){api.kill();await wait(300);}if(db)await db.$disconnect();await database.stop();}
