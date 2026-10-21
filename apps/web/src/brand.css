@@ -342,3 +342,8 @@ h1,h2,h3 { letter-spacing:-.045em; }
 .checkout-proof-list li{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:10px;border:1px solid #ccc;border-radius:8px}
 .checkout-proof-list li span{min-width:0;overflow-wrap:anywhere;color:#191919}
 .checkout-proof-list button{flex-shrink:0;padding:8px 12px;background:#fff;color:#191919;border:1px solid #777;border-radius:6px}
+
+.sinpe-payment-info{display:grid;gap:10px;padding:18px;border:2px solid #ff4200;border-radius:12px;background:#fff3eb;color:#191919}
+.sinpe-payment-info strong{font-size:30px;line-height:1.2;color:#191919;letter-spacing:1px}
+.sinpe-payment-info button{justify-self:start;border:1px solid #191919;border-radius:8px;background:#191919;color:#fff;padding:10px 16px;font:inherit;cursor:pointer}
+.sinpe-payment-info small{font-size:13px;line-height:1.5;color:#333}
