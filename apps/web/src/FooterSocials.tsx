@@ -15,9 +15,9 @@ function externalLink(value: string | undefined) {
 }
 
 const links = [
-  { name: 'WhatsApp', href: externalLink(import.meta.env.VITE_CIFRAYA_WHATSAPP_URL), icon: <BrandIcon name="whatsapp"/> },
-  { name: 'Facebook', href: externalLink(import.meta.env.VITE_CIFRAYA_FACEBOOK_URL), icon: <BrandIcon name="facebook"/> },
-  { name: 'Instagram', href: externalLink(import.meta.env.VITE_CIFRAYA_INSTAGRAM_URL), icon: <BrandIcon name="instagram"/> },
+  { name: 'WhatsApp', href: externalLink(import.meta.env.VITE_CIFRAYA_WHATSAPP_URL) || 'https://wa.me/50672833548', icon: <BrandIcon name="whatsapp"/> },
+  { name: 'Facebook', href: externalLink(import.meta.env.VITE_CIFRAYA_FACEBOOK_URL) || 'https://www.facebook.com/profile.php?id=61595720213836', icon: <BrandIcon name="facebook"/> },
+  { name: 'Instagram', href: externalLink(import.meta.env.VITE_CIFRAYA_INSTAGRAM_URL) || 'https://www.instagram.com/vnova_tcg/', icon: <BrandIcon name="instagram"/> },
 ];
 
 export default function FooterSocials() {

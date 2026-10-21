@@ -56,7 +56,7 @@ stateDiagram-v2
 ## Reglas de trabajo
 
 - Identidad visual Vnova TCG: naranja #ff4200, azul #395aff, rojo #ff2c2c, blanco y #191919; estilos centralizados en apps/web/src/brand.css, logo vectorial original en public/vnova-logo.svg. Mantener los colores originales de WhatsApp, Facebook e Instagram en el footer; las preguntas van dentro de la interfaz. Evitar texto de “prueba” en el producto público.
-- El footer muestra WhatsApp, Facebook e Instagram con relleno y tooltip de marca. Sin URL configurada, cada icono queda visible pero inactivo; las URL públicas se añaden como `VITE_CIFRAYA_*_URL` al compilar la web.
+- El footer muestra WhatsApp, Facebook e Instagram con relleno y tooltip de marca. Enlaces predeterminados: WhatsApp +506 72833548, Instagram vnova_tcg y Facebook perfil 61595720213836. Se pueden sustituir con URL HTTPS VITE_CIFRAYA_*_URL al compilar.
 - Inicio muestra paquetes de la rifa principal directamente; elegir uno abre `/rifa/:slug` y solicita sus números. El indicador de diez barras aparece al cargar desde Inicio y al generar o cambiar el conjunto completo en la rifa.
 - No publicar credenciales, PIN, comprobantes ni datos personales en este grafo. Las rutas admin requieren sesión; los comprobantes solo se sirven con autorización.
 - Verificar con `pnpm db:generate`, `pnpm build` y `git diff --check` cuando cambien esquema o código. Para actualizar el grafo automático tras cambios de código: `graphify extract . --code-only` y `graphify cluster-only . --no-label`.
