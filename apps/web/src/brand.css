@@ -347,3 +347,13 @@ h1,h2,h3 { letter-spacing:-.045em; }
 .sinpe-payment-info strong{font-size:30px;line-height:1.2;color:#191919;letter-spacing:1px}
 .sinpe-payment-info button{justify-self:start;border:1px solid #191919;border-radius:8px;background:#191919;color:#fff;padding:10px 16px;font:inherit;cursor:pointer}
 .sinpe-payment-info small{font-size:13px;line-height:1.5;color:#333}
+
+.prize-carousel-stage{position:relative;min-height:0;border-radius:16px;overflow:hidden;background:radial-gradient(ellipse at center,#343434,#161616);touch-action:pan-y pinch-zoom;border:1px solid #ffffff20}
+.prize-carousel-stage .prize-photo-open{height:100%;min-height:0}
+.prize-carousel-stage .prize-photo-open>img{padding:12px;box-sizing:border-box}
+.prize-carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:44px;height:44px;border:1px solid #ffffff70;border-radius:50%;background:#191919e6;color:#fff;cursor:pointer;box-shadow:0 3px 12px #0004}
+.prize-carousel-arrow.previous{left:10px}.prize-carousel-arrow.next{right:10px}
+.prize-carousel-arrow:hover{background:#ff4200;color:#191919}
+.prize-carousel-arrow:focus-visible{outline:3px solid #ff4200;outline-offset:3px}
+.prize-carousel-count{position:absolute;right:12px;top:12px;padding:6px 12px;border-radius:20px;background:#191919e6;color:#fff;font-size:14px;font-weight:700;pointer-events:none}
+@media(max-width:600px){.prize-carousel-stage .prize-photo-open>img{padding:6px}.prize-carousel-arrow.previous{left:6px}.prize-carousel-arrow.next{right:6px}}
