@@ -90,6 +90,13 @@ export async function auditStickers(request, db, proof, token) {
   const workbook=new ExcelJS.Workbook();await workbook.xlsx.load(Buffer.from(await exported.arrayBuffer()));
   const sheet=workbook.getWorksheet('Resumen de ventas');
   assert.equal(sheet.getCell('C6').value,1800);assert.equal(sheet.getCell('C7').value,25000);assert.equal(sheet.getCell('C8').value,26800);
+  assert.deepEqual(workbook.worksheets.map(s=>s.name),['Resumen de ventas','Efectivo','SINPE']);
+  const cashSheet=workbook.getWorksheet('Efectivo'), sinpeSheet=workbook.getWorksheet('SINPE');
+  assert.equal(cashSheet.getCell('A5').value,cashOrder.data.orderNumber);
+  assert.equal(cashSheet.getCell('B5').value,'Cash audit');assert.equal(cashSheet.getCell('D5').value,1800);
+  assert.equal(sinpeSheet.getCell('A5').value,order.data.orderNumber);
+  assert.equal(sinpeSheet.getCell('B5').value,'Sticker audit');assert.equal(sinpeSheet.getCell('D5').value,25000);
+  assert.equal(cashSheet.rowCount,6);assert.equal(sinpeSheet.rowCount,6);
   console.log('Excel export PASS: authenticated XLSX matches summary, pending excluded, numeric currency cells');
   console.log('Sales summary PASS: historical prices, cash/SINPE split, unconfirmed excluded, filter-independent, admin-only');
   console.log('Cash PASS: admin-only, receipt acknowledgment required, atomic SOLD without proof, one confirmation email, replay and duplicate numbers rejected');

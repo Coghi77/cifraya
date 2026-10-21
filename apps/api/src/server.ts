@@ -673,7 +673,8 @@ app.get<{ Params: { id: string } }>('/api/admin/campaigns/:id/sales.xlsx', async
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
   const campaign = await db.campaign.findUnique({ where: { id: request.params.id }, select: { title: true } });
   if (!campaign) return reply.code(404).send({ error: 'Rifa no encontrada' });
-  const buffer = await salesWorkbook(campaign.title, await raffleSales(db, request.params.id));
+  const rows = await db.reservation.findMany({ where: { campaignId: request.params.id, status: 'CONFIRMED' }, select: { orderNumber: true, buyerName: true, createdAt: true, totalCrc: true, paymentMethod: true }, orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] });
+  const buffer = await salesWorkbook(campaign.title, rows);
   return reply.header('Cache-Control', 'private, no-store').header('Content-Disposition', 'attachment; filename="ventas-rifa.xlsx"').type('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet').send(buffer);
 });
 
