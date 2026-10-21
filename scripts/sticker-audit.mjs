@@ -29,7 +29,7 @@ export async function auditStickers(request, db, proof, token) {
   assert.equal((await request('/api/reservations/lookup',{token:order.data.token})).data.status,'PENDING_REVIEW');
   const stored=await db.reservation.findUnique({where:{lookupToken:order.data.token}});
   const email=await db.emailNotification.findFirst({where:{reservationId:stored.id,kind:'RESERVED'}});
-  assert.match(email.html,/15 stickers/);
+  assert.match(email.html,/15 boletos/);
   const patch = async body => {const response=await fetch('http://127.0.0.1:4199/api/admin/campaigns/'+id,{method:'PATCH',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({title:data.title,description:'',...body})});return {status:response.status,data:await response.json()};};
   assert.equal((await patch({drawMode:'DATE',drawDate:null})).status,400);
   const dated=await patch({drawMode:'DATE',drawDate:'2020-01-01T00:00:00.000Z'});
