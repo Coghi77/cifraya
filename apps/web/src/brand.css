@@ -337,3 +337,8 @@ h1,h2,h3 { letter-spacing:-.045em; }
 .manual-numbers .manual-selection-summary strong{font-size:26px;line-height:1.2;font-weight:900;color:#191919}
 .manual-numbers .manual-selection-summary span{font-size:16px;color:#333}
 .manual-numbers .manual-selection-summary b{font-size:17px;color:#191919}
+
+.checkout-proof-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.checkout-proof-list li{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:10px;border:1px solid #ccc;border-radius:8px}
+.checkout-proof-list li span{min-width:0;overflow-wrap:anywhere;color:#191919}
+.checkout-proof-list button{flex-shrink:0;padding:8px 12px;background:#fff;color:#191919;border:1px solid #777;border-radius:6px}
