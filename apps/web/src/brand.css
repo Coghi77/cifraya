@@ -357,3 +357,8 @@ h1,h2,h3 { letter-spacing:-.045em; }
 .prize-carousel-arrow:focus-visible{outline:3px solid #ff4200;outline-offset:3px}
 .prize-carousel-count{position:absolute;right:12px;top:12px;padding:6px 12px;border-radius:20px;background:#191919e6;color:#fff;font-size:14px;font-weight:700;pointer-events:none}
 @media(max-width:600px){.prize-carousel-stage .prize-photo-open>img{padding:6px}.prize-carousel-arrow.previous{left:6px}.prize-carousel-arrow.next{right:6px}}
+
+.purchase-guide{row-gap:32px}
+.purchase-guide p{font-size:16px;line-height:1.65;color:#494949}
+.purchase-guide p strong{color:#191919;font-weight:800}
+.purchase-guide>div:nth-child(4){border-color:#ff4200}.purchase-guide>div:nth-child(5){border-color:#395aff}.purchase-guide>div:nth-child(6){border-color:#ff2c2c}
