@@ -54,7 +54,7 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
   return <div className="edit-raffle-backdrop" onMouseDown={event => { if (event.target === event.currentTarget && !busy) onClose(); }}>
     <section className="edit-raffle-panel" role="dialog" aria-modal="true" aria-labelledby="edit-raffle-title">
       <div className="edit-raffle-heading"><div><span className="eyebrow">CENTRO DE CONTROL</span><h2 id="edit-raffle-title">Editar rifa</h2></div><button type="button" onClick={onClose} disabled={busy} aria-label="Cerrar edición">×</button></div>
-      {!isDraft && <p className="edit-raffle-note">Las tarjetas nuevas se aplican a futuras reservas. Los pedidos existentes conservan su precio y sus números. Los premios y la cantidad de números por sticker no cambian.</p>}
+      {!isDraft && <p className="edit-raffle-note">Las tarjetas nuevas se aplican a futuras reservas. Los pedidos existentes conservan su precio y sus números. Los premios y la cantidad de números por boleto no cambian.</p>}
       <form className="form-grid" onSubmit={save}>
         <label>Nombre de la rifa<input required minLength={3} maxLength={120} value={form.title} onChange={event => setForm({ ...form, title: event.target.value })}/></label>
         {isDraft && <label>Identificador URL<input required pattern="[a-z0-9]+(-[a-z0-9]+)*" maxLength={80} value={form.slug} onChange={event => setForm({ ...form, slug: event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}/></label>}
@@ -62,9 +62,9 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
         {raffle.status!=='CLOSED' && <DrawScheduleEditor mode={form.drawMode} date={form.drawDate} onChange={(drawMode,drawDate)=>setForm({...form,drawMode,drawDate})}/>}
         {isDraft && <>
           <PrizeEditor prizes={form.prizes} sources={form.prizeSources} onChange={(prizes, prizeSources) => setForm({ ...form, prizes, prizeSources })}/>
-          <div className="form-row"><label>Precio por sticker (₡)<input required inputMode="numeric" pattern="[0-9]+" value={form.priceCrc} onChange={event => setForm({ ...form, priceCrc: event.target.value.replace(/\D/g, '') })}/></label><div className="select-field"><span>Cantidad de números</span><BrandSelect label="Cantidad de números" required value={form.numberCount} onChange={value => setForm({ ...form, numberCount: value })} options={numberCountOptions}/></div></div>
+          <div className="form-row"><label>Precio por boleto (₡)<input required inputMode="numeric" pattern="[0-9]+" value={form.priceCrc} onChange={event => setForm({ ...form, priceCrc: event.target.value.replace(/\D/g, '') })}/></label><div className="select-field"><span>Cantidad de números</span><BrandSelect label="Cantidad de números" required value={form.numberCount} onChange={value => setForm({ ...form, numberCount: value })} options={numberCountOptions}/></div></div>
           <div className="inverted-settings"><label><input type="checkbox" checked={form.invertedEnabled} onChange={event => setForm({ ...form, invertedEnabled: event.target.checked, invertedPrizeEnabled: event.target.checked && form.invertedPrizeEnabled })}/> Ofrecer números invertidos adicionales por el doble del precio</label></div>
-          <label>Números incluidos por sticker<input required type="number" min="1" max="20" step="1" value={form.numbersPerSticker} onChange={event => setForm({ ...form, numbersPerSticker: event.target.value })}/></label>
+          <label>Números incluidos por boleto<input required type="number" min="1" max="20" step="1" value={form.numbersPerSticker} onChange={event => setForm({ ...form, numbersPerSticker: event.target.value })}/></label>
           <StickerCardEditor cards={cards} onChange={setCards} numbersPerSticker={Number(form.numbersPerSticker)}/>
         </>}
         {raffle.status === 'LIVE' && <StickerCardEditor cards={cards} onChange={setCards} numbersPerSticker={raffle.numbersPerSticker || 1}/>}

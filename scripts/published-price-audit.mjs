@@ -30,7 +30,7 @@ export async function auditPublishedPrices(origin, token) {
     assert.equal((await reserve(secondSelection,25000)).status,409);
     const second=await reserve(secondSelection,22000);assert.equal(second.status,201);assert.equal(second.data.totalCrc,22000);
     const newLookup=await call('/api/reservations/lookup',{method:'POST',body:{token:second.data.token}});assert.equal(newLookup.data.totalCrc,22000);
-    const report={origin,campaignId:id,slug,result:'PASS',card:{stickers:15,numbers:30},previousOrder:{number:first.data.orderNumber,status:lookup.data.status,totalCrc:lookup.data.totalCrc},newOrder:{number:second.data.orderNumber,totalCrc:second.data.totalCrc},stalePriceRejected:true,previousNumbersUnchanged:true,hiddenFromPublic:true};
+    const report={origin,campaignId:id,slug,result:'PASS',card:{boletos:15,numbers:30},previousOrder:{number:first.data.orderNumber,status:lookup.data.status,totalCrc:lookup.data.totalCrc},newOrder:{number:second.data.orderNumber,totalCrc:second.data.totalCrc},stalePriceRejected:true,previousNumbersUnchanged:true,hiddenFromPublic:true};
     return report;
   } finally {
     if(id){const finish=await call('/api/admin/campaigns/'+id+'/finish-test',{method:'POST',body:{}});assert.equal(finish.status,200,'Test campaign must be retired');assert.equal((await call('/api/campaigns/'+slug)).status,404);}

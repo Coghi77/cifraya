@@ -14,7 +14,7 @@ export function paymentEmail(order: { paymentMethod?:string; stickerCount?: numb
   }[kind];
   const heading = copy.heading;
   const numbers = order.selectedValues.map(n => String(n).padStart(order.campaign.numberWidth, '0')).join(', ');
-  const stickerDetail = order.stickerCount ? `${order.stickerCount} stickers · ${order.numbersPerSticker} números por sticker` : '';
+  const stickerDetail = order.stickerCount ? `${order.stickerCount} boletos · ${order.numbersPerSticker} números por boleto` : '';
   const lines = [...(order.paymentMethod==='CASH'?['Método de pago: efectivo recibido.']:[]),stickerDetail,heading, `Hola, ${order.buyerName}.`, `Pedido: ${reference}`, `Rifa: ${order.campaign.title}`, `Total: ₡${order.totalCrc.toLocaleString('es-CR')}`, `Números: ${numbers}`, kind === 'REJECTED' ? `Motivo: ${order.reviewNote ?? ''}` : copy.description, ...(diagnostic ? [] : [`Código de consulta: ${order.lookupToken}`, `Para buscar tus boletos, copiá este código completo en ${url.origin}/buscar-boletos. Guardalo: es privado.`]), `Consultá tu pedido: ${link}`, 'Este enlace es privado. No lo compartás.'];
   const approved = kind === 'CONFIRMED';
   const accent = kind === 'REJECTED' ? '#b52a28' : '#395aff';

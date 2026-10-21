@@ -160,19 +160,6 @@
       "source_location": "L4"
     },
     {
-      "id": "apps_web_src_winnerspodium_winnerresult",
-      "label": "WinnerResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Community 1",
-      "file_type": "code",
-      "norm_label": "winnerresult",
-      "source_file": "apps/web/src/WinnersPodium.tsx",
-      "source_location": "L3"
-    },
-    {
       "id": "apps_api_src_salesexport_salerow",
       "label": "SaleRow",
       "_callable": true,
@@ -184,6 +171,19 @@
       "norm_label": "salerow",
       "source_file": "apps/api/src/salesExport.ts",
       "source_location": "L16"
+    },
+    {
+      "id": "apps_web_src_winnerspodium_winnerresult",
+      "label": "WinnerResult",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "Community 18",
+      "file_type": "code",
+      "norm_label": "winnerresult",
+      "source_file": "apps/web/src/WinnersPodium.tsx",
+      "source_location": "L3"
     },
     {
       "id": "apps_web_test_realtime_test_stream",
@@ -858,6 +858,42 @@
       "source_location": "L80"
     },
     {
+      "id": "apps_web_src_footersocials_brandicon",
+      "label": "BrandIcon()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "file_type": "code",
+      "norm_label": "brandicon()",
+      "source_file": "apps/web/src/FooterSocials.tsx",
+      "source_location": "L7"
+    },
+    {
+      "id": "apps_web_src_footersocials_externallink",
+      "label": "externalLink()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "file_type": "code",
+      "norm_label": "externallink()",
+      "source_file": "apps/web/src/FooterSocials.tsx",
+      "source_location": "L11"
+    },
+    {
+      "id": "apps_web_src_footersocials_footersocials",
+      "label": "FooterSocials()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "file_type": "code",
+      "norm_label": "footersocials()",
+      "source_file": "apps/web/src/FooterSocials.tsx",
+      "source_location": "L23"
+    },
+    {
       "id": "apps_web_src_preparephoto_preparephoto",
       "label": "preparePhoto()",
       "_callable": true,
@@ -880,6 +916,18 @@
       "norm_label": "startrealtime()",
       "source_file": "apps/web/src/realtime.ts",
       "source_location": "L2"
+    },
+    {
+      "id": "apps_web_src_stickerpicker_stickerpicker",
+      "label": "StickerPicker()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "file_type": "code",
+      "norm_label": "stickerpicker()",
+      "source_file": "apps/web/src/StickerPicker.tsx",
+      "source_location": "L3"
     },
     {
       "id": "apps_web_src_adminparticipantdetail_adminparticipantdetail",
@@ -1072,54 +1120,6 @@
       "norm_label": "siteheader()",
       "source_file": "apps/web/src/SiteHeader.tsx",
       "source_location": "L4"
-    },
-    {
-      "id": "apps_web_src_stickerpicker_stickerpicker",
-      "label": "StickerPicker()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Community 1",
-      "file_type": "code",
-      "norm_label": "stickerpicker()",
-      "source_file": "apps/web/src/StickerPicker.tsx",
-      "source_location": "L3"
-    },
-    {
-      "id": "apps_web_src_winnerspodium_morewinners",
-      "label": "MoreWinners()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Community 1",
-      "file_type": "code",
-      "norm_label": "morewinners()",
-      "source_file": "apps/web/src/WinnersPodium.tsx",
-      "source_location": "L17"
-    },
-    {
-      "id": "apps_web_src_winnerspodium_prizefor",
-      "label": "prizeFor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Community 1",
-      "file_type": "code",
-      "norm_label": "prizefor()",
-      "source_file": "apps/web/src/WinnersPodium.tsx",
-      "source_location": "L15"
-    },
-    {
-      "id": "apps_web_src_winnerspodium_winnerspodium",
-      "label": "WinnersPodium()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Community 1",
-      "file_type": "code",
-      "norm_label": "winnerspodium()",
-      "source_file": "apps/web/src/WinnersPodium.tsx",
-      "source_location": "L24"
     },
     {
       "id": "apps_api_src_reservationexpiry_createreservationexpirer",
@@ -1434,40 +1434,40 @@
       "source_location": "L11"
     },
     {
-      "id": "apps_web_src_footersocials_brandicon",
-      "label": "BrandIcon()",
+      "id": "apps_web_src_winnerspodium_morewinners",
+      "label": "MoreWinners()",
       "_callable": true,
       "_origin": "ast",
       "community": 18,
       "community_name": "Community 18",
       "file_type": "code",
-      "norm_label": "brandicon()",
-      "source_file": "apps/web/src/FooterSocials.tsx",
-      "source_location": "L7"
+      "norm_label": "morewinners()",
+      "source_file": "apps/web/src/WinnersPodium.tsx",
+      "source_location": "L17"
     },
     {
-      "id": "apps_web_src_footersocials_externallink",
-      "label": "externalLink()",
+      "id": "apps_web_src_winnerspodium_prizefor",
+      "label": "prizeFor()",
       "_callable": true,
       "_origin": "ast",
       "community": 18,
       "community_name": "Community 18",
       "file_type": "code",
-      "norm_label": "externallink()",
-      "source_file": "apps/web/src/FooterSocials.tsx",
-      "source_location": "L11"
+      "norm_label": "prizefor()",
+      "source_file": "apps/web/src/WinnersPodium.tsx",
+      "source_location": "L15"
     },
     {
-      "id": "apps_web_src_footersocials_footersocials",
-      "label": "FooterSocials()",
+      "id": "apps_web_src_winnerspodium_winnerspodium",
+      "label": "WinnersPodium()",
       "_callable": true,
       "_origin": "ast",
       "community": 18,
       "community_name": "Community 18",
       "file_type": "code",
-      "norm_label": "footersocials()",
-      "source_file": "apps/web/src/FooterSocials.tsx",
-      "source_location": "L23"
+      "norm_label": "winnerspodium()",
+      "source_file": "apps/web/src/WinnersPodium.tsx",
+      "source_location": "L24"
     },
     {
       "id": "apps_api_src_security_registersecurityheaders",
@@ -2045,6 +2045,39 @@
       "source_location": "L1"
     },
     {
+      "id": "apps_web_src_footersocials",
+      "label": "FooterSocials.tsx",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "file_type": "code",
+      "norm_label": "footersocials.tsx",
+      "source_file": "apps/web/src/FooterSocials.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_web_src_footersocials_brandpaths",
+      "label": "brandPaths",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "file_type": "code",
+      "norm_label": "brandpaths",
+      "source_file": "apps/web/src/FooterSocials.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_web_src_footersocials_links",
+      "label": "links",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "file_type": "code",
+      "norm_label": "links",
+      "source_file": "apps/web/src/FooterSocials.tsx",
+      "source_location": "L17"
+    },
+    {
       "id": "apps_web_src_realtime",
       "label": "realtime.ts",
       "_origin": "ast",
@@ -2053,6 +2086,17 @@
       "file_type": "code",
       "norm_label": "realtime.ts",
       "source_file": "apps/web/src/realtime.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_web_src_stickerpicker",
+      "label": "StickerPicker.tsx",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "file_type": "code",
+      "norm_label": "stickerpicker.tsx",
+      "source_file": "apps/web/src/StickerPicker.tsx",
       "source_location": "L1"
     },
     {
@@ -2153,39 +2197,6 @@
       "norm_label": "siteheader.tsx",
       "source_file": "apps/web/src/SiteHeader.tsx",
       "source_location": "L1"
-    },
-    {
-      "id": "apps_web_src_stickerpicker",
-      "label": "StickerPicker.tsx",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Community 1",
-      "file_type": "code",
-      "norm_label": "stickerpicker.tsx",
-      "source_file": "apps/web/src/StickerPicker.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_web_src_winnerspodium",
-      "label": "WinnersPodium.tsx",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Community 1",
-      "file_type": "code",
-      "norm_label": "winnerspodium.tsx",
-      "source_file": "apps/web/src/WinnersPodium.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_web_src_winnerspodium_positionname",
-      "label": "positionName",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Community 1",
-      "file_type": "code",
-      "norm_label": "positionname",
-      "source_file": "apps/web/src/WinnersPodium.tsx",
-      "source_location": "L14"
     },
     {
       "id": "ref_lucide_react",
@@ -2738,37 +2749,26 @@
       "source_location": "L2"
     },
     {
-      "id": "apps_web_src_footersocials",
-      "label": "FooterSocials.tsx",
+      "id": "apps_web_src_winnerspodium",
+      "label": "WinnersPodium.tsx",
       "_origin": "ast",
       "community": 18,
       "community_name": "Community 18",
       "file_type": "code",
-      "norm_label": "footersocials.tsx",
-      "source_file": "apps/web/src/FooterSocials.tsx",
+      "norm_label": "winnerspodium.tsx",
+      "source_file": "apps/web/src/WinnersPodium.tsx",
       "source_location": "L1"
     },
     {
-      "id": "apps_web_src_footersocials_brandpaths",
-      "label": "brandPaths",
+      "id": "apps_web_src_winnerspodium_positionname",
+      "label": "positionName",
       "_origin": "ast",
       "community": 18,
       "community_name": "Community 18",
       "file_type": "code",
-      "norm_label": "brandpaths",
-      "source_file": "apps/web/src/FooterSocials.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_web_src_footersocials_links",
-      "label": "links",
-      "_origin": "ast",
-      "community": 18,
-      "community_name": "Community 18",
-      "file_type": "code",
-      "norm_label": "links",
-      "source_file": "apps/web/src/FooterSocials.tsx",
-      "source_location": "L17"
+      "norm_label": "positionname",
+      "source_file": "apps/web/src/WinnersPodium.tsx",
+      "source_location": "L14"
     },
     {
       "id": "apps_api_src_security",
@@ -5510,18 +5510,6 @@
       "weight": 1.0
     },
     {
-      "source": "apps_web_src_app_proofuploader",
-      "target": "apps_web_src_preparephoto_preparephoto",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "apps/web/src/App.tsx",
-      "source_location": "L203",
-      "weight": 1.0
-    },
-    {
       "source": "apps_web_src_app_proofuploader_upload",
       "target": "apps_web_src_preparephoto_preparephoto",
       "relation": "calls",
@@ -6543,26 +6531,38 @@
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_preparephoto_preparephoto",
+      "target": "apps_web_src_orderdetail_orderdetail",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L1",
+      "source_location": "L11",
       "weight": 1.0
     },
     {
       "source": "apps_web_src_app",
-      "target": "apps_web_src_adminraffledetail_adminraffledetail",
+      "target": "apps_web_src_editraffle_editraffle",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L16",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_app",
+      "target": "apps_web_src_footersocials_footersocials",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -6615,6 +6615,30 @@
     },
     {
       "source": "apps_web_src_app",
+      "target": "apps_web_src_stickercardeditor_stickercardeditor",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_app",
+      "target": "apps_web_src_stickerpicker_stickerpicker",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_app",
       "target": "apps_web_src_brandselect_numbercountoptions",
       "relation": "imports",
       "_origin": "ast",
@@ -6623,18 +6647,6 @@
       "context": "import",
       "source_file": "apps/web/src/App.tsx",
       "source_location": "L9",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_editraffle",
-      "target": "apps_web_src_drawscheduleeditor_drawscheduleeditor",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/web/src/EditRaffle.tsx",
-      "source_location": "L1",
       "weight": 1.0
     },
     {
@@ -6676,6 +6688,18 @@
     {
       "source": "apps_web_src_editraffle",
       "target": "apps_web_src_stickercardeditor_stickercard",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/src/EditRaffle.tsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_editraffle",
+      "target": "apps_web_src_stickercardeditor_stickercardeditor",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11309,5 +11333,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "fa224957901deeafc7c404d6af3a99d2ead740df"
+  "built_at_commit": "1be3bfcf7a3650dd73d506c901fe017ff168849a"
 }

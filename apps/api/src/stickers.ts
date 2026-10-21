@@ -1,4 +1,4 @@
-// Limits the inventory held by one checkout while allowing arbitrary sticker counts.
+// Limits the inventory held by one checkout while allowing arbitrary boleto counts.
 export function validStickerQuantity(quantity: number, numbersPerSticker: number) {
   return Number.isInteger(quantity) && quantity > 0 && quantity <= 100 &&
     Number.isInteger(numbersPerSticker) && numbersPerSticker > 0 &&

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 export async function auditStickers(request, db, proof, token) {
-  const data = {title:'Sticker audit',slug:'sticker-audit',prizes:['Premio local'],prizeSources:[0],priceCrc:2000,numbersPerSticker:2,numberCount:1000,packages:[{quantity:2,priceCrc:2000},{quantity:30,priceCrc:25000}]};
+  const data = {title:'Boleto audit',slug:'sticker-audit',prizes:['Premio local'],prizeSources:[0],priceCrc:2000,numbersPerSticker:2,numberCount:1000,packages:[{quantity:2,priceCrc:2000},{quantity:30,priceCrc:25000}]};
   for (const packages of [[{quantity:3,priceCrc:2000}], [{quantity:2,priceCrc:2000},{quantity:2,priceCrc:3000}], [{quantity:102,priceCrc:2000}], [{quantity:2,priceCrc:0}]]) assert.equal((await request('/api/admin/campaigns',{...data,packages},'',token)).status,400);
   const created = await request('/api/admin/campaigns', data, '', token);
   assert.equal(created.status,201);
@@ -20,7 +20,7 @@ export async function auditStickers(request, db, proof, token) {
   assert.equal(competing.status,409);
   assert.equal((await request('/api/admin/reservations',{})).status,401);
   assert.equal((await request('/api/admin/reservations',{},'','forged')).status,401);
-  const order=await request('/api/admin/reservations',{campaignId:id,values:proposal.data.values,buyerName:'Sticker audit',buyerEmail:'audit@example.invalid',buyerPhone:'00000000',totalCrc:1,stickerCount:1},proposal.cookie,token);
+  const order=await request('/api/admin/reservations',{campaignId:id,values:proposal.data.values,buyerName:'Boleto audit',buyerEmail:'audit@example.invalid',buyerPhone:'00000000',totalCrc:1,stickerCount:1},proposal.cookie,token);
   assert.equal(order.status,201);assert.equal(order.data.totalCrc,25000);
   const lookup=await request('/api/reservations/lookup',{token:order.data.token});
   assert.equal(lookup.data.stickerCount,15);assert.equal(lookup.data.numbersPerSticker,2);
@@ -95,11 +95,11 @@ export async function auditStickers(request, db, proof, token) {
   assert.equal(cashSheet.getCell('A5').value,cashOrder.data.orderNumber);
   assert.equal(cashSheet.getCell('B5').value,'Cash audit');assert.equal(cashSheet.getCell('D5').value,1800);
   assert.equal(sinpeSheet.getCell('A5').value,order.data.orderNumber);
-  assert.equal(sinpeSheet.getCell('B5').value,'Sticker audit');assert.equal(sinpeSheet.getCell('D5').value,25000);
+  assert.equal(sinpeSheet.getCell('B5').value,'Boleto audit');assert.equal(sinpeSheet.getCell('D5').value,25000);
   assert.equal(cashSheet.rowCount,6);assert.equal(sinpeSheet.rowCount,6);
   console.log('Excel export PASS: authenticated XLSX matches summary, pending excluded, numeric currency cells');
   console.log('Sales summary PASS: historical prices, cash/SINPE split, unconfirmed excluded, filter-independent, admin-only');
   console.log('Cash PASS: admin-only, receipt acknowledgment required, atomic SOLD without proof, one confirmation email, replay and duplicate numbers rejected');
   console.log('Live cards PASS: pending and confirmed snapshots preserved; stale total rejected; new price used; removed quantities blocked; rules immutable');
-  console.log(JSON.stringify({stickers:'PASS',checks:['15 stickers / 30 unique numbers / CRC 25000','price and count tampering ignored','incomplete sticker rejected','held numbers excluded','three-photo limit','order snapshot and email']}));
+  console.log(JSON.stringify({boletos:'PASS',checks:['15 boletos / 30 unique numbers / CRC 25000','price and count tampering ignored','incomplete boleto rejected','held numbers excluded','three-photo limit','order snapshot and email']}));
 }

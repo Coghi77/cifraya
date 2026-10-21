@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {purchaseOffer} from '../dist/stickers.js';
 
-test('stickers charge per unit and require complete groups', () => {
+test('boletos charge per unit and require complete groups', () => {
   const campaign = {numbersPerSticker: 2, priceCrc: 2000, packages: []};
   assert.equal(purchaseOffer(campaign, 2).priceCrc, 2000);
   assert.equal(purchaseOffer(campaign, 30).priceCrc, 30000);
@@ -16,7 +16,7 @@ test('existing package prices remain unchanged', () => {
   assert.equal(purchaseOffer(campaign, 2), undefined);
 });
 
-test('configured sticker cards use exact prices and reject unlisted quantities', () => {
+test('configured boleto cards use exact prices and reject unlisted quantities', () => {
   const campaign = {numbersPerSticker:2,priceCrc:2000,packages:[{quantity:2,priceCrc:2500},{quantity:30,priceCrc:25000}]};
   assert.equal(purchaseOffer(campaign,2).priceCrc,2500);
   assert.equal(purchaseOffer(campaign,30).priceCrc,25000);

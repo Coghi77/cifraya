@@ -535,7 +535,7 @@ app.post('/api/admin/campaigns', async (request, reply) => {
   const schedule=resolveDrawSchedule(input);
   if(!schedule.success) return reply.code(400).send({error:"Indicá la fecha y hora del sorteo."});
   if (new Set(input.packages.map(item => item.quantity)).size !== input.packages.length || input.packages.some(item => input.numbersPerSticker ? !validStickerQuantity(item.quantity, input.numbersPerSticker) : (item.quantity < 2 || item.quantity > 20 || item.priceCrc >= item.quantity * input.priceCrc))) {
-    return reply.code(400).send({ error: 'Revisá las tarjetas: las cantidades deben ser distintas, incluir stickers completos y respetar los límites.' });
+    return reply.code(400).send({ error: 'Revisá las tarjetas: las cantidades deben ser distintas, incluir boletos completos y respetar los límites.' });
   }
   const campaign = await db.$transaction(async tx => {
     const created = await tx.campaign.create({
