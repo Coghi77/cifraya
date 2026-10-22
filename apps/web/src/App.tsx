@@ -597,7 +597,7 @@ export default function App() {
       <section className="how-section"><div className="how-inner"><div className="eyebrow">PASO A PASO</div><h2>¿Cómo comprar<br/><em>tus boletos?</em></h2><div className="how-grid purchase-guide">
         <div><span>01</span><h3>Elegí tus boletos y números</h3><p>Entrá a la rifa y elegí una tarjeta. Revisá cuántos números incluye y seleccioná los disponibles o dejá que el sistema los elija al azar.</p></div>
         <div><span>02</span><h3>Completá tus datos</h3><p>Tocá “Continuar con mi compra”, ingresá tu nombre completo, correo y teléfono, y confirmá con “Apartar números”.</p></div>
-        <div><span>03</span><h3>Pagá por SINPE Móvil</h3><p>Transferí el total indicado al <strong>7283 3548</strong>. Podés copiar el número desde el formulario de compra.</p></div>
+        <div><span>03</span><h3>Pagá por SINPE Móvil</h3><p>Transferí el total indicado al <strong>7283 3548</strong>, a nombre de <strong>David Vilanova Campos</strong>. Podés copiar el número desde el formulario de compra.</p></div>
         <div><span>04</span><h3>Adjuntá el comprobante</h3><p>Podés adjuntarlo al comprar o desde el enlace de tu pedido. Tenés <strong>30 minutos desde la reserva</strong> para subirlo; podés elegir hasta 3 fotos juntas.</p></div>
         <div><span>05</span><h3>Revisá la confirmación</h3><p>Al recibir el comprobante, tu pago queda en revisión y tus números siguen apartados. Te llegará un correo cuando aprobemos o rechacemos el pago.</p></div>
         <div><span>06</span><h3>Guardá tu pedido</h3><p>El correo inicial incluye el enlace privado y el código para consultar tus boletos y el estado del pago. Guardalos y no los compartás.</p></div>
