@@ -95,7 +95,7 @@ const progressOf = (raffle: Raffle) => Math.min(100, Math.floor(100 * (raffle.so
 function SelectionSpinner() { return <span className="selection-spinner" aria-hidden="true">{Array.from({ length: 10 }, (_, index) => <span key={index}/>)}</span>; }
 function RaffleProgress({ raffle, compact = false }: { raffle: Raffle; compact?: boolean }) {
   const percent = progressOf(raffle);
-  return <div className={compact ? 'raffle-progress compact' : 'raffle-progress'}><div><span>PROGRESO DE LA RIFA</span><strong>{percent}% vendido</strong></div><div className="raffle-progress-track" role="progressbar" aria-label="Números vendidos" aria-valuemin={0} aria-valuemax={raffle.numberCount} aria-valuenow={raffle.soldCount || 0}><span style={{ width: `${percent}%` }}/></div><small>{(raffle.soldCount || 0).toLocaleString('es-CR')} de {raffle.numberCount.toLocaleString('es-CR')} números confirmados</small></div>;
+  return <div className={compact ? 'raffle-progress compact' : 'raffle-progress'}><div><span>PROGRESO DE LA RIFA</span><strong>{percent}% vendido</strong></div><div className="raffle-progress-track" role="progressbar" aria-label="Porcentaje vendido" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}><span style={{ width: `${percent}%` }}/></div></div>;
 }
 function InvertedChoice({ raffle, values, inverted, selected, disabled, onToggle }: { raffle: Raffle; values: number[]; inverted: number[] | null; selected: boolean; disabled: boolean; onToggle: (value: boolean) => void }) {
   if (!raffle.invertedEnabled) return null;
