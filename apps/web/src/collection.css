@@ -30,3 +30,26 @@
 .featured-orbit{pointer-events:none}
 .featured-thumbnails{position:relative;z-index:2}
 .featured-art>*,.featured-thumbnails button>*,.parade-card>*{pointer-events:none}
+
+/* Automatic featured-card deck: one hero card with neighboring previews. */
+.featured-auto{isolation:isolate;gap:26px 50px}
+.featured-auto .featured-stage{padding:25px 0;min-height:520px}
+.featured-deck{position:relative;width:100%;height:490px;perspective:1200px}
+.featured-slide{position:absolute;left:50%;top:12px;width:min(65%,310px);padding:0;border:0;background:none;color:#f5efff;cursor:zoom-in;transform-origin:center;transition:transform .9s cubic-bezier(.2,.7,.2,1),opacity .7s,filter .7s;will-change:transform}
+.featured-slide img{display:block;width:100%;height:auto;border-radius:14px;filter:drop-shadow(0 24px 24px #0009)}
+.featured-slide>*{pointer-events:none}
+.featured-slide>span{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:18px;font-size:12px}
+.slide-current{z-index:3;opacity:1;transform:translateX(-50%) translateZ(35px) rotate(-3deg)}
+.slide-previous{z-index:1;opacity:.42;filter:saturate(.6);transform:translateX(-95%) translateY(32px) rotate(-14deg) scale(.78)}
+.slide-next{z-index:1;opacity:.42;filter:saturate(.6);transform:translateX(-5%) translateY(32px) rotate(14deg) scale(.78)}
+.slide-away{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(60px) scale(.65)}
+.featured-pagination{grid-column:1/-1;display:flex;justify-content:center;gap:12px;flex-wrap:wrap;position:relative;z-index:4}
+.featured-pagination button{position:relative;width:120px;min-height:48px;padding:16px 5px 8px;border:0;background:transparent;color:#bfb0ce;cursor:pointer;font:inherit;font-size:12px;overflow:hidden}
+.featured-pagination button:before{content:'';position:absolute;top:5px;left:0;width:100%;height:3px;border-radius:3px;background:#624776}
+.featured-pagination button[aria-pressed=true]{color:#fff}
+.featured-progress{position:absolute;top:5px;left:0;height:3px;width:100%;background:var(--glow);transform:scaleX(0);transform-origin:left}
+.featured-pagination button[aria-pressed=true] .featured-progress{animation:featured-timer 6s linear forwards}
+.featured-pagination button:focus-visible,.featured-slide:focus-visible{outline:3px solid #e4baff;outline-offset:5px}
+@keyframes featured-timer{to{transform:scaleX(1)}}
+@media(max-width:700px){.featured-auto{gap:12px}.featured-auto .featured-stage{min-height:375px;padding:12px 0}.featured-deck{height:370px}.featured-slide{width:65%;max-width:235px;top:12px}.featured-pagination{gap:8px}.featured-pagination button{width:calc(25% - 8px);min-width:55px;font-size:10px}.featured-auto .featured-controls{gap:18px}.featured-auto .featured-copy h2{font-size:36px;letter-spacing:-1.3px}}
+@media(prefers-reduced-motion:reduce){.featured-slide{transition:none}.featured-pagination button[aria-pressed=true] .featured-progress{animation:none;transform:scaleX(1)}}
