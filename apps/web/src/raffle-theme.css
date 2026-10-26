@@ -123,3 +123,57 @@
 .current-raffle .current-raffle-image .prize-photo {width:100%;}
 .current-raffle .current-raffle-content {border-top:0;}
 .current-raffle .current-raffle-image {height:auto;}
+
+/* Shared public states must own both foreground and background colors. */
+.public-page {color:#f4eafa;}
+.public-page :is(h1,h2,h3) {color:#f4eafa;}
+.public-page :is(.public-intro p,.lookup-help,.lookup-placeholder,.lookup-result>p),.order-page>header>p {color:#cdbbdf;}
+.public-page :is(.lookup-card,.lookup-result,.order-card,.winners-empty) {background:linear-gradient(140deg,#2b1d39,#191121);color:#f4eafa;border:1px solid #76568c;}
+.public-page :is(input,select,textarea) {background:#160f20;color:#f7efff;border:1px solid #9572a9;color-scheme:dark;}
+.public-page input::placeholder {color:#bba7cb;}
+.public-page .button,.reservation-actions .reservation-action {background:#7541a5;color:#fff;border:1px solid #b98cdb;}
+.public-page .button:disabled {background:#392b45;color:#c5b6d1;border-color:#705d7f;opacity:1;}
+.public-page .public-icon {background:#68408c;color:#f5eafa;}
+.ticket-pass {color:#f8efff;border-color:#b58ad0;background:#251630;box-shadow:0 14px 35px #08030d55;}
+.ticket-pass .ticket-main {background:linear-gradient(135deg,#4a2865,#291a3a);color:#f8efff;}
+.ticket-pass .ticket-meta,.ticket-pass .ticket-person,.ticket-pass .ticket-quantity {color:#f8efff;}
+.ticket-pass .ticket-person small,.ticket-pass .ticket-quantity small {color:#d8c3e8;}
+.ticket-pass .ticket-status {color:#efccff;}
+.ticket-pass .ticket-star {color:#ce9ff2;}
+.ticket-pass .ticket-stub {background:#21152c;color:#f3e6fd;border-color:#a57abb;}
+.ticket-pass .ticket-stub::before,.ticket-pass .ticket-stub::after {background:#201529;}
+.ticket-pass .ticket-values strong {background:#53336c;color:#fff;border-color:#b58ace;font-size:14px;min-width:36px;text-align:center;}
+.ticket-pass .ticket-timer {color:#efceff;}
+.reservation-result>p {color:#cfbddf;line-height:1.6;}
+.reservation-result>strong {color:#f6edfc;}
+.proof-uploader {background:#24182f;color:#f6edfc;border-color:#86629d;}
+.proof-uploader>p {color:#cdbbdf;}
+.proof-uploader .proof-upload-button {background:#74419f;color:#fff;border:1px solid #b88bd2;min-height:44px;}
+.sinpe-payment-info {background:#382149;color:#f4e9fc;border:1px solid #a578bf;}
+.sinpe-payment-info :is(span,strong,b,small) {color:#f4e9fc;}
+.sinpe-payment-info button {background:#7541a5;color:#fff;border:1px solid #c69de2;min-height:44px;}
+.reservation-actions .reservation-action.secondary {background:#382249;color:#efdefb;border-color:#9d74b6;}
+.order-card .order-heading>span {background:#623883;color:#f8efff;}
+.order-card .order-facts {border-color:#8b679f;}
+.order-card .order-facts dt {color:#cbb6dc;}
+.order-card .order-facts dd,.order-card>p {color:#f0e2fa;}
+.order-card .order-tickets span {background:#4b2b64;color:#fff;border-color:#b68acb;}
+.order-card .order-link-help,.order-card .order-notice {background:#352042;color:#e8d6f4;border:1px solid #88609e;border-radius:12px;padding:16px;}
+.detail-page .random-picker .random-values>span {background:#4b2b64;color:#fff;border-color:#ba8bd5;}
+.detail-page .selection-loader {background:#22142ff2;color:#f5eaff;border-color:#a178bb;}
+.detail-page .package-option {background:#352344;color:#fff;border-color:#9c77b1;}
+.detail-page .package-option[aria-pressed=true] {background:#713c9c;color:#fff;border-color:#e0b9fb;}
+:is(.public-page,.detail-page) :is(button,a,input,select,textarea):focus-visible {outline:3px solid #e8c0ff;outline-offset:3px;}
+@media(max-width:480px) {.ticket-pass .ticket-meta {flex-wrap:wrap;row-gap:8px;}.ticket-pass .ticket-person strong {font-size:clamp(22px,6vw,28px);}.ticket-pass .ticket-quantity {flex-wrap:wrap;}.sinpe-payment-info {min-width:0;overflow-wrap:anywhere;}.reservation-actions .reservation-action {white-space:normal;text-align:center;min-height:44px;}}
+.winners-page :is(.podium-section,.podium-detail) {background:#251831;color:#f3e6fc;border-color:#866299;}
+.winners-page .podium-place {background:linear-gradient(145deg,#523168,#2a1a38);color:#f7edff;border-color:#a278bb;}
+.winners-page .podium-place.selected {border-color:#e4baff;box-shadow:0 0 0 2px #a369cc;}
+.winners-page :is(.podium-person,.podium-prize,.podium-number,.podium-heading p) {color:#ead9f5;}
+.admin-page {background:#140e1c;color:#f4eafa;}
+.admin-page :is(.admin-login,.admin-card,.admin-raffle-card,.admin-stats>div,.admin-badge),.review-panel {background:#251a30;color:#f4eafa;border-color:#745789;}
+.admin-page :is(input,textarea,select) {background:#1a1123;color:#f4eafa;border-color:#8a6b9d;color-scheme:dark;}
+.admin-page :is(input,textarea)::placeholder {color:#bdabc9;}
+.admin-page .studio-navigation button {background:#2b1b38;color:#edddf7;border-color:#79568e;}
+.admin-page .studio-navigation button[aria-pressed=true] {background:#60317f;color:#fff;border-color:#ca9ce8;}
+.admin-page :is(.admin-action-button,.button.primary) {background:#714098;color:#fff;border-color:#bb8bd6;}
+.admin-page :is(.muted,.admin-top p,.admin-login p) {color:#ccbadb;}
