@@ -424,3 +424,6 @@ body,#root{background:#130f1d}.site-header{background:rgba(42,28,59,.96);border-
  .site-header:has(nav.mobile-menu-open){height:auto;flex-wrap:wrap}
  .site-header nav.mobile-menu-open{position:static;flex-basis:100%;margin:4px 0 0;width:100%;box-shadow:none;border-radius:12px}
 }
+
+.prize-carousel-stage .prize-photo-open>img.etb-product-frame{object-fit:cover;object-position:50% 44%;padding:0}
+.prize-gallery-stage>img.etb-product-frame{width:min(100%,65dvh);height:auto;aspect-ratio:1;object-fit:cover;object-position:50% 44%}
