@@ -15,6 +15,7 @@ export const cardCollectionInput = z.object({
     rarity: z.string().trim().min(1).max(80),
     number: z.string().trim().max(40),
     imageUrl: httpsUrl,
+    featured: z.boolean().default(false),
   }).strict()).min(1).max(100),
 }).strict();
 

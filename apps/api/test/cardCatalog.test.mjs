@@ -15,3 +15,10 @@ test('editing requires a positive concurrency version',()=>{
  assert.equal(cardCollectionUpdate.safeParse({...fixture,version:0}).success,false);
  assert.equal(cardCollectionUpdate.safeParse({...fixture,version:1}).success,true);
 });
+
+test('featured cards preserve selection and older cards default to unfeatured',()=>{
+ assert.equal(cardCollectionInput.parse(fixture).cards[0].featured,false);
+ const input={...fixture,cards:[{...fixture.cards[0],featured:true}]};
+ assert.equal(cardCollectionInput.parse(input).cards[0].featured,true);
+ assert.equal(cardCollectionInput.safeParse({...input,cards:[{...input.cards[0],featured:'true'}]}).success,false);
+});
