@@ -390,3 +390,28 @@ body,#root{background:#130f1d}.site-header{background:rgba(42,28,59,.96);border-
 .how-section h2 em { color:#eee4f7; }
 .how-section .purchase-guide p strong,
 .how-section .purchase-guide p b { color:#fff; font-weight:700; }
+/* Contrast on the shared dark public-page surfaces. Light cards keep their own palette. */
+.public-intro h1,
+.public-intro h1 em { color:#eee4f7; }
+.public-intro > p { color:#c8b9d6; }
+.public-intro .eyebrow,
+.how-section .eyebrow { color:#ff946d; }
+.site-header nav button.nav-active,
+.site-header nav button:hover { color:#191919; }
+.collection-topic-list button[aria-pressed=true],
+.collection-topic-list button[aria-pressed=true] small,
+.collection-topic-list button[aria-pressed=true] span { color:#191919; }
+.order-page > header h1,
+.detail-heading h1,
+.detail-description h2 { color:#eee4f7; }
+.order-page > header p,
+.order-page > p,
+.detail-heading p,
+.detail-description > p,
+.public-page > .text-button { color:#c8b9d6; }
+.order-page > header .eyebrow,
+.detail-heading .eyebrow,
+.detail-description > .eyebrow { color:#ff946d; }
+.public-page > .empty-state,
+.public-page > .empty-state h3 { color:#c8b9d6; }
+.detail-description .detail-prize-list{color:#eee4f7}
