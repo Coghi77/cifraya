@@ -1,3 +1,4 @@
+import CollectionHome from './CollectionHome';
 import SinpePaymentInfo from './SinpePaymentInfo';
 import preparePhoto from './preparePhoto';
 import SiteHeader from './SiteHeader';
@@ -581,10 +582,11 @@ export default function App() {
     {error && <div className="alert" role="alert"><span>{error}</span><button onClick={() => setError('')} aria-label="Cerrar aviso"><X size={17} /></button></div>}
 
     {view === 'home' && <main>
+      <CollectionHome/>
       {featured ? <section className="current-raffle" aria-label="Rifa actual">
         <div className="current-raffle-image">{coverOf(featured) ? <PrizePhoto photos={featured.photos} src={coverOf(featured)!} title={featured.prize}/> : <img className="current-logo" src="/vnova-logo.svg" alt=""/>}</div>
         <div className="current-raffle-content"><span className="current-label">RIFA ACTUAL</span><h1>{featured.title}</h1><div className="current-prize">{featured.prize}</div><DrawCountdown mode={featured.drawMode} date={featured.drawDate} sold={featured.soldCount} total={featured.numberCount}/><RaffleProgress raffle={featured} compact/>{featured.numbersPerSticker ? <StickerPicker cards={featured.packages} price={featured.priceCrc} numbersPerSticker={featured.numbersPerSticker} disabled={busy} onChoose={quantity => void openRaffle(featured.slug, true, quantity)}/> : <div className="home-packages"><span>Elegí tu paquete</span><div>{offersFor(featured).map(offer => <button key={offer.quantity} type="button" disabled={busy} onClick={() => void openRaffle(featured.slug, true, offer.quantity)}><span>{offer.quantity} {offer.quantity === 1 ? 'número' : 'números'}</span><strong>{money(offer.priceCrc)}</strong>{homePackageLoading === offer.quantity ? <SelectionSpinner/> : <ArrowRight size={18} aria-hidden="true"/>}</button>)}</div></div>}<button className="home-details-link" type="button" disabled={busy} onClick={() => void openRaffle(featured.slug)}>Ver detalles de la rifa <ArrowRight size={16}/></button></div>
-      </section> : <section className="current-raffle current-empty"><img src="/vnova-logo.svg" alt=""/><div><span className="current-label">VNOVA TCG</span><h1>Próxima rifa</h1><p>Estamos preparando la siguiente rifa.</p></div></section>}
+      </section> : null}
 
       {raffles.length > 1 && <section className="section raffles-section" id="rifas">
         <div className="section-heading"><div><h2>Más rifas</h2></div></div>

@@ -34,7 +34,7 @@ function PrizeGallery({photos,title,initialIndex,onClose}:{photos:Photo[];title:
     document.body.style.overflow='hidden';element.showModal();
     return ()=>{element.close();document.body.style.overflow=overflow;};
   },[]);
-  return <dialog ref={dialog} className="prize-gallery" aria-label={'Fotos del premio: '+title} onClose={onClose} onClick={event=>{if(event.target===event.currentTarget)dialog.current?.close();}} onKeyDown={event=>{if(event.key==='ArrowRight'){event.preventDefault();move(1);}if(event.key==='ArrowLeft'){event.preventDefault();move(-1);}}}>
+  return <dialog ref={dialog} className="prize-gallery" aria-label={'Fotos del premio: '+title} onClose={event=>{if(!event.currentTarget.open)onClose();}} onClick={event=>{if(event.target===event.currentTarget)dialog.current?.close();}} onKeyDown={event=>{if(event.key==='ArrowRight'){event.preventDefault();move(1);}if(event.key==='ArrowLeft'){event.preventDefault();move(-1);}}}>
     <div className="prize-gallery-panel">
       <div className="prize-gallery-header"><span>{title}</span><button type="button" autoFocus aria-label="Cerrar fotos" onClick={()=>dialog.current?.close()}><X/></button></div>
       <div className="prize-gallery-stage" onTouchCancel={()=>{start.current=null;}} onTouchStart={event=>{start.current=event.touches.length===1?{x:event.touches[0].clientX,y:event.touches[0].clientY}:null;}} onTouchEnd={event=>{const origin=start.current;start.current=null;if(!origin||!event.changedTouches.length)return;const dx=event.changedTouches[0].clientX-origin.x;const dy=event.changedTouches[0].clientY-origin.y;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))move(dx<0?1:-1);}}>

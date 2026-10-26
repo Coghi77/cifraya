@@ -16,6 +16,8 @@ flowchart LR
 
 ## Rutas y archivos
 
+- `CollectionHome.tsx` y `collection.css`: portada editorial, vitrina de productos con fotos ampliables y guía interactiva de coleccionismo. Usa fotografías proporcionadas por el usuario en `public/collection/`. Se muestra independientemente de las rifas publicadas; no muestra precios de cartas ni promete contenido aleatorio. Reutiliza `PrizePhoto` para la ampliación accesible.
+
 | Nodo | Responsabilidad | Fuente |
 |---|---|---|
 | Web pública | Inicio `/`, `/buscar-boletos`, `/ganadores`, `/rifa/:slug`; selección, reserva, comprobantes, podio y footer social | `apps/web/src/App.tsx`, `apps/web/src/WinnersPodium.tsx`, `apps/web/src/FooterSocials.tsx` |
