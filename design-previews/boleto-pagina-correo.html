@@ -1,0 +1,448 @@
+<!doctype html><html lang="es"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Maqueta visual — boleto y correo</title><style>.ticket-canvas {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2em;
+}
+
+.ticket-wrapper {
+  --t-bg: #1e1e24;
+  --t-bg-light: #2b2b36;
+  --t-accent: #7c3aed;
+  --t-accent-glow: rgba(124, 58, 237, 0.5);
+  --t-text-main: #f8fafc;
+  --t-text-muted: #94a3b8;
+  font-size: 10px;
+  perspective: 1000px;
+  display: inline-block;
+}
+
+.ticket {
+  position: relative;
+  width: 22em;
+  color: var(--t-text-main);
+  font-family: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  transform-style: preserve-3d;
+  transition:
+    transform 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.6s ease;
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  background: transparent;
+  filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.5));
+}
+
+.ticket-wrapper:hover .ticket {
+  transform: rotateX(5deg) rotateY(-10deg) scale(1.02);
+  box-shadow:
+    20px 20px 40px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    -5px -5px 20px var(--t-accent-glow);
+}
+
+.ticket::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 1em;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.1) 45%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.1) 55%,
+    transparent 60%,
+    transparent 100%
+  );
+  z-index: 10;
+  background-size: 250% 250%;
+  background-position: 100% 100%;
+  transition: background-position 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  mix-blend-mode: overlay;
+}
+
+.ticket-wrapper:hover .ticket::after {
+  background-position: 0% 0%;
+}
+
+.t-main {
+  padding: 2em;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(
+      circle at bottom left,
+      transparent 1em,
+      var(--t-bg) 1.05em
+    ),
+    radial-gradient(circle at bottom right, transparent 1em, var(--t-bg) 1.05em);
+  background-size: 51% 100%;
+  background-position:
+    bottom left,
+    bottom right;
+  background-repeat: no-repeat;
+  border-top-left-radius: 1em;
+  border-top-right-radius: 1em;
+}
+
+.t-main::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(
+      rgba(124, 58, 237, 0.15) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.15) 1px, transparent 1px);
+  background-size: 2em 2em;
+  opacity: 0.6;
+  z-index: 0;
+  pointer-events: none;
+  transform: perspective(500px) rotateX(20deg) scale(1.5);
+  animation: grid-scroll 20s linear infinite;
+}
+
+@keyframes grid-scroll {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 0 4em;
+  }
+}
+
+.t-content {
+  position: relative;
+  z-index: 1;
+}
+
+.t-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2em;
+}
+
+.t-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  font-weight: 900;
+  font-size: 1.2em;
+  letter-spacing: -0.05em;
+  color: #fff;
+}
+
+.t-logo svg {
+  width: 1.5em;
+  height: 1.5em;
+  fill: var(--t-accent);
+  filter: drop-shadow(0 0 5px var(--t-accent));
+  animation: logo-pulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes logo-pulse {
+  0% {
+    filter: drop-shadow(0 0 2px var(--t-accent));
+  }
+
+  100% {
+    filter: drop-shadow(0 0 10px var(--t-accent)) brightness(1.2);
+  }
+}
+
+.t-type {
+  font-size: 0.6em;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--t-accent);
+  border: 1px solid var(--t-accent);
+  padding: 0.4em 0.8em;
+  border-radius: 99em;
+  font-weight: 700;
+}
+
+.t-title {
+  font-size: 2.5em;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 0.2em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.t-subtitle {
+  color: var(--t-text-muted);
+  font-size: 0.9em;
+  margin-bottom: 2.5em;
+}
+
+.t-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5em;
+  margin-bottom: 1em;
+}
+
+.t-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+
+.t-label {
+  font-size: 0.6em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--t-text-muted);
+}
+
+.t-value {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: var(--t-text-main);
+}
+
+.t-perforation {
+  display: flex;
+  justify-content: space-between;
+  height: 1em;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.t-perf-line {
+  flex-grow: 1;
+  height: 0;
+  border-top: 2px dashed rgba(255, 255, 255, 0.2);
+  margin: 0 1.5em;
+}
+
+.t-stub {
+  padding: 2em;
+  background: radial-gradient(
+      circle at top left,
+      transparent 1em,
+      var(--t-bg-light) 1.05em
+    ),
+    radial-gradient(
+      circle at top right,
+      transparent 1em,
+      var(--t-bg-light) 1.05em
+    );
+  background-size: 51% 100%;
+  background-position:
+    top left,
+    top right;
+  background-repeat: no-repeat;
+  border-bottom-left-radius: 1em;
+  border-bottom-right-radius: 1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.t-barcode-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.t-barcode {
+  width: 10em;
+  height: 3em;
+  background: repeating-linear-gradient(
+    90deg,
+    #fff 0,
+    #fff 2px,
+    transparent 2px,
+    transparent 4px,
+    #fff 4px,
+    #fff 5px,
+    transparent 5px,
+    transparent 8px,
+    #fff 8px,
+    #fff 12px,
+    transparent 12px,
+    transparent 15px,
+    #fff 15px,
+    #fff 16px,
+    transparent 16px,
+    transparent 18px
+  );
+  opacity: 0.8;
+}
+
+.t-barcode-id {
+  font-family: monospace;
+  font-size: 0.7em;
+  color: var(--t-text-muted);
+  letter-spacing: 0.2em;
+  text-align: justify;
+}
+
+.t-admit {
+  text-align: right;
+}
+
+.t-admit-text {
+  font-size: 0.7em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--t-text-muted);
+}
+
+.t-admit-num {
+  font-size: 3em;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--t-accent);
+  text-shadow: 0 0 15px var(--t-accent-glow);
+}
+
+.ticket-wrapper:active .ticket {
+  transform: rotateX(15deg) rotateY(-5deg) scale(0.98);
+}
+
+.ticket-wrapper:active .t-stub {
+  transform: translateY(5px) rotateZ(2deg);
+  opacity: 0.8;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+body{margin:0;background:#121017;color:#f8fafc;font-family:Segoe UI,sans-serif;padding:30px}h1{font-size:28px}body>p{color:#94a3b8}.previews{display:grid;grid-template-columns:1fr 1fr;gap:28px}.preview{border:1px solid #393341;border-radius:18px;overflow:hidden;background:#212121}.preview>h2{padding:20px;margin:0;font-size:17px;background:#211b2d}.ticket-wrapper{font-size:14px;max-width:100%}.ticket{max-width:100%}.mail{background:#edf0f4;color:#334155;padding:20px;font-size:13px}.mail-body{background:#f8fafc;padding:18px}.mail-body .ticket-canvas{background:#121017;border-radius:12px;padding:25px 10px}.mail-body>p{color:#475569}.ticket-canvas{box-sizing:border-box;min-height:0;padding:35px 12px}.note{font-size:12px;line-height:1.7}a{color:#c4b5fd}@media(max-width:760px){body{padding:16px}.previews{grid-template-columns:1fr}.ticket-wrapper{font-size:12px}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}</style><h1>Maqueta del boleto</h1><p>Dos vistas independientes. Datos ficticios. Sin emisión, compra, envío ni códigos funcionales.</p><div class="previews"><section class="preview"><h2>En la página</h2><div class="ticket-canvas">
+  <div class="ticket-wrapper">
+    <div class="ticket">
+      <div class="t-main">
+        <div class="t-content">
+          <div class="t-header">
+            <div class="t-logo">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+              VNOVA TCG
+            </div>
+            <div class="t-type">MAQUETA</div>
+          </div>
+          <div class="t-title">Pase de<br />colección</div>
+          <div class="t-subtitle">Vista de diseño · sin validez</div>
+          <div class="t-details">
+            <div class="t-detail-item">
+              <span class="t-label">Nombre</span
+              ><span class="t-value">Persona de ejemplo</span>
+            </div>
+            <div class="t-detail-item">
+              <span class="t-label">Fecha</span
+              ><span class="t-value">26 oct. 2026</span>
+            </div>
+            <div class="t-detail-item">
+              <span class="t-label">Colección</span
+              ><span class="t-value">Colección de ejemplo</span>
+            </div>
+            <div class="t-detail-item">
+              <span class="t-label">Números</span
+              ><span class="t-value">007 · 015</span>
+            </div>
+          </div>
+        </div>
+        <div
+          class="t-perforation"
+          style="position:absolute; bottom:0; left:0; width:100%; transform:translateY(50%);"
+        >
+          <div class="t-perf-line"></div>
+        </div>
+      </div>
+      <div class="t-stub">
+        <div class="t-barcode-container">
+          <div class="t-barcode"></div>
+          <div class="t-barcode-id">DEMO-SIN-VALIDEZ</div>
+        </div>
+        <div class="t-admit">
+          <div class="t-admit-text">Cantidad</div>
+          <div class="t-admit-num">02</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section><section class="preview"><h2>En el correo — simulación visual</h2><div class="mail">De: Vnova TCG<br>Asunto: Así se vería tu pase<div class="mail-body"><p>Hola, Persona de ejemplo.</p><div class="ticket-canvas">
+  <div class="ticket-wrapper">
+    <div class="ticket">
+      <div class="t-main">
+        <div class="t-content">
+          <div class="t-header">
+            <div class="t-logo">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+              VNOVA TCG
+            </div>
+            <div class="t-type">MAQUETA</div>
+          </div>
+          <div class="t-title">Pase de<br />colección</div>
+          <div class="t-subtitle">Vista de diseño · sin validez</div>
+          <div class="t-details">
+            <div class="t-detail-item">
+              <span class="t-label">Nombre</span
+              ><span class="t-value">Persona de ejemplo</span>
+            </div>
+            <div class="t-detail-item">
+              <span class="t-label">Fecha</span
+              ><span class="t-value">26 oct. 2026</span>
+            </div>
+            <div class="t-detail-item">
+              <span class="t-label">Colección</span
+              ><span class="t-value">Colección de ejemplo</span>
+            </div>
+            <div class="t-detail-item">
+              <span class="t-label">Números</span
+              ><span class="t-value">007 · 015</span>
+            </div>
+          </div>
+        </div>
+        <div
+          class="t-perforation"
+          style="position:absolute; bottom:0; left:0; width:100%; transform:translateY(50%);"
+        >
+          <div class="t-perf-line"></div>
+        </div>
+      </div>
+      <div class="t-stub">
+        <div class="t-barcode-container">
+          <div class="t-barcode"></div>
+          <div class="t-barcode-id">DEMO-SIN-VALIDEZ</div>
+        </div>
+        <div class="t-admit">
+          <div class="t-admit-text">Cantidad</div>
+          <div class="t-admit-num">02</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p class="note">Maqueta visual. El código de barras es decorativo. Esta vista no es una prueba de compatibilidad con Gmail u Outlook.</p></div></div></section></div><p class="note">Referencia: <a href="https://uiverse.io/zeeshan_2112/shy-rattlesnake-3">zeeshan_2112 — Uiverse</a>. Paleta original: #1e1e24, #2b2b36, #7c3aed, #f8fafc y #94a3b8.</p></html>

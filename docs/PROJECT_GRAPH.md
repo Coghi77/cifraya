@@ -175,3 +175,7 @@ Correo inicial unificado: RESERVED explica reserva, carga pendiente y revision c
 - La portada educativa usa Gengar VMAX de Fusion Strike 271/264 como referencia visual, sin vincularlo a premios. Archivo de productos abierto; guía interactiva con una pregunta por tema; acentos blanco/naranja.
 - Confirmation.tsx adapta la tarjeta MIT de akshat-patel28 (atribución en THIRD_PARTY_NOTICES.md). Se usa en guardado del catálogo y respuestas de la guía. No sustituye avisos de error por confirmaciones de éxito.
 - vnova-transparent.png es una variante de fondo transparente generada a partir del logo proporcionado. Navegación y footer la usan; el original sigue disponible.
+
+## Cinta visual y maqueta independiente
+- CollectionHome sustituye la vitrina con texto por una cinta CSS de imágenes. Pausa global, al pasar el puntero o enfocar, y movimiento reducido; las imágenes originales mantienen ampliación. Temas educativos conservados, panel violeta con cuadrícula y paleta consistente.
+- design-previews/boleto-pagina-correo.html es una maqueta estática independiente con datos ficticios. Copia la estructura y CSS MIT de zeeshan_2112/shy-rattlesnake-3 y simula dos contextos (página y correo). No forma parte del build web ni del sistema de correos. Licencia en design-previews/LICENSE-ticket.txt. La vista de correo no certifica compatibilidad con clientes de email.
