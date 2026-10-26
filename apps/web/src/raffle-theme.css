@@ -86,3 +86,40 @@
 }
 .current-raffle .raffle-progress.compact .raffle-progress-track {background:#453151;}
 .current-raffle .raffle-progress.compact .raffle-progress-track>span {background:linear-gradient(90deg,#9657f5,#d697ff);}
+
+/* Homepage prize showcase: layered display and perforated ticket choices. */
+.current-raffle {position:relative;isolation:isolate;overflow:hidden;gap:clamp(36px,6vw,100px);background:radial-gradient(ellipse at 22% 35%,#753dbb55,transparent 48%),radial-gradient(ellipse at 95% 100%,#5b2b7233,transparent 55%),#110d1b;}
+.current-raffle::before {content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(#bc8bed06 1px,transparent 1px),linear-gradient(90deg,#bc8bed06 1px,transparent 1px);background-size:64px 64px;mask-image:linear-gradient(to bottom,#000,transparent);}
+.current-raffle-image {position:relative;isolation:isolate;padding:16px;background:linear-gradient(140deg,#503465,#21172e 60%,#38214d);border-color:#b78bce88;border-radius:24px;box-shadow:0 30px 65px #05020c80,0 0 80px #ad65f51c;transform:rotate(-2deg);}
+.current-raffle-image::before,.current-raffle-image::after {content:"";position:absolute;pointer-events:none;z-index:-1;inset:8px;border:1px solid #a56dc34d;border-radius:24px;transform:rotate(5deg);background:#3f245d33;}
+.current-raffle-image::after {inset:-28px;border-radius:50%;transform:none;background:none;border-style:dashed;border-color:#b785e329;}
+.prize-showcase-label {display:flex;align-items:center;gap:8px;padding:2px 2px 15px;font-size:10px;font-weight:800;letter-spacing:.18em;color:#e1c1f7;}
+.prize-showcase-label span:last-child {margin-left:auto;color:#f5d59b;font-size:20px;}
+.current-raffle .prize-carousel-stage {border:1px solid #ffffff26;border-radius:14px;}
+.prize-showcase-caption {display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 4px 2px;color:#c9b6da;font-size:13px;line-height:1.5;}
+.prize-showcase-caption strong {font-size:17px;color:#fff;font-weight:750;}
+.prize-showcase-seal {display:grid;place-items:center;width:46px;height:46px;border:1px solid #d8acff77;border-radius:50%;color:#efccff;background:#bb7fe512;}
+.current-raffle .current-label {display:inline-flex;align-items:center;gap:8px;font-size:10px;letter-spacing:.12em;}
+.current-raffle .current-label::before {content:"";width:6px;height:6px;border-radius:50%;background:#e2baff;box-shadow:0 0 12px #cb8aff;}
+.current-raffle h1 {font-size:clamp(38px,4.6vw,66px);max-width:14ch;line-height:1.02;margin:18px 0 20px;letter-spacing:-.055em;text-wrap:balance;background:linear-gradient(110deg,#fff 20%,#dba8ff);background-clip:text;color:transparent;}
+.current-raffle .current-prize {font-size:clamp(17px,1.5vw,21px);line-height:1.5;}
+.current-raffle .raffle-progress.compact {padding:14px 0;border:0;border-radius:0;background:none;margin:12px 0 18px;}
+.current-raffle .raffle-progress.compact .raffle-progress-track {height:5px;}
+.current-raffle .sticker-picker .ticket-number-highlight {display:block;background:none;border:0;border-top:1px solid #8a619744;border-radius:0;padding:18px 0 12px;font-size:14px;}
+.current-raffle .sticker-picker .ticket-number-highlight strong {font-size:20px;margin-left:5px;color:#e6baff;}
+.current-raffle .sticker-picker .ticket-number-highlight span {display:block;margin-top:4px;font-size:12px;font-weight:400;}
+.current-raffle .sticker-cards {gap:12px;}
+.current-raffle .sticker-cards .sticker-card {padding:15px 12px 12px;border-radius:14px;background:linear-gradient(145deg,#392449,#21162d);border-color:#9971ad88;}
+.current-raffle .sticker-card::before,.current-raffle .sticker-card::after {content:"";position:absolute;top:53px;width:14px;height:14px;border-radius:50%;background:#140f1e;border:1px solid #9971ad88;pointer-events:none;}
+.current-raffle .sticker-card::before {left:-8px;}.current-raffle .sticker-card::after {right:-8px;}
+.current-raffle .sticker-cards .sticker-card .sticker-card-heading {min-height:44px;border-bottom:1px dashed #a67dbb66;padding-bottom:12px;gap:5px;}
+.current-raffle .sticker-cards .sticker-card .sticker-card-includes {margin-top:9px;background:transparent;border:0;padding:4px 0 0;gap:5px;}
+.current-raffle .sticker-cards .sticker-card .sticker-card-includes small {color:#c6afd6;font-size:9px;letter-spacing:.08em;}
+.current-raffle .sticker-cards .sticker-card .sticker-card-includes strong {font-size:23px;color:#ebcaff;}
+.current-raffle .home-details-link {display:inline-flex;align-items:center;gap:20px;min-height:44px;padding:10px 16px;border:1px solid #b88bd177;border-radius:10px;text-decoration:none;background:#9f67bf12;color:#f1defd;}
+@media(min-width:801px) {.current-raffle {grid-template-columns:minmax(0,.88fr) minmax(0,1fr);padding-top:58px;padding-bottom:58px;}.current-raffle-image {max-width:460px;width:100%;justify-self:center;}}
+@media(max-width:800px) {.current-raffle {gap:0;padding-top:22px;}.current-raffle-image {transform:none;margin:0 24px;padding:10px;}.prize-showcase-label {font-size:9px;padding-bottom:9px;}.prize-showcase-caption {padding:10px 3px 2px;font-size:11px;}.prize-showcase-caption strong {font-size:14px;}.prize-showcase-seal {width:36px;height:36px;}.current-raffle h1 {font-size:40px;max-width:17ch;}.current-raffle-content {padding:26px 20px 30px;}.current-raffle-image::after {inset:-12px;}.current-raffle .sticker-cards .sticker-card .sticker-card-heading {flex-wrap:wrap;}.current-raffle .sticker-card::before,.current-raffle .sticker-card::after {display:none;}}
+.current-raffle .current-raffle-image {display:block;align-self:center;}
+.current-raffle .current-raffle-image .prize-photo {width:100%;}
+.current-raffle .current-raffle-content {border-top:0;}
+.current-raffle .current-raffle-image {height:auto;}

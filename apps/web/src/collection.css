@@ -80,3 +80,7 @@
 .card-catalog .catalog-tabs button[aria-pressed=true]{background:#623580;border-color:#b58ed1}
 @media(max-width:700px){.card-catalog .catalog-grid{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:8px 4px 24px;scrollbar-color:#9a69bb #25172f}.card-catalog button.catalog-card{flex:0 0 78%;scroll-snap-align:center}.collection-home .card-catalog{padding-block:44px}.card-catalog .catalog-card>img{padding:20px 18px 12px}.card-catalog .catalog-card h4{font-size:20px}}
 @media(prefers-reduced-motion:reduce){.card-catalog button.catalog-card{transition:none}.card-catalog button.catalog-card:hover{transform:none}}
+/* Clear, vivid character art without dim overlays. */
+.lesson-pokemon img {opacity:1;filter:saturate(1.45) contrast(1.08) brightness(1.08) drop-shadow(0 8px 12px #a546e955);}
+.lesson-pokemon {background:radial-gradient(circle,#c86aff66,transparent 68%);}
+.collection-real-card img {filter:saturate(1.22) contrast(1.06);}
