@@ -177,3 +177,5 @@
 .admin-page .studio-navigation button[aria-pressed=true] {background:#60317f;color:#fff;border-color:#ca9ce8;}
 .admin-page :is(.admin-action-button,.button.primary) {background:#714098;color:#fff;border-color:#bb8bd6;}
 .admin-page :is(.muted,.admin-top p,.admin-login p) {color:#ccbadb;}
+.public-page .lookup-card>p,.public-page .lookup-placeholder p {color:#cdbbdf;}
+.public-page .public-intro h1 em {color:#dfb2ff;}
