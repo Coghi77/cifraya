@@ -586,7 +586,6 @@ export default function App() {
     {error && <div className="vn-global-notice"><Confirmation variant="error" message={error} onClose={() => setError('')}/></div>}
 
     {view === 'home' && <main>
-      <CollectionHome/>
       {featured ? <section className="current-raffle" aria-label="Rifa actual">
         <div className="current-raffle-image">{coverOf(featured) ? <PrizePhoto photos={featured.photos} src={coverOf(featured)!} title={featured.prize}/> : <img className="current-logo" src="/vnova-logo.svg" alt=""/>}</div>
         <div className="current-raffle-content"><span className="current-label">RIFA ACTUAL</span><h1>{featured.title}</h1><div className="current-prize">{featured.prize}</div><DrawCountdown mode={featured.drawMode} date={featured.drawDate} sold={featured.soldCount} total={featured.numberCount}/><RaffleProgress raffle={featured} compact/>{featured.numbersPerSticker ? <StickerPicker cards={featured.packages} price={featured.priceCrc} numbersPerSticker={featured.numbersPerSticker} disabled={busy} onChoose={quantity => void openRaffle(featured.slug, true, quantity)}/> : <div className="home-packages"><span>Elegí tu paquete</span><div>{offersFor(featured).map(offer => <button key={offer.quantity} type="button" disabled={busy} onClick={() => void openRaffle(featured.slug, true, offer.quantity)}><span>{offer.quantity} {offer.quantity === 1 ? 'número' : 'números'}</span><strong>{money(offer.priceCrc)}</strong>{homePackageLoading === offer.quantity ? <SelectionSpinner/> : <ArrowRight size={18} aria-hidden="true"/>}</button>)}</div></div>}<button className="home-details-link" type="button" disabled={busy} onClick={() => void openRaffle(featured.slug)}>Ver detalles de la rifa <ArrowRight size={16}/></button></div>
@@ -600,6 +599,7 @@ export default function App() {
         </article>)}</div>
       </section>}
 
+      <CollectionHome/>
       <section className="how-section"><div className="how-inner"><div className="eyebrow">PASO A PASO</div><h2>¿Cómo comprar<br/><em>tus boletos?</em></h2><div className="how-grid purchase-guide">
         <div><span>01</span><h3>Elegí tus boletos y números</h3><p>Entrá a la rifa y elegí una tarjeta. Revisá cuántos números incluye y seleccioná los disponibles o dejá que el sistema los elija al azar.</p></div>
         <div><span>02</span><h3>Completá tus datos</h3><p>Tocá “Continuar con mi compra”, ingresá tu nombre completo, correo y teléfono, y confirmá con “Apartar números”.</p></div>
