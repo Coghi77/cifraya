@@ -386,3 +386,7 @@ h1,h2,h3 { letter-spacing:-.045em; }
 .site-header .brand{background:transparent;padding:0;border-radius:0}.site-header .brand-logo{filter:drop-shadow(0 1px 1px #18101f55)}
 /* One continuous violet base, including the area behind the floating header. */
 body,#root{background:#130f1d}.site-header{background:rgba(42,28,59,.96);border-color:#85679e55;box-shadow:0 12px 35px #0005}.site-header nav button{color:#e8dcf2}.site-header .mobile-menu-toggle{background:#4e3268;color:#fff}.site-header nav button.nav-active,.site-header nav button:hover{background:#ff4200;color:white}.how-section{background:#171321;color:#eee4f7;border-color:#664c7c40}.how-section h2,.how-grid h3,.how-grid span{color:#eee4f7}.how-section p{color:#b9a7c9}.site-footer{background:#130f1d;border-top:1px solid #75528d44}.site-header .brand-logo{filter:drop-shadow(0 3px 8px #0004)}@media(max-width:800px){.site-header nav{background:#2a1c3b;border-color:#85679e55}.site-header nav button{color:#e8dcf2}}
+/* Keep emphasis readable against the violet purchase-guide background. */
+.how-section h2 em { color:#eee4f7; }
+.how-section .purchase-guide p strong,
+.how-section .purchase-guide p b { color:#fff; font-weight:700; }
