@@ -375,3 +375,8 @@ h1,h2,h3 { letter-spacing:-.045em; }
 .prize-photo .prize-photo-thumbnails button[aria-pressed=true]{opacity:1;border-color:#395aff;box-shadow:0 0 0 1px #395aff}
 .prize-photo .prize-photo-thumbnails img{object-fit:cover;border-radius:4px}
 @media(min-width:801px){.prize-photo .prize-photo-thumbnails button{flex-basis:88px;height:88px}}
+/* Glass navigation retains the same focus, menu and route controls. */
+.site-header{background:rgba(24,24,34,.94);border-bottom:1px solid #ffffff25;box-shadow:0 8px 35px #0002;backdrop-filter:blur(18px) saturate(145%);-webkit-backdrop-filter:blur(18px) saturate(145%)}
+.site-header nav button{color:#f8f5ff;border-color:#ffffff35;background:#ffffff08}.site-header nav .nav-active,.site-header nav button:hover{background:#ff570f;color:#161616;border-color:#ff570f}.site-header .mobile-menu-toggle{color:#fff;border-color:#ffffff40;background:#ffffff0a}.site-header :is(button,a):focus-visible{outline:3px solid #ff9b71;outline-offset:4px}
+@media(max-width:800px){.site-header nav{background:rgba(25,24,36,.98);backdrop-filter:blur(18px);border-color:#ffffff30}.site-header nav button{color:#f8f5ff}.site-header nav button.nav-active{background:#ff570f;color:#161616}}
+.site-header .brand-logo{border-radius:18px}.site-header .brand{overflow:hidden;border-radius:18px}

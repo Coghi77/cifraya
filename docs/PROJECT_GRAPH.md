@@ -166,3 +166,7 @@ Correo inicial unificado: RESERVED explica reserva, carga pendiente y revision c
 
 ## Catálogo educativo de cartas
 - CardCatalog.tsx: galería pública y editor autenticado. CardCollection guarda nombre, edición/idioma, fuente HTTPS, cartas JSON (nombre, rareza, número, imagen HTTPS), publicación y versión. API /api/card-collections solo entrega publicadas; /api/admin/card-collections permite crear y editar. updateMany con versión evita sobrescribir ediciones simultáneas. El catálogo es independiente de las rifas y no altera compras. Imágenes externas cargadas sin Referer; el servidor no descarga URLs. Máximo 100 cartas por colección. Ocultar conserva el borrador.
+
+## Presentación educativa inmersiva
+- CollectionHome conserva el catálogo editable y añade carta Gengar ex 104/162 (Temporal Forces), ilustraciones oficiales de Gengar/Mewtwo/Pikachu en la guía, y carrusel de productos cada 6,5 segundos. Las imágenes de referencia se cargan desde assets.pokemon.com / pokemon.com; no se presentan como contenido de una colección concreta.
+- Carrusel pausa al interactuar, al elegir manualmente, en pestaña oculta y con prefers-reduced-motion. Control global de pausa detiene las animaciones decorativas. La guía de formatos ahora enlaza dentro de la página. SiteHeader conserva sus controles y rutas; solo cambia su presentación a vidrio oscuro.
