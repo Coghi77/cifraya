@@ -179,3 +179,7 @@
 .admin-page :is(.muted,.admin-top p,.admin-login p) {color:#ccbadb;}
 .public-page .lookup-card>p,.public-page .lookup-placeholder p {color:#cdbbdf;}
 .public-page .public-intro h1 em {color:#dfb2ff;}
+.winners-page .winners-empty p {color:#cdbbdf;}
+.winners-page .winner-symbol {border-color:#8d68a4;color:#dfb2ff;}
+.admin-page .admin-login-icon {background:#5b3478;color:#f7eaff;}
+.admin-page .form-grid :is(input,textarea,select) {background:#1a1123;color:#f4eafa;border-color:#8a6b9d;}
