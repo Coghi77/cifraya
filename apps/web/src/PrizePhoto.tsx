@@ -22,7 +22,7 @@ export default function PrizePhoto({photos, src, title}: {photos:Photo[]; src:st
   </div>;
 }
 
-function PrizeGallery({photos,title,initialIndex,onClose}:{photos:Photo[];title:string;initialIndex:number;onClose:()=>void}) {
+export function PrizeGallery({photos,title,initialIndex,onClose}:{photos:Photo[];title:string;initialIndex:number;onClose:()=>void}) {
   const dialog=useRef<HTMLDialogElement>(null);
   const start=useRef<{x:number;y:number}|null>(null);
   const [index,setIndex]=useState(initialIndex);
