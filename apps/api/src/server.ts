@@ -1,3 +1,4 @@
+import {cardCollectionInput, cardCollectionUpdate} from './cardCatalog.js';
 import { raffleSales, salesWorkbook } from './salesExport.js';
 import {drawFields,resolveDrawSchedule} from './drawSchedule.js';
 import { composeLotteryNumber } from './lotteryResults.js';
@@ -31,6 +32,26 @@ app.setErrorHandler((error, request, reply) => {
   return reply.code(status).send({ error: status === 500 ? 'No se pudo completar la operación. Intentá de nuevo.' : 'Solicitud inválida.' });
 });
 const publicCache = createPublicCache();
+app.get('/api/card-collections', async () => db.cardCollection.findMany({where:{published:true},orderBy:{createdAt:'asc'},select:{id:true,name:true,edition:true,sourceUrl:true,cards:true}}));
+app.get('/api/admin/card-collections', async (request,reply) => {
+  if(!adminAuthorized(request.headers.authorization))return reply.code(401).send({error:'Acceso no autorizado'});
+  return db.cardCollection.findMany({orderBy:{createdAt:'asc'}});
+});
+app.post('/api/admin/card-collections', async (request,reply) => {
+  if(!adminAuthorized(request.headers.authorization))return reply.code(401).send({error:'Acceso no autorizado'});
+  const parsed=cardCollectionInput.safeParse(request.body);
+  if(!parsed.success)return reply.code(400).send({error:'Completá colección, edición, fuente y todas las cartas. Las imágenes y la fuente deben usar HTTPS. Máximo 100 cartas.'});
+  return reply.code(201).send(await db.cardCollection.create({data:parsed.data}));
+});
+app.put<{Params:{id:string}}>('/api/admin/card-collections/:id', async (request,reply) => {
+  if(!adminAuthorized(request.headers.authorization))return reply.code(401).send({error:'Acceso no autorizado'});
+  const parsed=cardCollectionUpdate.safeParse(request.body);
+  if(!parsed.success)return reply.code(400).send({error:'Revisá los campos de la colección y las direcciones HTTPS.'});
+  const {version,...data}=parsed.data;
+  const result=await db.cardCollection.updateMany({where:{id:request.params.id,version},data:{...data,version:{increment:1}}});
+  if(!result.count)return reply.code(409).send({error:'La colección cambió en otra sesión. Conservá tus cambios y volvé a cargar la lista antes de editar.'});
+  return {ok:true,version:version+1};
+});
 const emailWorker = createEmailWorker(db, () => broadcast('reservations'), () => app.log.error('Email worker failed; queued messages retained'));
 registerSecurityHeaders(app, process.env.NODE_ENV === 'production');
 const subscribers = new Set<(event: string) => void>();

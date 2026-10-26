@@ -2,6 +2,18 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model CardCollection {
+  id        String   @id @default(cuid())
+  name      String
+  edition   String
+  sourceUrl String
+  published Boolean  @default(false)
+  cards     Json
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
