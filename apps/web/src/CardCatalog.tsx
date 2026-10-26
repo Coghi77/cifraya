@@ -1,5 +1,6 @@
 import {useEffect,useState,type FormEvent} from 'react';
 import './cardCatalog.css';
+import Confirmation from './Confirmation';
 
 type Card={name:string;rarity:string;number:string;imageUrl:string};
 type Collection={id:string;name:string;edition:string;sourceUrl:string;cards:Card[];published:boolean;version:number};
@@ -52,7 +53,7 @@ export function CardCatalogAdmin({token}:{token:string}){
   setFormOpen(false);setNotice(draft.published?'Colección publicada en la portada.':'Colección guardada como borrador; no aparece en la portada.');await load();
  }catch(err){setError((err as Error).message);}finally{setBusy(false);}}
  return <details className="admin-card catalog-admin"><summary>Catálogo de cartas · colecciones y rarezas</summary><p>Organizá las cartas por expansión y edición. Usá una lista de referencia para comprobar que pertenecen a los sobres de esa colección.</p>
-  {error&&<p role="alert" className="catalog-error">{error}</p>}{notice&&<p role="status">{notice}</p>}
+  {error&&<p role="alert" className="catalog-error">{error}</p>}{notice&&<Confirmation message={notice} onClose={()=>setNotice('')}/>}
   {!formOpen&&<><div className="catalog-actions"><button type="button" disabled={loading} onClick={()=>edit(null)}>Nueva colección</button><button type="button" disabled={loading} onClick={()=>{setError('');void load();}}>Actualizar lista</button></div>{loading?<p>Cargando colecciones…</p>:items.length===0?<p>Todavía no hay colecciones configuradas.</p>:<div className="catalog-admin-list">{items.map(item=><div key={item.id}><span><strong>{item.name}</strong><small>{item.edition} · {item.cards.length} cartas · {item.published?'Publicada':'Borrador'}</small></span><button type="button" onClick={()=>edit(item)}>Editar</button></div>)}</div>}</>}
   {formOpen&&<form className="form-grid" onSubmit={save}><fieldset disabled={busy} className="catalog-fields"><legend>{editing?'Editar colección':'Nueva colección'}</legend>
    <label>Nombre de la colección<input required maxLength={120} minLength={2} value={draft.name} onChange={e=>setDraft({...draft,name:e.target.value})}/></label>

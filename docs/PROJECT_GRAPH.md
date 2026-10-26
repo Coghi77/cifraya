@@ -170,3 +170,8 @@ Correo inicial unificado: RESERVED explica reserva, carga pendiente y revision c
 ## Presentación educativa inmersiva
 - CollectionHome conserva el catálogo editable y añade carta Gengar ex 104/162 (Temporal Forces), ilustraciones oficiales de Gengar/Mewtwo/Pikachu en la guía, y carrusel de productos cada 6,5 segundos. Las imágenes de referencia se cargan desde assets.pokemon.com / pokemon.com; no se presentan como contenido de una colección concreta.
 - Carrusel pausa al interactuar, al elegir manualmente, en pestaña oculta y con prefers-reduced-motion. Control global de pausa detiene las animaciones decorativas. La guía de formatos ahora enlaza dentro de la página. SiteHeader conserva sus controles y rutas; solo cambia su presentación a vidrio oscuro.
+
+## Archivo visual y confirmaciones
+- La portada educativa usa Gengar VMAX de Fusion Strike 271/264 como referencia visual, sin vincularlo a premios. Archivo de productos abierto; guía interactiva con una pregunta por tema; acentos blanco/naranja.
+- Confirmation.tsx adapta la tarjeta MIT de akshat-patel28 (atribución en THIRD_PARTY_NOTICES.md). Se usa en guardado del catálogo y respuestas de la guía. No sustituye avisos de error por confirmaciones de éxito.
+- vnova-transparent.png es una variante de fondo transparente generada a partir del logo proporcionado. Navegación y footer la usan; el original sigue disponible.
