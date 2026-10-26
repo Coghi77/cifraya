@@ -1,3 +1,4 @@
+import Confirmation from './Confirmation';
 import {useEffect, useRef, useState} from 'react';
 import {ChevronLeft, ChevronRight, X, Search} from 'lucide-react';
 
@@ -38,7 +39,7 @@ export function PrizeGallery({photos,title,initialIndex,onClose}:{photos:Photo[]
     <div className="prize-gallery-panel">
       <div className="prize-gallery-header"><span>{title}</span><button type="button" autoFocus aria-label="Cerrar fotos" onClick={()=>dialog.current?.close()}><X/></button></div>
       <div className="prize-gallery-stage" onTouchCancel={()=>{start.current=null;}} onTouchStart={event=>{start.current=event.touches.length===1?{x:event.touches[0].clientX,y:event.touches[0].clientY}:null;}} onTouchEnd={event=>{const origin=start.current;start.current=null;if(!origin||!event.changedTouches.length)return;const dx=event.changedTouches[0].clientX-origin.x;const dy=event.changedTouches[0].clientY-origin.y;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))move(dx<0?1:-1);}}>
-        {failed ? <p role="status">No se pudo cargar esta foto. Podés pasar a otra imagen.</p> : <img key={photos[index].url} src={photos[index].url} alt={`${title}, foto ${index+1}`} draggable={false} onError={()=>setFailed(true)}/>}
+        {failed ? <Confirmation variant="error" message="No se pudo cargar esta foto. Podés pasar a otra imagen."/> : <img key={photos[index].url} src={photos[index].url} alt={`${title}, foto ${index+1}`} draggable={false} onError={()=>setFailed(true)}/>}
       </div>
       <div className="prize-gallery-controls">{photos.length>1 && <button type="button" aria-label="Foto anterior" onClick={()=>move(-1)}><ChevronLeft/></button>}<span role="status" aria-live="polite">Foto {index+1} de {photos.length}</span>{photos.length>1 && <button type="button" aria-label="Foto siguiente" onClick={()=>move(1)}><ChevronRight/></button>}</div>
     </div>

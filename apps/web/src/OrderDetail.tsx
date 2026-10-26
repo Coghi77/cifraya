@@ -1,3 +1,4 @@
+import Confirmation from './Confirmation';
 import { useEffect, useState, type ReactNode } from 'react';
 
 type Order = {
@@ -38,7 +39,7 @@ export default function OrderDetail({ renderProof }: { renderProof: (token: stri
   }, [token, revision]);
   const refresh = async () => { setRevision(value => value + 1); };
   return <main className="public-page order-page"><header><span className="eyebrow">VNOVA TCG / TU PEDIDO</span><h1>{order ? `CY-${String(order.orderNumber).padStart(6, '0')}` : 'Detalle del pedido'}</h1><p>Guardá este enlace privado para consultar tus boletos.</p></header>
-    {error && <div role="alert"><p>{error}</p><button className="button dark" onClick={() => void refresh()}>Volver a consultar</button></div>}
+    {error && <div><Confirmation variant="error" message={error}/><button className="button dark" onClick={() => void refresh()}>Volver a consultar</button></div>}
     {!order && !error && <p role="status">Cargando pedido…</p>}
     {order && <section className="order-card" aria-label="Detalle del pedido"><div className="order-heading"><h2>{order.campaign.title}</h2><span role="status">{labels[order.status] || order.status}</span></div>
       <dl className="order-facts"><div><dt>A nombre de</dt><dd>{order.buyerName}</dd></div><div><dt>Total</dt><dd>{money(order.totalCrc)}</dd></div><div><dt>Fecha del pedido</dt><dd>{date(order.createdAt)}</dd></div><div><dt>Método de pago</dt><dd>{order.paymentMethod==='CASH'?'Efectivo':'SINPE Móvil'}</dd></div><div><dt>{order.stickerCount ? 'Boletos' : 'Selección'}</dt><dd>{order.stickerCount && `${order.stickerCount} boletos de ${order.numbersPerSticker} números · `}{order.baseValues.length || order.values.length} números{order.includesInverted ? ' + invertidos' : ''}</dd></div><div><dt>Números del pedido</dt><dd>{order.values.length}</dd></div>{order.confirmedAt && <div><dt>Pago confirmado</dt><dd>{date(order.confirmedAt)}</dd></div>}</dl>

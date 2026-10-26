@@ -21,7 +21,7 @@ export default function CardCatalog(){
  const [attempt,setAttempt]=useState(0);
  useEffect(()=>{const controller=new AbortController();setFailed(false);fetch('/api/card-collections',{signal:controller.signal}).then(async response=>{if(!response.ok)throw Error();setItems(await response.json());}).catch(error=>{if(error.name!=='AbortError')setFailed(true);});return()=>controller.abort();},[attempt]);
  const collection=items.find(item=>item.id===chosen)||items[0];
- if(failed)return <section className="collection-section"><p role="status">No se pudo cargar el catálogo de cartas.</p><button type="button" onClick={()=>setAttempt(value=>value+1)}>Volver a intentar</button></section>;
+ if(failed)return <section className="collection-section"><Confirmation variant="error" message="No se pudo cargar el catálogo de cartas."/><button type="button" onClick={()=>setAttempt(value=>value+1)}>Volver a intentar</button></section>;
  if(!collection)return null;
  return <section className="collection-section card-catalog" aria-labelledby="catalog-title">
   <span className="collection-kicker">EXPLORÁ LAS CARTAS</span><h2 id="catalog-title">Dentro de la colección.</h2>
@@ -53,7 +53,7 @@ export function CardCatalogAdmin({token}:{token:string}){
   setFormOpen(false);setNotice(draft.published?'Colección publicada en la portada.':'Colección guardada como borrador; no aparece en la portada.');await load();
  }catch(err){setError((err as Error).message);}finally{setBusy(false);}}
  return <details className="admin-card catalog-admin"><summary>Catálogo de cartas · colecciones y rarezas</summary><p>Organizá las cartas por expansión y edición. Usá una lista de referencia para comprobar que pertenecen a los sobres de esa colección.</p>
-  {error&&<p role="alert" className="catalog-error">{error}</p>}{notice&&<Confirmation message={notice} onClose={()=>setNotice('')}/>}
+  {error&&<Confirmation variant="error" message={error}/>}{notice&&<Confirmation message={notice} onClose={()=>setNotice('')}/>}
   {!formOpen&&<><div className="catalog-actions"><button type="button" disabled={loading} onClick={()=>edit(null)}>Nueva colección</button><button type="button" disabled={loading} onClick={()=>{setError('');void load();}}>Actualizar lista</button></div>{loading?<p>Cargando colecciones…</p>:items.length===0?<p>Todavía no hay colecciones configuradas.</p>:<div className="catalog-admin-list">{items.map(item=><div key={item.id}><span><strong>{item.name}</strong><small>{item.edition} · {item.cards.length} cartas · {item.published?'Publicada':'Borrador'}</small></span><button type="button" onClick={()=>edit(item)}>Editar</button></div>)}</div>}</>}
   {formOpen&&<form className="form-grid" onSubmit={save}><fieldset disabled={busy} className="catalog-fields"><legend>{editing?'Editar colección':'Nueva colección'}</legend>
    <label>Nombre de la colección<input required maxLength={120} minLength={2} value={draft.name} onChange={e=>setDraft({...draft,name:e.target.value})}/></label>

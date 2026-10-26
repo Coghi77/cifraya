@@ -1,3 +1,4 @@
+import Confirmation from './Confirmation';
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 
@@ -32,7 +33,7 @@ export default function AdminParticipantDetail({ reservationId, token, onClose, 
     return () => { active = false; window.removeEventListener('cifraya:update', refresh); };
   }, [reservationId, token, page]);
 
-  return <div className="participant-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}><section className="participant-panel" role="dialog" aria-modal="true" aria-label="Ficha del participante"><button className="participant-close" type="button" onClick={onClose} aria-label="Cerrar"><X size={19}/></button><span className="eyebrow">FICHA DEL PARTICIPANTE</span>{error && <p className="admin-detail-error" role="alert">{error}</p>}{data ? <>
+  return <div className="participant-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}><section className="participant-panel" role="dialog" aria-modal="true" aria-label="Ficha del participante"><button className="participant-close" type="button" onClick={onClose} aria-label="Cerrar"><X size={19}/></button><span className="eyebrow">FICHA DEL PARTICIPANTE</span>{error && <Confirmation variant="error" message={error}/>}{data ? <>
     <div className="participant-heading"><div className="participant-avatar">{data.participant.name.trim().charAt(0).toUpperCase()}</div><div><h2>{data.participant.name}</h2><span>{data.total} {data.total === 1 ? 'participación' : 'participaciones'} registradas</span></div></div>
     <div className="participant-contact"><div><small>CORREO</small><a href={`mailto:${data.participant.email}`}>{data.participant.email}</a></div><div><small>TELÉFONO</small><a href={`tel:${data.participant.phone}`}>{data.participant.phone}</a></div></div>
     <div className="participant-section"><div className="participant-section-heading"><h3>Esta reserva</h3><span>{statusLabel(data.source.status)}</span></div><p>{data.source.campaign.title} · {money(data.source.totalCrc)} · {new Date(data.source.createdAt).toLocaleString('es-CR')}</p><div className="participant-numbers">{data.source.selectedValues.map(value => <span key={value}>{numberLabel(value, data.source.campaign.numberWidth)}</span>)}</div>{['ACTIVE', 'PENDING_REVIEW'].includes(data.source.status) && <button className="participant-review" type="button" onClick={() => onReview(data.source.id)}>Revisar reserva y pago</button>}{onChooseWinner && <button className="participant-review" type="button" onClick={onChooseWinner}>Elegir este boleto como ganador</button>}</div>

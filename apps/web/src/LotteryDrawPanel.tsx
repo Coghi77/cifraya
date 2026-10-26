@@ -1,3 +1,4 @@
+import Confirmation from './Confirmation';
 import { useState } from 'react';
 
 export default function LotteryDrawPanel({ id, token, position, width, start, requiredCount, savedResults, savedReference, onSaved }: {
@@ -30,7 +31,7 @@ export default function LotteryDrawPanel({ id, token, position, width, start, re
     <label>Sorteo y fecha<input disabled={locked || busy} value={reference} maxLength={120} placeholder="Ej. Sorteo 0000 · 20/10/2026" onChange={event => { setReference(event.target.value); setPreview(null); }}/></label>
     <div className="lottery-inputs">{results.map((value, index) => <label key={index}>{index + 1}.º premio<input disabled={locked || busy} inputMode="numeric" maxLength={2} placeholder="00" value={value} onChange={event => { setResults(results.map((item, i) => i === index ? event.target.value.replace(/\D/g, '') : item)); setPreview(null); }}/></label>)}</div>
     <small>Completá los resultados que necesitan las reglas de esta rifa. Tras publicar el primer resultado, no se podrán cambiar.</small>
-    {error && <p role="alert">{error}</p>}
+    {error && <Confirmation variant="error" message={error}/>}
     {preview ? <div className="lottery-preview"><strong>{String(preview.value).padStart(width, '0')}</strong><p>{preview.sold ? preview.buyerName : 'Sin compra confirmada: se publicará sin ganador.'}</p><button type="button" disabled={busy} onClick={() => void submit(true)}>Confirmar y publicar resultado</button><button type="button" disabled={busy} onClick={() => setPreview(null)}>Volver a revisar</button></div> : <button type="button" disabled={busy || reference.trim().length < 3 || results.some(value => !/^\d{2}$/.test(value))} onClick={() => void submit(false)}>{busy ? 'Calculando…' : 'Calcular y revisar resultado'}</button>}
   </section>;
 }

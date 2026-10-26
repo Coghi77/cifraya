@@ -1,3 +1,4 @@
+import Confirmation from './Confirmation';
 import BrandSelect from './BrandSelect';
 import { useEffect, useId, useRef, useState } from 'react';
 
@@ -22,7 +23,7 @@ export default function PrizeEditor({ prizes, sources, onChange }: { prizes: str
       setError('');
       onChange(Array.from({ length: next }, (_, index) => prizes[index] ?? ''), Array.from({ length: next }, (_, index) => sources[index] || 0));
     }}>Aplicar</button></div>
-    {error && <p role="alert">{error}</p>}
+    {error && <Confirmation variant="error" message={error}/>}
     <small>Un premio por posición. Indicá el nombre de cada uno.</small>
     {prizes.slice(page * 10, page * 10 + 10).map((prize, offset) => {
       const index = page * 10 + offset;

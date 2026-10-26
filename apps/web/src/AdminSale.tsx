@@ -1,3 +1,4 @@
+import Confirmation from './Confirmation';
 import {useEffect,useRef,useState,type FormEvent} from 'react';
 import ManualNumbers from './ManualNumbers';
 import BrandSelect from './BrandSelect';
@@ -47,7 +48,7 @@ export default function AdminSale({campaign,token,onClose,onReview}:{campaign:Sa
    {order&&<p role="status">El pedido #{order.orderNumber} ya está creado. Reintentá adjuntar el comprobante; no se creará otro pedido. También podés encontrarlo en Boletos y personas.</p>}
    <fieldset disabled={busy||Boolean(order)}><legend>Método de pago</legend><BrandSelect label="Método de pago" value={paymentMethod} onChange={value=>{setPaymentMethod(value);setCashReceived(false);}} options={[{value:'SINPE',label:'SINPE Móvil · con comprobante'},{value:'CASH',label:'Efectivo · sin comprobante'}]}/></fieldset>
    {paymentMethod==='CASH'?<label className="cash-received"><input type="checkbox" required checked={cashReceived} disabled={busy||Boolean(order)} onChange={event=>setCashReceived(event.target.checked)}/>Confirmo que recibí {money(offer.priceCrc)} en efectivo. Al guardar, los números quedarán vendidos.</label>:<><label>Comprobante del pago<input type="file" required disabled={busy} accept="image/jpeg,image/png,image/webp" onChange={e=>setFile(e.target.files?.[0]||null)}/></label><small>JPG, PNG o WebP. Se guardará en revisión; adjuntar una imagen no confirma el pago.</small></>}
-   {error&&<p role="alert" className="admin-detail-error">{error}</p>}
+   {error&&<Confirmation variant="error" message={error}/>}
    <button className="admin-sale-primary" disabled={busy||(paymentMethod==='SINPE'?!file:!cashReceived)||(!order&&(values.length!==quantity||expired))}>{busy?'Guardando…':order?'Reintentar comprobante':`${paymentMethod==='CASH'?'Confirmar venta en efectivo':'Registrar pedido'} · ${money(offer.priceCrc)}`}</button>
   </form>}
  </dialog>;

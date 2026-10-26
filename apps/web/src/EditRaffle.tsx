@@ -1,3 +1,4 @@
+import Confirmation from './Confirmation';
 import DrawScheduleEditor, {toDrawDate,fromDrawDate} from './DrawScheduleEditor';
 import StickerCardEditor, { cardPackages, type StickerCard } from './StickerCardEditor';
 import BrandSelect, { numberCountOptions } from './BrandSelect';
@@ -68,7 +69,7 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
           <StickerCardEditor cards={cards} onChange={setCards} numbersPerSticker={Number(form.numbersPerSticker)}/>
         </>}
         {raffle.status === 'LIVE' && <StickerCardEditor cards={cards} onChange={setCards} numbersPerSticker={raffle.numbersPerSticker || 1}/>}
-        {error && <p className="edit-raffle-error" role="alert">{error}</p>}
+        {error && <Confirmation variant="error" message={error}/>}
         <div className="edit-raffle-actions"><button type="button" onClick={onClose} disabled={busy}>Cancelar</button><button type="submit" disabled={busy}>{busy ? 'Guardando...' : 'Guardar cambios'}</button></div>
       </form>
     </section>

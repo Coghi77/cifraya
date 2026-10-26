@@ -1,3 +1,4 @@
+import Confirmation from './Confirmation';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
@@ -70,7 +71,7 @@ export default function AdminReservationReview({ id, token, onClose, onReviewed 
     finally { setBusy(false); }
   }
 
-  return <div className="review-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}><section className="review-panel" role="dialog" aria-modal="true" aria-label="Revisar reserva"><button className="review-close" onClick={onClose} aria-label="Cerrar"><X size={19}/></button><span className="eyebrow">BOLETOS Y PERSONAS</span><h2>Revisar pago</h2>{detail && <p>Pedido CY-{String(detail.orderNumber).padStart(6, '0')}</p>}{error && <p className="review-error" role="alert">{error}</p>}{detail ? <>
+  return <div className="review-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}><section className="review-panel" role="dialog" aria-modal="true" aria-label="Revisar reserva"><button className="review-close" onClick={onClose} aria-label="Cerrar"><X size={19}/></button><span className="eyebrow">BOLETOS Y PERSONAS</span><h2>Revisar pago</h2>{detail && <p>Pedido CY-{String(detail.orderNumber).padStart(6, '0')}</p>}{error && <Confirmation variant="error" message={error}/>}{detail ? <>
     {detail.emails?.map((email, index) => <p key={index} role="status">Correo: {email.status === 'SENT' ? 'Aceptado por Resend' : email.status === 'FAILED' ? 'Requiere revisión del administrador' : detail.emailConfigured ? 'Pendiente de envío' : 'Pendiente: falta configurar Resend'}{email.lastError && ` (${email.lastError})`}</p>)}
     <div className="review-person"><strong>{detail.buyerName}</strong><span>{detail.buyerEmail}</span><span>{detail.buyerPhone}</span><span>{detail.campaign.title}</span></div>
     <div className="review-summary"><div><small>ESTADO</small><strong>{detail.status === 'PENDING_REVIEW' ? 'Pago en revisión' : detail.status === 'ACTIVE' ? 'Esperando comprobante' : detail.status === 'CONFIRMED' ? 'Compra confirmada' : detail.status === 'EXPIRED' ? 'Vencida' : 'Rechazada'}</strong></div><div><small>IMPORTE</small><strong>{money(detail.totalCrc)}</strong></div><div><small>NÚMEROS</small><strong>{detail.selectedValues.length}</strong></div></div>
