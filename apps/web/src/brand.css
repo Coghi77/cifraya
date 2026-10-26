@@ -415,3 +415,12 @@ body,#root{background:#130f1d}.site-header{background:rgba(42,28,59,.96);border-
 .public-page > .empty-state,
 .public-page > .empty-state h3 { color:#c8b9d6; }
 .detail-description .detail-prize-list{color:#eee4f7}
+
+/* Mobile navigation stays in document flow so it never covers the cards. */
+@media(max-width:800px){
+ .site-header{position:relative;top:auto;height:60px;min-height:60px;margin:8px 12px;padding:6px 12px;border-radius:18px;gap:12px}
+ .site-header .brand{width:46px;height:46px}
+ .site-header .mobile-menu-toggle{width:44px;height:44px;min-height:44px}
+ .site-header:has(nav.mobile-menu-open){height:auto;flex-wrap:wrap}
+ .site-header nav.mobile-menu-open{position:static;flex-basis:100%;margin:4px 0 0;width:100%;box-shadow:none;border-radius:12px}
+}
