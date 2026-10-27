@@ -314,3 +314,16 @@
  .detail-page .selection-head h2 {font-size:21px;}
  .detail-page .selection-head p {font-size:13px;line-height:1.5;}
 }
+
+/* Quiet banner and an unboxed purchase guide. */
+.collection-about {background:#171020;}
+.how-section .how-inner {background:transparent;box-shadow:none;border:0;}
+.current-raffle {background-size:auto, min(100vw,1680px) auto;background-color:#120e1d;}
+@media(min-width:801px) {
+ .current-raffle .current-raffle-image {max-width:360px;padding:12px;}
+}
+@media(max-width:800px) {
+ .current-raffle .current-raffle-image {max-width:300px;}
+ .current-raffle .prize-carousel-stage {height:190px;}
+ .current-raffle {background-size:100% 100%,auto 760px;}
+}
