@@ -1,0 +1,25 @@
+/* Shared battle-menu controls. Image viewers and ticket silhouettes retain their layouts. */
+#root :is(button,a.button):not(.brand):not(.prize-photo-open):not(.parade-card):not(.featured-slide):not(.sticker-card):not(.site-header nav button):not(.featured-pagination button):not(.prize-photo-thumbnails button) {
+  --battle-top:#79509c;--battle-bottom:#4c3268;--battle-edge:#b58bd5;
+  border-radius:0;
+  background:linear-gradient(180deg,var(--battle-edge) 0 3px,var(--battle-top) 3px 53%,var(--battle-bottom) 53% calc(100% - 5px),#191222 calc(100% - 5px));
+  color:#fff;
+  box-shadow:inset 3px 0 var(--battle-edge),inset -3px 0 #21162c;
+  clip-path:polygon(0 6px,3px 6px,3px 3px,6px 3px,6px 0,calc(100% - 6px) 0,calc(100% - 6px) 3px,calc(100% - 3px) 3px,calc(100% - 3px) 6px,100% 6px,100% calc(100% - 6px),calc(100% - 3px) calc(100% - 6px),calc(100% - 3px) calc(100% - 3px),calc(100% - 6px) calc(100% - 3px),calc(100% - 6px) 100%,6px 100%,6px calc(100% - 3px),3px calc(100% - 3px),3px calc(100% - 6px),0 calc(100% - 6px));
+  font-family:'Courier New',monospace;font-weight:700;text-shadow:1px 1px #25172f;
+  transition:filter .12s,transform .12s;
+}
+#root :is(button,a.button):not(.brand):not(.prize-photo-open):not(.parade-card):not(.featured-slide):not(.site-header nav button):is(.primary,.dark,.home-details-link,[type=submit]) {
+  --battle-top:#328b96;--battle-bottom:#225761;--battle-edge:#83d2d8;
+}
+#root button:is([aria-pressed=true],.active):not(.site-header nav button):not(.featured-slide):not(.sticker-card):not(.featured-pagination button):not(.prize-photo-thumbnails button) {
+  --battle-top:#a54870;--battle-bottom:#74324f;--battle-edge:#e998b8;
+}
+#root :is(button,a.button):disabled {filter:saturate(.25);opacity:.5;cursor:not-allowed;}
+#root :is(button,a.button):focus-visible {outline:0;filter:brightness(1.2);box-shadow:inset 0 0 0 3px #fff;}
+#root .sticker-card {font-family:'Courier New',monospace;box-shadow:inset 0 3px #b58bd577,inset 0 -4px #160f22;}
+#root .sticker-card[aria-pressed=true] {box-shadow:inset 0 3px #efb1d0,inset 0 -4px #160f22;background:#613c80;}
+#root .manual-grid button[aria-pressed=true] {--battle-top:#b04e7b;--battle-bottom:#763452;--battle-edge:#ffd1e5;box-shadow:inset 0 0 0 3px #ffd1e5;}
+#root .vn-confirmation>button {text-shadow:none;}
+@media(hover:hover){#root :is(button,a.button):enabled:not(.brand):not(.prize-photo-open):not(.parade-card):not(.featured-slide):hover{filter:brightness(1.12);}}
+@media(prefers-reduced-motion:reduce){#root :is(button,a.button){transition:none;}}
