@@ -357,3 +357,11 @@
 /* Studio entry uses the same fixed calligraphy layer as public pages. */
 #root .admin-shell.admin-shell:has(.admin-entry) {background:transparent;}
 #root .admin-shell.admin-shell .admin-entry {background:transparent;}
+
+/* Sign in directly on the artwork, without a surrounding card. */
+#root .admin-shell.admin-shell .admin-entry .admin-login {
+  background:transparent;border:0;box-shadow:none;backdrop-filter:none;border-radius:0;
+}
+#root .admin-entry .admin-login h2 {margin-bottom:28px;}
+#root .admin-entry .admin-login-icon {background:transparent;box-shadow:none;}
+#root .admin-shell.admin-shell .admin-entry input {letter-spacing:.08em;}
