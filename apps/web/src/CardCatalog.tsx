@@ -53,7 +53,7 @@ export function CardCatalogAdmin({token}:{token:string}){
  async function save(event:FormEvent){event.preventDefault();setBusy(true);setError('');setNotice('');try{
   const response=await fetch('/api/admin/card-collections'+(editing?'/'+editing.id:''),{method:editing?'PUT':'POST',headers,body:JSON.stringify({...draft,...(editing?{version:editing.version}:{})})});
   const data=await response.json();if(!response.ok)throw Error(response.status===401?'La sesión venció. Volvé a ingresar al panel.':data.error||'No se pudo guardar.');
-  setFormOpen(false);setNotice(draft.published?'Colección publicada en la portada.':'Colección guardada como borrador; no aparece en la portada.');await load();
+  setFormOpen(false);setNotice(draft.published?'Colección publicada en la portada.':'Borrador guardado. Aún no es público.');await load();
  }catch(err){setError((err as Error).message);}finally{setBusy(false);}}
  return <details open className="admin-card catalog-admin"><summary>Catálogo de cartas · colecciones y rarezas</summary><p>Marcá “Destacar” para mostrar una carta en grande. Usá Subir/Bajar para ordenar las cartas. Podés editar nombre, rareza e imagen, agregar o quitar cartas. Usá una lista de referencia para comprobar que pertenecen a los sobres de esa colección.</p>
   {error&&<Confirmation variant="error" message={error}/>}{notice&&<Confirmation message={notice} onClose={()=>setNotice('')}/>}

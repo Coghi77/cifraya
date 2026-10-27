@@ -8,3 +8,18 @@
 .tcg-quiz .vn-confirmation-icon{width:28px;height:28px;margin-left:4px}
 .tcg-quiz .vn-confirmation-wave{top:22px}
 .tcg-quiz .vn-confirmation button{min-width:44px;min-height:44px}
+
+/* Shared feedback owns its typography in every public and admin container. */
+.vn-confirmation.vn-confirmation {max-width:100%;height:auto;min-height:68px;padding:12px;gap:10px;align-items:flex-start;overflow:visible;isolation:isolate;}
+.vn-confirmation.vn-confirmation>div {min-width:0;flex:1;overflow-wrap:anywhere;}
+.vn-confirmation.vn-confirmation strong {display:block;font-size:14px!important;line-height:1.4!important;letter-spacing:normal!important;color:#187a24!important;white-space:normal;}
+.vn-confirmation.vn-confirmation-error strong {color:#b91c1c!important;}
+.vn-confirmation.vn-confirmation p {font-size:13px!important;line-height:1.45!important;margin:3px 0 0!important;color:#4b4b4b!important;white-space:normal;overflow-wrap:anywhere;}
+.vn-confirmation.vn-confirmation .vn-confirmation-icon {width:30px;height:30px;margin:3px 0 0 6px;flex:0 0 30px;}
+.vn-confirmation.vn-confirmation .vn-confirmation-icon svg {width:18px;height:18px;flex-shrink:0;}
+.vn-confirmation.vn-confirmation>button {display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;flex:0 0 44px;margin:-2px -4px 0 0;}
+.vn-confirmation.vn-confirmation .vn-confirmation-wave {transform:none;left:0;top:0;width:6px;height:100%;border-radius:8px 0 0 8px;background:#bcf7c0;}
+.vn-confirmation.vn-confirmation-error .vn-confirmation-wave {background:#ffd0d0;}
+.vn-confirmation-wave path {display:none;}
+.vn-global-notice {top:auto;bottom:calc(20px + env(safe-area-inset-bottom,0px));width:min(440px,calc(100% - 24px));max-height:calc(100dvh - 40px);overflow-y:auto;padding:4px;box-sizing:border-box;z-index:10000;}
+@media(max-width:480px) {.vn-confirmation.vn-confirmation {gap:8px;padding:10px;}.vn-global-notice{bottom:calc(12px + env(safe-area-inset-bottom,0px));}}
