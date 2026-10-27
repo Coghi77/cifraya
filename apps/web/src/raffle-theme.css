@@ -358,3 +358,19 @@ main.detail-page .detail-side {
 main.detail-page .raffle-progress {background:rgb(255 255 255 / 4%);}
 main.detail-page .ticket-number-highlight {background:rgb(180 128 225 / 10%);}
 main.detail-page .sticker-cards .sticker-card .sticker-card-includes {border:0;}
+
+/* Mobile textures follow section height instead of ending at a fixed pixel height. */
+@media(max-width:800px) {
+ .current-raffle,.how-section {
+   background-size:100% 100%,cover;
+   background-position:center,center;
+   background-repeat:no-repeat;
+ }
+ .current-raffle {
+   background-image:linear-gradient(180deg,#120e1dbf,#120e1d70 24%,#120e1d70 76%,#120e1d),url('/collection/matte-calligraphy.webp');
+ }
+ .how-section {
+   background-image:linear-gradient(180deg,#120e1d,#120e1d99 12%,#120e1d99 88%,#120e1d),url('/collection/matte-calligraphy.webp');
+ }
+ .featured-cards,.anniversary-parade {background-size:100% 100%,cover;background-position:center;}
+}
