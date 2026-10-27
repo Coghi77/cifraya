@@ -208,3 +208,9 @@
   .current-raffle {background-size:auto 650px;background-position:center top;background-color:#110d1b;}
   .current-raffle .current-raffle-content {margin:24px 16px 0;padding:24px 18px;border-radius:20px;}
 }
+
+/* Clean purchase cards without ticket outlines or perforations. */
+.current-raffle .prize-showcase-label span:last-child {margin-left:0;color:#e1c1f7;font-size:10px;}
+:is(.current-raffle,.detail-page) .sticker-cards .sticker-card {border:0;}
+.current-raffle .sticker-card::before,.current-raffle .sticker-card::after {display:none;}
+.current-raffle .sticker-cards .sticker-card .sticker-card-heading {border-bottom:0;}
