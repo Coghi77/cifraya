@@ -284,3 +284,27 @@
 }
 #root .ticket-pass .ticket-stub::after {display:none;}
 @media(max-width:480px){#root .ticket-pass .ticket-main{padding:18px 20px 22px;}#root .ticket-pass .ticket-stub{padding:22px 20px 20px;}}
+
+/* Photo lightbox must fit the viewport rather than its image's intrinsic width. */
+#root dialog.prize-gallery {
+  inset:0;margin:0;box-sizing:border-box;
+  width:100%;max-width:100vw;height:100dvh;max-height:100dvh;
+  overflow:hidden;
+  padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));
+}
+#root .prize-gallery .prize-gallery-panel {
+  width:100%;max-width:1200px;min-width:0;min-height:0;height:100%;
+  grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;
+}
+#root .prize-gallery .prize-gallery-header {min-width:0;gap:12px;}
+#root .prize-gallery .prize-gallery-header>span {min-width:0;flex:1;}
+#root .prize-gallery .prize-gallery-stage {min-width:0;min-height:0;overflow:hidden;}
+#root .prize-gallery .prize-gallery-stage>img,
+#root .prize-gallery .prize-gallery-stage>img.etb-product-frame {
+  width:100%;height:100%;min-width:0;max-width:100%;max-height:100%;
+  aspect-ratio:auto;object-fit:contain;object-position:center;
+}
+@media(max-width:600px){
+ #root .prize-gallery .prize-gallery-header{font-size:12px;}
+ #root .prize-gallery .prize-gallery-controls{gap:16px;font-size:12px;}
+}
