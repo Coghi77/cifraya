@@ -19,3 +19,26 @@
   outline:2px solid #cbb2e6;
   outline-offset:3px;
 }
+
+/* Admin form groups: headings stay inside their cards, with subtle boundaries. */
+#root .admin-shell .studio-form-section,
+#root .admin-shell fieldset {
+  border:1px solid rgb(211 183 235 / 16%)!important;
+  min-width:0;max-width:100%;box-sizing:border-box;
+}
+#root .admin-shell fieldset {display:flow-root;margin:0;padding:20px;}
+#root .admin-shell fieldset>legend {
+  float:left;width:100%;max-width:100%;box-sizing:border-box;
+  padding:0;margin:0 0 16px;line-height:1.45;white-space:normal;overflow-wrap:anywhere;
+}
+#root .admin-shell fieldset>legend+* {clear:both;}
+#root .admin-shell fieldset :is(p,small,label) {overflow-wrap:anywhere;}
+#root .admin-shell .draw-schedule-editor>small {display:block;margin-top:14px;}
+#root .admin-shell .draw-schedule-editor>label {display:grid;gap:8px;margin-top:16px;}
+#root .admin-shell .sticker-card-row {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:12px;align-items:end;margin:16px 0;}
+#root .admin-shell :is(input,textarea,select,.brand-select-trigger) {box-sizing:border-box;min-width:0;max-width:100%;}
+@media(max-width:520px){
+ #root .admin-shell fieldset {padding:16px;}
+ #root .admin-shell .sticker-card-row {grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+ #root .admin-shell .sticker-card-row>button {grid-column:1/-1;}
+}
