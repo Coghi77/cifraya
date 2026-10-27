@@ -159,3 +159,16 @@
 @media(max-width:800px){
   #root:has(.home-page)::before{background-size:100% 100%,auto 100%;background-position:center;}
 }
+
+/* Prize detail uses the same unframed image treatment as the homepage. */
+.detail-page .detail-image,
+.detail-page .detail-image .prize-carousel-stage,
+.detail-page .detail-image .prize-photo-open {
+  padding:0;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  border-radius:0;
+}
+.detail-page .detail-image .prize-photo-hint {display:none;}
+.detail-page .detail-image .prize-photo-open>img {object-fit:contain;padding:0;}
