@@ -42,3 +42,13 @@
  #root .admin-shell .sticker-card-row {grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
  #root .admin-shell .sticker-card-row>button {grid-column:1/-1;}
 }
+
+/* Photo removal controls must not inherit full-size admin button padding. */
+#root .admin-shell :is(.admin-photo,.pending-photo) {width:88px;height:88px;flex:0 0 88px;}
+#root .admin-shell :is(.admin-photo,.pending-photo)>button {
+ position:absolute;top:3px;right:3px;display:grid;place-items:center;
+ width:32px;height:32px;min-width:32px;min-height:32px;max-width:32px;
+ padding:0!important;margin:0;border:0;border-radius:50%;line-height:1;
+ background:#1a1024ed;color:#fff;box-sizing:border-box;
+}
+#root .admin-shell :is(.admin-photo,.pending-photo)>button svg {display:block;width:16px;height:16px;margin:0;flex-shrink:0;}
