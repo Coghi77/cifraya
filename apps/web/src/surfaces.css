@@ -251,3 +251,19 @@
  #root .lookup-page .lookup-result{min-height:220px;}
  #root .lookup-page .lookup-card .form-grid{margin-top:24px;}
 }
+
+/* Keep the reservation clock legible on every purchase surface. */
+#root .detail-page .package-offers .hold-countdown {
+  color:#fff;font-size:14px;font-weight:700;line-height:1.5;
+  margin:12px 0 16px;letter-spacing:.01em;
+}
+#root .hold-countdown strong {color:#fff;font-weight:900;font-variant-numeric:tabular-nums;}
+@media(max-width:800px){
+  /* The center of the wide artwork is empty: frame its calligraphy on phones. */
+  #root:has(:is(.home-page,main.detail-page,.lookup-page))::before {
+    background-image:linear-gradient(#120e1d18,#120e1d30),url('/collection/matte-calligraphy.webp');
+    background-size:100% 100%,auto 100%;
+    background-position:center,left center;
+  }
+  #root .detail-page .package-offers .hold-countdown{font-size:14px;}
+}
