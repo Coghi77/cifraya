@@ -183,3 +183,14 @@
 .winners-page .winner-symbol {border-color:#8d68a4;color:#dfb2ff;}
 .admin-page .admin-login-icon {background:#5b3478;color:#f7eaff;}
 .admin-page .form-grid :is(input,textarea,select) {background:#1a1123;color:#f4eafa;border-color:#8a6b9d;}
+
+/* Keep payment feedback independent of the SINPE number typography. */
+.sinpe-payment-info .vn-confirmation {min-height:60px;padding:8px 10px;gap:10px;margin:4px 0;box-shadow:0 4px 12px #0002;}
+.sinpe-payment-info .vn-confirmation strong {font-size:14px;line-height:1.3;letter-spacing:normal;}
+.checkout-dialog .sinpe-payment-info .vn-confirmation strong,.sinpe-payment-info .vn-confirmation strong {color:#187a24;}
+.checkout-dialog .sinpe-payment-info .vn-confirmation-error strong,.sinpe-payment-info .vn-confirmation-error strong {color:#b91c1c;}
+.sinpe-payment-info .vn-confirmation p {font-size:12px!important;line-height:1.4!important;margin-top:2px!important;}
+.checkout-dialog .sinpe-payment-info .vn-confirmation-icon,.sinpe-payment-info .vn-confirmation-icon {color:#187a24;width:28px;height:28px;margin-left:4px;}
+.checkout-dialog .sinpe-payment-info .vn-confirmation-error .vn-confirmation-icon,.sinpe-payment-info .vn-confirmation-error .vn-confirmation-icon {color:#b91c1c;}
+.sinpe-payment-info .vn-confirmation-wave {top:22px;}
+.sinpe-payment-info .vn-confirmation button {min-width:44px;min-height:44px;flex-shrink:0;}
