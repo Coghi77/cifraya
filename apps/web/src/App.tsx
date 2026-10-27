@@ -649,7 +649,7 @@ export default function App() {
       </div>
     </main>}
 
-    {view === 'admin' && <main className="admin-page">
+    {view === 'admin' && <main className={`admin-page${!adminUnlocked ? ' admin-entry' : ''}`}>
       <div className="admin-top"><div><div className="eyebrow">VNOVA TCG / STUDIO</div><h1>Tu panel de administración</h1><p>Elegí una sección para trabajar. Tus rifas y pagos, en un solo lugar.</p></div><div className="admin-badge"><LockKeyhole size={16}/> Acceso con clave</div></div>
       {!adminUnlocked ? <section className="admin-login"><div className="admin-login-icon"><LockKeyhole size={26}/></div><h2>Entrá a tu estudio</h2><p>Ingresá tu PIN de seis dígitos.</p><form onSubmit={event => void unlockAdmin(event)} className="form-grid"><label>Ingresa el PIN<input type="password" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required value={adminPin} onChange={event => setAdminPin(event.target.value.replace(/\D/g, ''))} autoComplete="off" placeholder="6 dígitos" /></label><button className="button primary full" disabled={busy || adminPin.length !== 6}>{busy ? 'Verificando...' : 'Ingresar al panel'} <ArrowRight size={17}/></button></form></section> : adminDetailId ? <AdminRaffleDetail id={adminDetailId} token={adminToken} onBack={closeAdminRaffle} onReview={setReviewReservationId} onChange={() => { void loadAdmin(); void loadRaffles(); void loadWinners(); }}/> : <>
         <div className="admin-stats"><div><small>RIFAS</small><strong>{adminRaffles.length}</strong><span>Creadas en el sistema</span></div><div><small>RESERVAS ACTIVAS</small><strong>{activeHolds.length}</strong><span>Con vencimiento</span></div><div><small>BOLETOS APARTADOS</small><strong>{heldTickets}</strong><span>Pendientes de confirmar</span></div></div>
