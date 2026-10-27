@@ -318,7 +318,7 @@
 /* Quiet banner and an unboxed purchase guide. */
 .collection-about {background:#171020;}
 .how-section .how-inner {background:transparent;box-shadow:none;border:0;}
-.current-raffle {background-size:auto, min(100vw,1680px) auto;background-color:#120e1d;}
+.current-raffle {background-size:100% 100%,cover;background-position:center;background-color:#120e1d;}
 @media(min-width:801px) {
  .current-raffle .current-raffle-image {max-width:360px;padding:12px;}
 }
