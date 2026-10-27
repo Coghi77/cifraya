@@ -267,3 +267,20 @@
   }
   #root .detail-page .package-offers .hold-countdown{font-size:14px;}
 }
+
+/* Digital passes have real transparent ticket notches, not painted circles. */
+#root .ticket-pass {background:transparent;border:0;border-radius:0;box-shadow:none;overflow:visible;filter:drop-shadow(0 12px 20px #0003);}
+#root .ticket-pass .ticket-main {
+  border-radius:12px 12px 0 0;padding:22px 26px 24px;
+  mask:radial-gradient(circle at 0 100%,transparent 12px,#000 12.5px) left / 51% 100% no-repeat,radial-gradient(circle at 100% 100%,transparent 12px,#000 12.5px) right / 51% 100% no-repeat;
+}
+#root .ticket-pass .ticket-stub {
+  border:0;border-radius:0 0 12px 12px;padding:24px 26px 22px;
+  mask:radial-gradient(circle at 0 0,transparent 12px,#000 12.5px) left / 51% 100% no-repeat,radial-gradient(circle at 100% 0,transparent 12px,#000 12.5px) right / 51% 100% no-repeat;
+}
+#root .ticket-pass .ticket-stub::before {
+  content:'';left:22px;right:22px;top:0;width:auto;height:2px;border-radius:0;
+  background:repeating-linear-gradient(90deg,#d6b7ef99 0 7px,transparent 7px 13px);
+}
+#root .ticket-pass .ticket-stub::after {display:none;}
+@media(max-width:480px){#root .ticket-pass .ticket-main{padding:18px 20px 22px;}#root .ticket-pass .ticket-stub{padding:22px 20px 20px;}}
