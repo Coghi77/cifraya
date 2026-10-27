@@ -338,3 +338,23 @@
 .manual-save-spinner {width:14px;height:14px;border:2px solid #b48ad744;border-top-color:#e9ceff;border-radius:50%;animation:manual-saving .8s linear infinite;}
 @keyframes manual-saving {to {transform:rotate(360deg);}}
 @media(prefers-reduced-motion:reduce) {.manual-save-spinner {animation:none;}}
+
+/* Keep the outer surface defined; inner glass panels have no colored outlines. */
+main.detail-page {
+  border:1px solid rgb(255 255 255 / 12%);
+  box-shadow:0 20px 60px rgb(0 0 0 / 18%);
+}
+main.detail-page :is(.detail-image,.detail-side,.raffle-progress,.ticket-number-highlight,.selection-modes,.manual-selection-summary,.selection-result,.info-strip) {
+  border:0;
+}
+main.detail-page .detail-image {
+  box-shadow:0 16px 36px rgb(0 0 0 / 20%);
+}
+main.detail-page .detail-side {
+  background:linear-gradient(145deg,rgb(51 36 65 / 78%),rgb(29 21 39 / 90%));
+  backdrop-filter:blur(14px);
+  box-shadow:0 18px 45px rgb(0 0 0 / 18%);
+}
+main.detail-page .raffle-progress {background:rgb(255 255 255 / 4%);}
+main.detail-page .ticket-number-highlight {background:rgb(180 128 225 / 10%);}
+main.detail-page .sticker-cards .sticker-card .sticker-card-includes {border:0;}
