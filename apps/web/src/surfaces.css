@@ -137,3 +137,25 @@
   .site-header nav button{font-size:14px;padding:13px 18px 13px 32px;min-height:48px;}
 }
 @media(prefers-reduced-motion:reduce){.site-header nav button{transition:none;}}
+
+/* One continuous backdrop, shared by every homepage section. */
+#root:has(.home-page) {position:relative;isolation:isolate;background:transparent;}
+#root:has(.home-page)::before {
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(#120e1d66,#120e1d66),url('/collection/matte-calligraphy.webp') center / cover no-repeat,#120e1d;
+}
+.home-page,
+.home-page .current-raffle,
+.home-page .collection-home,
+.home-page .anniversary-parade,
+.home-page .featured-cards,
+#root:has(.home-page) .site-footer {
+  background:transparent;border:0;box-shadow:none;
+}
+.home-page .current-raffle::before,
+.home-page .featured-cards::before,
+.home-page .anniversary-parade::before,
+.home-page .featured-orbit {display:none;}
+@media(max-width:800px){
+  #root:has(.home-page)::before{background-size:100% 100%,auto 100%;background-position:center;}
+}

@@ -585,7 +585,7 @@ export default function App() {
 
     {error && <div className="vn-global-notice"><Confirmation variant="error" message={error} onClose={() => setError('')}/></div>}
 
-    {view === 'home' && <main>
+    {view === 'home' && <main className="home-page">
       {featured ? <section className="current-raffle" aria-label="Rifa actual">
         <div className="mobile-raffle-intro"><span>RIFA DE POKÉMON</span><h2>{featured.title}</h2><p>{featured.prize}</p><button type="button" onClick={() => document.getElementById("home-ticket-options")?.scrollIntoView({block:"start",behavior:"smooth"})}>Elegir mis boletos <ArrowRight size={16}/></button></div>
         <div className="current-raffle-image">{coverOf(featured) ? <PrizePhoto photos={featured.photos} src={coverOf(featured)!} title={featured.prize}/> : <img className="current-logo" src="/vnova-logo.svg" alt=""/>}</div>
