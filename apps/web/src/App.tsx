@@ -604,7 +604,7 @@ export default function App() {
     </main>}
 
     {view === 'order' && <OrderDetail renderProof={(token, count, refresh) => <ProofUploader token={token} proofCount={count} onUploaded={refresh}/>}/> }
-    {view === 'lookup' && <main className="public-page">
+    {view === 'lookup' && <main className="public-page lookup-page">
       <div className="public-intro"><div className="eyebrow">VNOVA TCG / TUS BOLETOS</div><h1>Encontrá tus <em>números.</em></h1><p>Ingresá el código que recibiste al apartar tus números para consultar tu pase y su estado.</p></div>
       <div className="lookup-layout"><section className="lookup-card"><div className="public-icon"><Search size={27}/></div><h2>Buscar boletos</h2><p>Encontrá tu código en el correo de reserva o confirmación, o copialo desde tu pase.</p><form onSubmit={event => void lookupTickets(event)} className="form-grid"><label>Código de consulta<input value={lookupCode} onChange={event => setLookupCode(event.target.value)} placeholder="Pegá aquí tu código" autoComplete="off" spellCheck={false} required maxLength={48}/></label><button className="button dark full" disabled={busy || lookupCode.trim().length !== 48}>Consultar mi pase <ArrowRight size={17}/></button></form><span className="lookup-help"><LockKeyhole size={15}/> Solo quien tenga el código puede ver este pase.</span></section>
       <section className="lookup-result">{lookupResult ? <>
