@@ -139,8 +139,8 @@
 @media(prefers-reduced-motion:reduce){.site-header nav button{transition:none;}}
 
 /* One continuous backdrop, shared by every homepage section. */
-#root:has(.home-page) {position:relative;isolation:isolate;background:transparent;}
-#root:has(.home-page)::before {
+#root:has(:is(.home-page,main.detail-page)) {position:relative;isolation:isolate;background:transparent;}
+#root:has(:is(.home-page,main.detail-page))::before {
   content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
   background:linear-gradient(#120e1d66,#120e1d66),url('/collection/matte-calligraphy.webp') center / cover no-repeat,#120e1d;
 }
@@ -149,7 +149,7 @@
 .home-page .collection-home,
 .home-page .anniversary-parade,
 .home-page .featured-cards,
-#root:has(.home-page) .site-footer {
+#root:has(:is(.home-page,main.detail-page)) .site-footer {
   background:transparent;border:0;box-shadow:none;
 }
 .home-page .current-raffle::before,
@@ -157,7 +157,7 @@
 .home-page .anniversary-parade::before,
 .home-page .featured-orbit {display:none;}
 @media(max-width:800px){
-  #root:has(.home-page)::before{background-size:100% 100%,auto 100%;background-position:center;}
+  #root:has(:is(.home-page,main.detail-page))::before{background-size:100% 100%,auto 100%;background-position:center;}
 }
 
 /* Prize detail uses the same unframed image treatment as the homepage. */
@@ -213,3 +213,19 @@
 .site-header nav button.nav-active::after {right:8px;top:12px;bottom:14px;width:4px;box-shadow:-4px 4px 0 #ffffff35;}
 .site-header .battle-nav-icon {border-radius:0;clip-path:polygon(8px 0,24px 0,24px 4px,28px 4px,28px 8px,32px 8px,32px 24px,28px 24px,28px 28px,24px 28px,24px 32px,8px 32px,8px 28px,4px 28px,4px 24px,0 24px,0 8px,4px 8px,4px 4px,8px 4px);box-shadow:inset 3px 3px 0 var(--key-light),inset -3px -3px 0 #100c19;}
 .site-header .battle-ball::after {border-radius:0;width:8px;height:8px;box-shadow:0 0 0 3px #302333;}
+
+/* Raffle details sit directly on the shared calligraphy backdrop. */
+#root main.detail-page {
+  background:transparent;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+}
+#root main.detail-page .detail-image,
+#root main.detail-page .detail-image .prize-carousel-stage,
+#root main.detail-page .detail-image .prize-photo-open {
+  background:transparent;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+}
