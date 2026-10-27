@@ -23,3 +23,7 @@
 #root .vn-confirmation>button {text-shadow:none;}
 @media(hover:hover){#root :is(button,a.button):enabled:not(.brand):not(.prize-photo-open):not(.parade-card):not(.featured-slide):hover{filter:brightness(1.12);}}
 @media(prefers-reduced-motion:reduce){#root :is(button,a.button){transition:none;}}
+/* State colors must override the base control selector. */
+#root button[aria-pressed=true]:not(.sticker-card):not(.featured-slide):not(.featured-pagination button):not(.prize-photo-thumbnails button) {
+ --battle-top:#a54870!important;--battle-bottom:#74324f!important;--battle-edge:#e998b8!important;
+}
