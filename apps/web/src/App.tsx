@@ -575,7 +575,7 @@ export default function App() {
   const featured = raffles[0];
 
   return <div className={'app-shell ' + (view === 'admin' ? 'admin-shell' : '')}>
-    {view === 'admin' ? <header className="studio-header"><div><img src="/vnova-transparent.webp" alt="Vnova TCG"/><span>Administración<small>Rifas, ventas y pagos</small></span></div><button type="button" onClick={goHome}>Salir al sitio <ArrowRight size={16}/></button></header> : <SiteHeader onHome={goHome}>
+    {view === 'admin' ? <header className="studio-header"><div><img src="/vnova-transparent.webp" alt="Vnova TCG"/><span>Administración<small>Rifas, ventas y pagos</small></span></div><div className="studio-header-actions"><button type="button" onClick={goHome}>Salir al sitio <ArrowRight size={16}/></button>{adminUnlocked && <button type="button" onClick={() => { setAdminToken(''); setAdminPin(''); setAdminUnlocked(false); window.location.replace(ADMIN_PATH); }}>Cerrar sesión <LockKeyhole size={16}/></button>}</div></header> : <SiteHeader onHome={goHome}>
         <>
           <button className={view === 'home' || view === 'raffle' ? 'nav-active' : ''} onClick={goHome}><span className="battle-nav-icon battle-ball" aria-hidden="true"/><span>Inicio</span></button>
           <button className={view === 'lookup' ? 'nav-active' : ''} onClick={() => goPublic('lookup')}><span className="battle-nav-icon" aria-hidden="true"><Ticket size={20}/></span><span>Buscar boletos</span></button>
