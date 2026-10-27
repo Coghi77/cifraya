@@ -379,3 +379,14 @@ main.detail-page .sticker-cards .sticker-card .sticker-card-includes {border:0;}
 main.detail-page .random-values span,
 main.detail-page .selection-result .button,
 main.detail-page .selection-footer>.button {border:0;}
+
+/* Checkout surfaces match the borderless purchase controls. */
+.checkout-dialog .modal,
+.checkout-dialog input,
+.checkout-dialog .sinpe-payment-info,
+.checkout-dialog .sinpe-payment-info button,
+.checkout-dialog .checkout-proof-field,
+.checkout-dialog .checkout-proof-field>span,
+.checkout-dialog .button {border:0;}
+.checkout-dialog input {background:#100b19;box-shadow:inset 0 1px 4px #0003;}
+.checkout-dialog .checkout-proof-field {background:#ffffff05;}
