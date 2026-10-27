@@ -1,0 +1,21 @@
+/* Shared surface policy: no decorative colored outlines on panels or controls.
+   Border widths remain to avoid layout shifts. Focus, native choice controls,
+   SVG icons and loading indicators retain their functional indicators. */
+#root :is(div,section,article,aside,header,footer,nav,form,fieldset,details,summary,dialog,button,a,textarea,select,label,li),
+#root input:not([type=checkbox]):not([type=radio]),
+#root :is(.random-values span,.random-values button,.modal-numbers span,.detail-prize-list span,.sticker-card-includes,.ticket-number-highlight) {
+  border-color:transparent!important;
+}
+/* Keep the previously requested outer page boundary discreet. */
+#root main.detail-page {border-color:rgb(255 255 255 / 12%);}
+/* Ticket perforations and table separators are structural, not panel outlines. */
+#root .sticker-card-heading {border-bottom-color:rgb(255 255 255 / 18%)!important;}
+#root :is(th,td) {border-color:rgb(150 135 170 / 16%);}
+/* Selection is communicated through fill and the radio/check marker. */
+#root :is(.sticker-card[aria-pressed=true],.manual-grid button[aria-pressed=true]) {
+  box-shadow:none;
+}
+#root :is(button,a,input,textarea,select,summary):focus-visible {
+  outline:2px solid #cbb2e6;
+  outline-offset:3px;
+}
