@@ -365,3 +365,9 @@
 #root .admin-entry .admin-login h2 {margin-bottom:28px;}
 #root .admin-entry .admin-login-icon {background:transparent;box-shadow:none;}
 #root .admin-shell.admin-shell .admin-entry input {letter-spacing:.08em;}
+
+/* Studio entry header belongs to the continuous artwork, without a color band. */
+#root .admin-shell:has(.admin-entry) .studio-header {
+  background:transparent;border:0;box-shadow:none;
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+}
