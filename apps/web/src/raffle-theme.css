@@ -209,11 +209,12 @@
   .current-raffle .current-raffle-content {margin:24px 16px 0;padding:24px 18px;border-radius:20px;}
 }
 
-/* Clean purchase cards without ticket outlines or perforations. */
+/* Borderless tickets retain their perforated silhouette. */
 .current-raffle .prize-showcase-label span:last-child {margin-left:0;color:#e1c1f7;font-size:10px;}
 :is(.current-raffle,.detail-page) .sticker-cards .sticker-card {border:0;}
 .current-raffle .sticker-card::before,.current-raffle .sticker-card::after {display:none;}
-.current-raffle .sticker-cards .sticker-card .sticker-card-heading {border-bottom:0;}
+.current-raffle .sticker-cards .sticker-card .sticker-card-heading {border-bottom:1px dashed #a67dbb66;}
+.current-raffle .sticker-cards .sticker-card {mask-image:radial-gradient(circle at 0 59px,transparent 6px,#000 6.5px),radial-gradient(circle at 100% 59px,transparent 6px,#000 6.5px);mask-composite:intersect;}
 
 /* Matte ink textures blend quietly across public sections. */
 .current-raffle::before {background:linear-gradient(180deg,#120e1d 0%,transparent 18%,transparent 78%,#120e1d 100%);}
