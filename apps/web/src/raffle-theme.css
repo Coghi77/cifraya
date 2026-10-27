@@ -197,7 +197,7 @@
 
 /* Japanese night artwork: decoration stays behind the readable purchase panels. */
 .current-raffle {
-  background:linear-gradient(90deg,#110d1b26,#110d1b66),url('/collection/japanese-pokemon-night.webp') center center / cover no-repeat,#110d1b;
+  background:linear-gradient(180deg,#120e1d15,#120e1d30),url('/collection/matte-calligraphy.webp') center center / cover no-repeat,#110d1b;
 }
 .current-raffle::before {background:linear-gradient(180deg,#110d1b20 60%,#110d1b);mask-image:none;}
 .current-raffle .current-raffle-content {
@@ -214,3 +214,15 @@
 :is(.current-raffle,.detail-page) .sticker-cards .sticker-card {border:0;}
 .current-raffle .sticker-card::before,.current-raffle .sticker-card::after {display:none;}
 .current-raffle .sticker-cards .sticker-card .sticker-card-heading {border-bottom:0;}
+
+/* Matte ink textures blend quietly across public sections. */
+.current-raffle::before {background:linear-gradient(180deg,#120e1d 0%,transparent 18%,transparent 78%,#120e1d 100%);}
+.current-raffle .current-raffle-content {background:#191222ed;box-shadow:none;border-color:#82639133;}
+.current-raffle-image {background:#2b2036;box-shadow:0 16px 32px #0003;}
+.current-raffle-image::before,.current-raffle-image::after {display:none;}
+.featured-cards,.anniversary-parade {background:linear-gradient(180deg,#120e1d,transparent 22%,#120e1d44 75%,#120e1d),url('/collection/matte-waves.webp') center / cover no-repeat,#120e1d;}
+.featured-cards .featured-orbit {box-shadow:none;border-color:#9c78b01a;}
+@media(max-width:800px) {
+ .current-raffle {background-size:auto 760px;background-position:center top;}
+ .featured-cards,.anniversary-parade {background-position:35% center;}
+}
