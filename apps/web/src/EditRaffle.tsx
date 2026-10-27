@@ -57,18 +57,18 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
       <div className="edit-raffle-heading"><div><span className="eyebrow">CENTRO DE CONTROL</span><h2 id="edit-raffle-title">Editar rifa</h2></div><button type="button" onClick={onClose} disabled={busy} aria-label="Cerrar edición">×</button></div>
       {!isDraft && <p className="edit-raffle-note">Las tarjetas nuevas se aplican a futuras reservas. Los pedidos existentes conservan su precio y sus números. Los premios y la cantidad de números por boleto no cambian.</p>}
       <form className="form-grid" onSubmit={save}>
-        <label>Nombre de la rifa<input required minLength={3} maxLength={120} value={form.title} onChange={event => setForm({ ...form, title: event.target.value })}/></label>
-        {isDraft && <label>Identificador URL<input required pattern="[a-z0-9]+(-[a-z0-9]+)*" maxLength={80} value={form.slug} onChange={event => setForm({ ...form, slug: event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}/></label>}
+        <div className="studio-form-section"><h3>Datos de la rifa</h3><label>Nombre de la rifa<input required minLength={3} maxLength={120} value={form.title} onChange={event => setForm({ ...form, title: event.target.value })}/></label>
+        {isDraft && <label>Enlace de la rifa<input required pattern="[a-z0-9]+(-[a-z0-9]+)*" maxLength={80} value={form.slug} onChange={event => setForm({ ...form, slug: event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}/></label>}
         <label>Descripción<textarea maxLength={3000} rows={4} value={form.description} onChange={event => setForm({ ...form, description: event.target.value })}/></label>
-        {raffle.status!=='CLOSED' && <DrawScheduleEditor mode={form.drawMode} date={form.drawDate} onChange={(drawMode,drawDate)=>setForm({...form,drawMode,drawDate})}/>}
-        {isDraft && <>
+        </div>{raffle.status!=='CLOSED' && <DrawScheduleEditor mode={form.drawMode} date={form.drawDate} onChange={(drawMode,drawDate)=>setForm({...form,drawMode,drawDate})}/>}
+        {isDraft && <div className="studio-form-section"><h3>Premios, boletos y precios</h3>
           <PrizeEditor prizes={form.prizes} sources={form.prizeSources} onChange={(prizes, prizeSources) => setForm({ ...form, prizes, prizeSources })}/>
           <div className="form-row"><label>Precio por boleto (₡)<input required inputMode="numeric" pattern="[0-9]+" value={form.priceCrc} onChange={event => setForm({ ...form, priceCrc: event.target.value.replace(/\D/g, '') })}/></label><div className="select-field"><span>Cantidad de números</span><BrandSelect label="Cantidad de números" required value={form.numberCount} onChange={value => setForm({ ...form, numberCount: value })} options={numberCountOptions}/></div></div>
           <div className="inverted-settings"><label><input type="checkbox" checked={form.invertedEnabled} onChange={event => setForm({ ...form, invertedEnabled: event.target.checked, invertedPrizeEnabled: event.target.checked && form.invertedPrizeEnabled })}/> Ofrecer números invertidos adicionales por el doble del precio</label></div>
           <label>Números incluidos por boleto<input required type="number" min="1" max="20" step="1" value={form.numbersPerSticker} onChange={event => setForm({ ...form, numbersPerSticker: event.target.value })}/></label>
           <StickerCardEditor cards={cards} onChange={setCards} numbersPerSticker={Number(form.numbersPerSticker)}/>
-        </>}
-        {raffle.status === 'LIVE' && <StickerCardEditor cards={cards} onChange={setCards} numbersPerSticker={raffle.numbersPerSticker || 1}/>}
+        </div>}
+        {raffle.status === 'LIVE' && <div className="studio-form-section"><h3>Tarjetas de compra</h3><p>Los cambios de precio se aplican a las nuevas reservas.</p><StickerCardEditor cards={cards} onChange={setCards} numbersPerSticker={raffle.numbersPerSticker || 1}/></div>}
         {error && <Confirmation variant="error" message={error}/>}
         <div className="edit-raffle-actions"><button type="button" onClick={onClose} disabled={busy}>Cancelar</button><button type="submit" disabled={busy}>{busy ? 'Guardando...' : 'Guardar cambios'}</button></div>
       </form>

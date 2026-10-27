@@ -69,3 +69,17 @@
 .admin-entry input::placeholder {letter-spacing:.05em;font-size:15px;}
 .admin-shell.admin-shell .admin-entry .button {min-height:50px;border-radius:12px;background:linear-gradient(110deg,#8c4cc5,#6b3699)!important;}
 @media(max-width:520px){.admin-shell.admin-shell .admin-entry .admin-login{padding:32px 24px}.admin-entry .admin-login h2{font-size:27px}.admin-shell.admin-shell .admin-entry{padding:28px 16px 48px;}}
+
+/* Clear navigation and a readable rhythm for creation and editing. */
+.create-section-nav {display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px;}
+.create-section-nav a {padding:10px 14px;background:#4b305f;color:#f8efff;text-decoration:none;border-radius:10px;font-size:13px;min-height:40px;display:flex;align-items:center;}
+.studio-form-section {scroll-margin-top:24px;}
+.admin-shell .studio-form-section h3 {font-size:21px;margin-bottom:4px;}
+.admin-shell .studio-create-form {gap:28px;}
+.admin-shell .edit-raffle-panel {width:min(760px,calc(100% - 32px));}
+.admin-shell .edit-raffle-panel .form-grid {gap:24px;}
+.admin-shell .edit-raffle-actions {position:sticky;bottom:0;background:#251b32;padding:16px 0 0;display:flex;justify-content:flex-end;gap:12px;}
+.admin-shell .admin-raffle-heading {align-items:flex-start;}
+.admin-shell .admin-raffle-actions {display:flex;gap:10px;}
+.admin-shell .admin-photo-section {margin-top:20px;padding:16px;border-radius:12px;}
+@media(max-width:520px){.create-section-nav{display:grid;grid-template-columns:1fr 1fr}.create-section-nav a{font-size:12px}.admin-shell .admin-raffle-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}.admin-raffle-actions .state{grid-column:1/-1}}
