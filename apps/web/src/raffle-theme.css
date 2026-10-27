@@ -243,3 +243,16 @@
   .how-section .how-inner {background:#171321bd;}
   .collection-about {background-position:center,right center;}
 }
+
+/* Choose a ticket first, then choose how its numbers are assigned. */
+.detail-page .package-offers {padding-bottom:20px;margin-bottom:0;border-bottom:0;}
+.detail-page .selection-modes {margin:4px 0 24px;}
+.detail-page .sticker-cards {gap:16px;margin-top:14px;margin-bottom:12px;}
+.detail-page .sticker-cards .sticker-card {
+ padding:15px 14px 14px;border:0;border-radius:14px;
+ mask-image:radial-gradient(circle at 0 59px,transparent 6px,#000 6.5px),radial-gradient(circle at 100% 59px,transparent 6px,#000 6.5px);mask-composite:intersect;
+}
+.detail-page .sticker-cards .sticker-card-heading {min-height:44px;padding-bottom:12px;border-bottom:1px dashed #a67dbb66;}
+.detail-page .sticker-cards .sticker-card .sticker-card-includes {margin-top:12px;padding:4px 0;background:none;border:0;}
+.detail-page .sticker-cards .sticker-card .sticker-card-includes strong {font-size:23px;color:#ebcaff;}
+.detail-page .selection-result {margin-top:20px;}
