@@ -374,3 +374,8 @@ main.detail-page .sticker-cards .sticker-card .sticker-card-includes {border:0;}
  }
  .featured-cards,.anniversary-parade {background-size:100% 100%,cover;background-position:center;}
 }
+
+/* Selected numbers and purchase actions use clean, borderless surfaces. */
+main.detail-page .random-values span,
+main.detail-page .selection-result .button,
+main.detail-page .selection-footer>.button {border:0;}
