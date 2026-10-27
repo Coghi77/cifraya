@@ -73,3 +73,16 @@
 #root .admin-shell .admin-sale-dialog fieldset>label {margin-top:14px;}
 #root .admin-shell .admin-sale-dialog fieldset>legend+label {margin-top:0;}
 #root .admin-shell .admin-detail-heading {flex-wrap:wrap;gap:14px;}
+
+/* The featured prize is a standalone photo, without a surrounding card. */
+.current-raffle .current-raffle-image {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.current-raffle .current-raffle-image .prize-carousel-stage,
+.current-raffle .current-raffle-image .prize-photo-open {
+  border-radius: 20px;
+  overflow: hidden;
+}
