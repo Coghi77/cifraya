@@ -198,3 +198,18 @@
 .site-header .battle-ball{position:relative;background:linear-gradient(#f1b6c7 0 45%,#302333 45% 57%,#f4edf1 57%);}
 .site-header .battle-ball::after{content:'';width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px #302333;}
 @media(max-width:800px){.site-header nav button{min-height:54px;width:100%;text-align:left;font-size:15px;}.site-header nav.mobile-menu-open{gap:12px;}}
+
+/* Stepped pixel corners and hard bevels, without diagonal cut edges. */
+.site-header nav button {
+  padding:10px 21px 14px 10px;
+  clip-path:polygon(0 8px,4px 8px,4px 4px,8px 4px,8px 0,calc(100% - 8px) 0,calc(100% - 8px) 4px,calc(100% - 4px) 4px,calc(100% - 4px) 8px,100% 8px,100% calc(100% - 8px),calc(100% - 4px) calc(100% - 8px),calc(100% - 4px) calc(100% - 4px),calc(100% - 8px) calc(100% - 4px),calc(100% - 8px) 100%,8px 100%,8px calc(100% - 4px),4px calc(100% - 4px),4px calc(100% - 8px),0 calc(100% - 8px));
+}
+.site-header nav button,
+.site-header nav button.nav-active,
+.site-header nav button:hover {
+  background:linear-gradient(180deg,var(--key-light) 0 4px,var(--key-top) 4px 52%,var(--key-bottom) 52% calc(100% - 8px),#302333 calc(100% - 8px) calc(100% - 4px),#16111e calc(100% - 4px));
+  box-shadow:inset 4px 0 0 var(--key-light),inset 8px 0 0 #ffffff18,inset -4px 0 0 #16111e,inset -8px 0 0 #0003;
+}
+.site-header nav button.nav-active::after {right:8px;top:12px;bottom:14px;width:4px;box-shadow:-4px 4px 0 #ffffff35;}
+.site-header .battle-nav-icon {border-radius:0;clip-path:polygon(8px 0,24px 0,24px 4px,28px 4px,28px 8px,32px 8px,32px 24px,28px 24px,28px 28px,24px 28px,24px 32px,8px 32px,8px 28px,4px 28px,4px 24px,0 24px,0 8px,4px 8px,4px 4px,8px 4px);box-shadow:inset 3px 3px 0 var(--key-light),inset -3px -3px 0 #100c19;}
+.site-header .battle-ball::after {border-radius:0;width:8px;height:8px;box-shadow:0 0 0 3px #302333;}
