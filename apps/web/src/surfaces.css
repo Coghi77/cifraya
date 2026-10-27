@@ -86,3 +86,13 @@
   border-radius: 20px;
   overflow: hidden;
 }
+
+/* Let the prize cutout share the space of the purchase panel. */
+.current-raffle .current-raffle-image {max-width:none;width:100%;align-self:stretch;display:flex;align-items:center;}
+.current-raffle .current-raffle-image .prize-photo {width:100%;}
+.current-raffle .current-raffle-image .prize-carousel-stage {height:auto;aspect-ratio:1;background:transparent;border:0;border-radius:0;}
+.current-raffle .current-raffle-image .prize-photo-open {background:transparent;border-radius:0;box-shadow:none;}
+.current-raffle .prize-photo-hint {display:none;}
+.current-raffle .prize-photo-open>img {object-fit:contain;padding:0;}
+@media(min-width:801px){.current-raffle {grid-template-columns:minmax(0,1fr) minmax(0,1fr);}}
+@media(max-width:800px){.current-raffle .current-raffle-image {width:calc(100% - 40px);max-width:420px;margin:0 auto;}}
