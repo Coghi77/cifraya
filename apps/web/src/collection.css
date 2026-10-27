@@ -18,7 +18,7 @@
 .anniversary-parade .parade-card{display:block;flex:0 0 245px;width:245px;min-width:245px;height:342px;padding:0;border:0;border-radius:12px;background:#241b35;cursor:zoom-in;box-shadow:0 16px 28px #0006;transition:transform .25s,box-shadow .25s;transform:rotate(-3deg)}
 .anniversary-parade .parade-card:nth-child(even){transform:rotate(3deg)}
 .anniversary-parade .parade-card img{display:block;width:100%;height:100%;object-fit:contain;border-radius:12px}
-.anniversary-parade .parade-card:hover,.anniversary-parade .parade-card:focus-visible{transform:scale(1.1);box-shadow:0 18px 40px #a965ff55;z-index:1}
+.anniversary-parade .parade-card:hover,.anniversary-parade .parade-card:focus-visible{transform:scale(1.1);box-shadow:0 16px 28px #0006;z-index:1}
 .anniversary-parade .parade-window{padding:48px 0 55px}
 .anniversary-parade .parade-window:hover .parade-track{animation-play-state:running}
 .anniversary-parade .parade-window:focus-within .parade-track{animation-play-state:paused}
