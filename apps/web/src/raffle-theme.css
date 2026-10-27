@@ -194,3 +194,17 @@
 .checkout-dialog .sinpe-payment-info .vn-confirmation-error .vn-confirmation-icon,.sinpe-payment-info .vn-confirmation-error .vn-confirmation-icon {color:#b91c1c;}
 .sinpe-payment-info .vn-confirmation-wave {top:22px;}
 .sinpe-payment-info .vn-confirmation button {min-width:44px;min-height:44px;flex-shrink:0;}
+
+/* Japanese night artwork: decoration stays behind the readable purchase panels. */
+.current-raffle {
+  background:linear-gradient(90deg,#110d1b26,#110d1b66),url('/collection/japanese-pokemon-night.webp') center center / cover no-repeat,#110d1b;
+}
+.current-raffle::before {background:linear-gradient(180deg,#110d1b20 60%,#110d1b);mask-image:none;}
+.current-raffle .current-raffle-content {
+  background:#171020ed;border:1px solid #ac7fc34d;border-radius:24px;
+  padding:28px;box-shadow:0 20px 60px #08040c55;
+}
+@media(max-width:800px) {
+  .current-raffle {background-size:auto 650px;background-position:center top;background-color:#110d1b;}
+  .current-raffle .current-raffle-content {margin:24px 16px 0;padding:24px 18px;border-radius:20px;}
+}
