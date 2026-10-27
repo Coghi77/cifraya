@@ -15,8 +15,8 @@
     "@fastify/static": "^10.1.5",
     "@prisma/client": "^6.16.0",
     "exceljs": "^4.4.0",
-    "fastify": "^5.10.0",
-    "zod": "^3.25.76"
+    "fastify": "^5.12.7",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "tsx": "^4.23.1",

@@ -10,6 +10,6 @@ export default function CollectionHome(){
  return <div className={'collection-home'+(reduced?' motion-paused':'')}>
    <AnniversaryCarousel/>
    <FeaturedCards/>
-   <section className="collection-about"><img src="/vnova-transparent.png" alt="Vnova TCG" loading="lazy"/><div><span className="collection-kicker">SEGUÍ EXPLORANDO</span><h2>Tu próxima historia.</h2><p>El universo TCG tiene mucho más por descubrir.</p></div><a href="#coleccion">Explorar las cartas <ArrowUpRight size={18}/></a></section>
+   <section className="collection-about"><img src="/vnova-transparent.webp" alt="Vnova TCG" loading="lazy"/><div><span className="collection-kicker">SEGUÍ EXPLORANDO</span><h2>Tu próxima historia.</h2><p>El universo TCG tiene mucho más por descubrir.</p></div><a href="#coleccion">Explorar las cartas <ArrowUpRight size={18}/></a></section>
  </div>;
 }

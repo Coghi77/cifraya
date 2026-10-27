@@ -52,3 +52,24 @@
  background:#1a1024ed;color:#fff;box-sizing:border-box;
 }
 #root .admin-shell :is(.admin-photo,.pending-photo)>button svg {display:block;width:16px;height:16px;margin:0;flex-shrink:0;}
+
+/* Audit fixes: stable mobile summaries and breathing room around actions. */
+@media(max-width:800px){
+ .admin-shell.admin-shell .admin-stats {grid-template-columns:repeat(3,minmax(0,1fr));}
+ .admin-shell.admin-shell .admin-stats>div:last-child {grid-column:auto;}
+ .admin-shell.admin-shell .admin-stats>div {min-width:0;padding:12px 10px;}
+ .admin-shell.admin-shell .admin-stats small {font-size:9px;letter-spacing:.04em;overflow-wrap:anywhere;}
+ .admin-shell.admin-shell .admin-stats span {font-size:11px;line-height:1.5;}
+}
+#root .selection-footer {margin-top:20px;padding-top:20px;}
+#root .selection-result>p {margin-top:14px;line-height:1.6;}
+#root .manual-pagination {margin:16px 0;gap:12px;}
+#root .manual-numbers>p {line-height:1.6;overflow-wrap:anywhere;}
+#root .admin-shell .edit-raffle-actions {gap:12px;padding:16px 0;margin-top:12px;}
+#root .admin-shell :is(.admin-raffle-info,.reservation-person,.participant-contact) {min-width:0;overflow-wrap:anywhere;}
+
+/* Fieldsets use normal flow so legends stay inside; restore spacing between controls. */
+#root .admin-shell fieldset>:is(label,.brand-select,.admin-sale-mode,.admin-sale-selection,button)+:is(label,.brand-select,div,button) {margin-top:14px;}
+#root .admin-shell .admin-sale-dialog fieldset>label {margin-top:14px;}
+#root .admin-shell .admin-sale-dialog fieldset>legend+label {margin-top:0;}
+#root .admin-shell .admin-detail-heading {flex-wrap:wrap;gap:14px;}

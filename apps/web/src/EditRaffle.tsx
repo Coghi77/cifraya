@@ -27,6 +27,12 @@ export default function EditRaffle({ raffle, token, onClose, onSaved, onUnauthor
   const isDraft = raffle.status === 'DRAFT';
 
   useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, []);
+
+  useEffect(() => {
     const onEscape = (event: KeyboardEvent) => { if (event.key === 'Escape' && !busy) onClose(); };
     document.addEventListener('keydown', onEscape);
     return () => document.removeEventListener('keydown', onEscape);

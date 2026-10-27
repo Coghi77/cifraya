@@ -21,7 +21,7 @@ export default function SiteHeader({children,onHome}:{children:ReactNode;onHome:
   return()=>{query.removeEventListener('change',close);window.removeEventListener('popstate',close);};
  },[]);
  return <header ref={header} className="site-header" onBlur={event=>{if(!event.currentTarget.contains(event.relatedTarget as Node))setOpen(false);}}>
-  <button className="brand" onClick={()=>{setOpen(false);onHome();}} aria-label="Vnova TCG, ir al inicio"><img src="/vnova-transparent.png" alt="Logo de Vnova TCG" className="brand-logo"/></button>
+  <button className="brand" onClick={()=>{setOpen(false);onHome();}} aria-label="Vnova TCG, ir al inicio"><img src="/vnova-transparent.webp" alt="Logo de Vnova TCG" className="brand-logo"/></button>
   <button ref={toggle} type="button" className="mobile-menu-toggle" aria-expanded={open} aria-controls="site-navigation" aria-label={open?'Cerrar menú':'Abrir menú'} onClick={()=>setOpen(value=>!value)}>{open?<X size={26}/>:<Menu size={26}/>}</button>
   <nav id="site-navigation" className={open?'mobile-menu-open':''} aria-label="Navegación principal" onClick={event=>{if((event.target as Element).closest('button,a'))setOpen(false);}}>{children}</nav>
  </header>;
