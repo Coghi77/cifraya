@@ -139,8 +139,8 @@
 @media(prefers-reduced-motion:reduce){.site-header nav button{transition:none;}}
 
 /* One continuous backdrop, shared by every homepage section. */
-#root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page)) {position:relative;isolation:isolate;background:transparent;}
-#root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page))::before {
+#root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page,.winners-page)) {position:relative;isolation:isolate;background:transparent;}
+#root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page,.winners-page))::before {
   content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
   background:linear-gradient(#120e1d66,#120e1d66),url('/collection/matte-calligraphy.webp') center / cover no-repeat,#120e1d;
 }
@@ -149,7 +149,7 @@
 .home-page .collection-home,
 .home-page .anniversary-parade,
 .home-page .featured-cards,
-#root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page)) .site-footer {
+#root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page,.winners-page)) .site-footer {
   background:transparent;border:0;box-shadow:none;
 }
 .home-page .current-raffle::before,
@@ -157,7 +157,7 @@
 .home-page .anniversary-parade::before,
 .home-page .featured-orbit {display:none;}
 @media(max-width:800px){
-  #root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page))::before{background-size:100% 100%,auto 100%;background-position:center;}
+  #root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page,.winners-page))::before{background-size:100% 100%,auto 100%;background-position:center;}
 }
 
 /* Prize detail uses the same unframed image treatment as the homepage. */
@@ -260,7 +260,7 @@
 #root .hold-countdown strong {color:#fff;font-weight:900;font-variant-numeric:tabular-nums;}
 @media(max-width:800px){
   /* The center of the wide artwork is empty: frame its calligraphy on phones. */
-  #root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page))::before {
+  #root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page,.winners-page))::before {
     background-image:linear-gradient(#120e1d18,#120e1d30),url('/collection/matte-calligraphy.webp');
     background-size:100% 100%,auto 100%;
     background-position:center,left center;
@@ -337,4 +337,19 @@
  #root .order-page .order-card{padding:22px 18px;margin-left:3px;margin-right:3px;}
  #root .order-page .order-facts{grid-template-columns:1fr;gap:18px;}
  #root .order-page .order-heading h2{font-size:22px;}
+}
+
+/* Results share the backdrop and classic game-menu framing. */
+#root .winners-page {background:transparent;}
+#root .winners-page :is(.winners-empty,.podium-section,.podium-detail) {
+  background:#21172de8;border:0;border-radius:0;
+  box-shadow:0 -3px #a68bbd,0 3px #100c18,-3px 0 #a68bbd,3px 0 #100c18,0 0 0 6px #392746,6px 6px 0 3px #100c18;
+}
+#root .winners-page .winner-symbol {border-radius:0;background:transparent;box-shadow:none;}
+#root .winners-page .winners-empty h2 {font-size:clamp(24px,3vw,40px);line-height:1.2;}
+#root .winners-page .winners-empty .button {min-height:46px;padding:12px 20px;line-height:1.4;}
+#root .winners-page :is(.podium-heading,.podium-detail) {overflow-wrap:anywhere;}
+@media(max-width:600px){
+ #root .winners-page :is(.winners-empty,.podium-section){margin-left:3px;margin-right:3px;padding:26px 20px;}
+ #root .winners-page .winners-empty{gap:24px;}
 }
