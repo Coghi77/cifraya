@@ -184,3 +184,8 @@ Correo inicial unificado: RESERVED explica reserva, carga pendiente y revision c
 `n- FeaturedCards.tsx: selección editorial de cuatro cartas (Mew/Mewtwo Futuristic Rare y Pikachu ex 149/150), imagen grande, controles manuales y miniaturas; reutiliza la galería ampliada y las URLs oficiales de anniversaryCards.json.
 
 - `FeaturedCards.tsx` carga las cartas con `featured:true` del JSON de `CardCollection` publicado. Se editan y ordenan en `CardCatalogAdmin`; desmarcar todas oculta la sección. La migración 20261027000000 conserva las cuatro cartas iniciales como una colección editable, sin modificar rifas ni ventas.
+
+## Panel de administración (2026-10-26)
+- `admin-theme.css`, cargado después del tema público, unifica superficies, formularios, selectores, estados y ventanas bajo `.admin-shell`; no afecta la tienda.
+- El panel usa encabezado estático propio y cuatro espacios: Tus rifas, Nueva rifa, Pagos y reservas, Cartas destacadas. Los formularios ocultos conservan su estado al cambiar de sección.
+- Nueva rifa se organiza en cinco bloques: información, premios, boletos/precios, fecha/opciones y fotos. Las reglas de reservas, pagos y publicación no cambian.
