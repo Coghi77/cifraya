@@ -577,9 +577,9 @@ export default function App() {
   return <div className={'app-shell ' + (view === 'admin' ? 'admin-shell' : '')}>
     {view === 'admin' ? <header className="studio-header"><div><img src="/vnova-transparent.webp" alt="Vnova TCG"/><span>Administración<small>Rifas, ventas y pagos</small></span></div><button type="button" onClick={goHome}>Salir al sitio <ArrowRight size={16}/></button></header> : <SiteHeader onHome={goHome}>
         <>
-          <button className={view === 'home' || view === 'raffle' ? 'nav-active' : ''} onClick={goHome}>Inicio</button>
-          <button className={view === 'lookup' ? 'nav-active' : ''} onClick={() => goPublic('lookup')}>Buscar boletos</button>
-          <button className={view === 'winners' ? 'nav-active' : ''} onClick={() => goPublic('winners')}>Ganadores</button>
+          <button className={view === 'home' || view === 'raffle' ? 'nav-active' : ''} onClick={goHome}><span className="battle-nav-icon battle-ball" aria-hidden="true"/><span>Inicio</span></button>
+          <button className={view === 'lookup' ? 'nav-active' : ''} onClick={() => goPublic('lookup')}><span className="battle-nav-icon" aria-hidden="true"><Ticket size={20}/></span><span>Buscar boletos</span></button>
+          <button className={view === 'winners' ? 'nav-active' : ''} onClick={() => goPublic('winners')}><span className="battle-nav-icon" aria-hidden="true"><Trophy size={20}/></span><span>Ganadores</span></button>
         </>
     </SiteHeader>}
 

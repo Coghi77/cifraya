@@ -172,3 +172,29 @@
 }
 .detail-page .detail-image .prize-photo-hint {display:none;}
 .detail-page .detail-image .prize-photo-open>img {object-fit:contain;padding:0;}
+
+/* Battle-menu keys inspired by the supplied handheld Pokémon menus. */
+.site-header nav button {
+  --key-top:#ad466d;--key-bottom:#71304c;--key-light:#ee91b0;
+  display:flex;align-items:center;gap:10px;min-height:54px;
+  padding:8px 20px 12px 8px;border-radius:0;
+  background:linear-gradient(180deg,var(--key-light) 0 3px,var(--key-top) 3px 56%,var(--key-bottom) 56% calc(100% - 5px),#24212c calc(100% - 5px));
+  clip-path:polygon(8px 0,calc(100% - 9px) 0,100% 9px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0 calc(100% - 8px),0 8px);
+  color:#fff;font-size:14px;text-shadow:2px 2px 0 #292330;
+  box-shadow:inset 3px 0 0 #ffffff36,inset -4px 0 0 #17121e;
+}
+.site-header nav button:nth-child(2){--key-top:#328e98;--key-bottom:#225a65;--key-light:#85dce0;}
+.site-header nav button:nth-child(3){--key-top:#8861b2;--key-bottom:#543b73;--key-light:#c7a3e8;}
+.site-header nav button::before{display:none;}
+.site-header nav button.nav-active,
+.site-header nav button:hover {
+  background:linear-gradient(180deg,var(--key-light) 0 3px,var(--key-top) 3px 56%,var(--key-bottom) 56% calc(100% - 5px),#24212c calc(100% - 5px));
+  color:#fff;box-shadow:inset 3px 0 0 #ffffff36,inset -4px 0 0 #17121e;
+}
+.site-header nav button.nav-active::after{content:'';position:absolute;right:6px;top:10px;bottom:10px;width:3px;background:#fff;}
+.site-header nav button:hover{filter:brightness(1.12);}
+.site-header nav button:active{transform:translateY(2px);}
+.site-header .battle-nav-icon{flex:0 0 32px;width:32px;height:32px;display:grid;place-items:center;background:#25212f;border-radius:50%;box-shadow:inset 2px 2px 0 var(--key-light),inset -2px -2px 0 #100c19;color:var(--key-light);}
+.site-header .battle-ball{position:relative;background:linear-gradient(#f1b6c7 0 45%,#302333 45% 57%,#f4edf1 57%);}
+.site-header .battle-ball::after{content:'';width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px #302333;}
+@media(max-width:800px){.site-header nav button{min-height:54px;width:100%;text-align:left;font-size:15px;}.site-header nav.mobile-menu-open{gap:12px;}}
