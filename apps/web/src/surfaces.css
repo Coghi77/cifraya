@@ -139,8 +139,8 @@
 @media(prefers-reduced-motion:reduce){.site-header nav button{transition:none;}}
 
 /* One continuous backdrop, shared by every homepage section. */
-#root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page,.winners-page)) {position:relative;isolation:isolate;background:transparent;}
-#root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page,.winners-page))::before {
+#root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page,.winners-page,.admin-entry)) {position:relative;isolation:isolate;background:transparent;}
+#root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page,.winners-page,.admin-entry))::before {
   content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
   background:linear-gradient(#120e1d66,#120e1d66),url('/collection/matte-calligraphy.webp') center / cover no-repeat,#120e1d;
 }
@@ -149,7 +149,7 @@
 .home-page .collection-home,
 .home-page .anniversary-parade,
 .home-page .featured-cards,
-#root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page,.winners-page)) .site-footer {
+#root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page,.winners-page,.admin-entry)) .site-footer {
   background:transparent;border:0;box-shadow:none;
 }
 .home-page .current-raffle::before,
@@ -157,7 +157,7 @@
 .home-page .anniversary-parade::before,
 .home-page .featured-orbit {display:none;}
 @media(max-width:800px){
-  #root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page,.winners-page))::before{background-size:100% 100%,auto 100%;background-position:center;}
+  #root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page,.winners-page,.admin-entry))::before{background-size:100% 100%,auto 100%;background-position:center;}
 }
 
 /* Prize detail uses the same unframed image treatment as the homepage. */
@@ -260,7 +260,7 @@
 #root .hold-countdown strong {color:#fff;font-weight:900;font-variant-numeric:tabular-nums;}
 @media(max-width:800px){
   /* The center of the wide artwork is empty: frame its calligraphy on phones. */
-  #root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page,.winners-page))::before {
+  #root:has(:is(.home-page,main.detail-page,.lookup-page,.order-page,.winners-page,.admin-entry))::before {
     background-image:linear-gradient(#120e1d18,#120e1d30),url('/collection/matte-calligraphy.webp');
     background-size:100% 100%,auto 100%;
     background-position:center,left center;
@@ -353,3 +353,7 @@
  #root .winners-page :is(.winners-empty,.podium-section){margin-left:3px;margin-right:3px;padding:26px 20px;}
  #root .winners-page .winners-empty{gap:24px;}
 }
+
+/* Studio entry uses the same fixed calligraphy layer as public pages. */
+#root .admin-shell.admin-shell:has(.admin-entry) {background:transparent;}
+#root .admin-shell.admin-shell .admin-entry {background:transparent;}
