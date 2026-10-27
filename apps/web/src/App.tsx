@@ -142,7 +142,7 @@ function TicketPass({ name, title, values, baseValues, includesInverted, width, 
   return <article className="ticket-pass" aria-label={'Boleto de ' + name}>
     <div className="ticket-main">
       <div className="ticket-meta"><span>VNOVA TCG / BOLETO DIGITAL</span><span className="ticket-status">{status}</span></div>
-      <div className="ticket-star"><Sparkles size={30} strokeWidth={1.5} /></div>
+
       <div className="ticket-person"><small>A NOMBRE DE</small><strong>{name}</strong></div>
       <div className="ticket-quantity"><span>{count}</span><div>BOLETO{count === 1 ? '' : 'S'}<small>{title}</small></div></div>
     </div>
@@ -601,14 +601,6 @@ export default function App() {
       </section>}
 
       <CollectionHome/>
-      <section className="how-section"><div className="how-inner"><div className="eyebrow">PASO A PASO</div><h2>¿Cómo comprar<br/><em>tus boletos?</em></h2><div className="how-grid purchase-guide">
-        <div><span>01</span><h3>Elegí tus boletos y números</h3><p>Entrá a la rifa y elegí una tarjeta. Revisá cuántos números incluye y seleccioná los disponibles o dejá que el sistema los elija al azar.</p></div>
-        <div><span>02</span><h3>Completá tus datos</h3><p>Tocá “Continuar con mi compra”, ingresá tu nombre completo, correo y teléfono, y confirmá con “Apartar números”.</p></div>
-        <div><span>03</span><h3>Pagá por SINPE Móvil</h3><p>Transferí el total indicado al <strong>7283 3548</strong>, a nombre de <strong>David Vilanova Campos</strong>. Podés copiar el número desde el formulario de compra.</p></div>
-        <div><span>04</span><h3>Adjuntá el comprobante</h3><p>Podés subir hasta 3 fotos juntas al comprar. Si salís, abrí el correo de reserva, tocá <strong>“Ver mi pedido”</strong> y adjuntá el comprobante desde ahí. Tenés <strong>30 minutos desde la reserva</strong>: salir de la página no reinicia el plazo.</p></div>
-        <div><span>05</span><h3>Revisá la confirmación</h3><p>Al recibir el comprobante, tu pago queda en revisión y tus números siguen apartados. Te llegará un correo cuando aprobemos o rechacemos el pago.</p></div>
-        <div><span>06</span><h3>Volvé a tu pedido</h3><p>También podés entrar a <strong>“Buscar boletos”</strong> y pegar el código de consulta que recibiste por correo. Guardá el código y el enlace privado; no los compartás. Si la reserva venció sin comprobante, necesitás hacer una nueva y los números anteriores podrían estar ocupados.</p></div>
-      </div></div></section>
     </main>}
 
     {view === 'order' && <OrderDetail renderProof={(token, count, refresh) => <ProofUploader token={token} proofCount={count} onUploaded={refresh}/>}/> }
