@@ -227,3 +227,19 @@
  .current-raffle {background-size:auto 760px;background-position:center top;}
  .featured-cards,.anniversary-parade {background-position:35% center;}
 }
+
+/* Continue the matte artwork through the lower homepage sections. */
+.collection-about {
+  background:linear-gradient(90deg,#17102088,#17102055),url('/collection/matte-waves.webp') center 58% / cover no-repeat,#120e1d;
+}
+.how-section {
+  background:linear-gradient(180deg,#120e1d,transparent 18%,transparent 80%,#120e1d),url('/collection/matte-calligraphy.webp') center / cover no-repeat,#120e1d;
+}
+.how-section .how-inner {
+  background:radial-gradient(ellipse at center,#171321f5 40%,#171321c9 70%,transparent 100%);
+}
+@media(max-width:800px) {
+  .how-section {background-size:100% 100%,auto 900px;background-position:center,center top;}
+  .how-section .how-inner {background:#171321bd;}
+  .collection-about {background-position:center,right center;}
+}
