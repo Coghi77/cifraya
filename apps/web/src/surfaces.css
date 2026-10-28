@@ -391,3 +391,8 @@
 #root .admin-shell.admin-shell .admin-card.studio-raffles {
   background:transparent;border:0;border-radius:0;box-shadow:none;padding:0;
 }
+
+/* Creation steps remain grouped without a redundant outer card. */
+#root .admin-shell.admin-shell .admin-card.studio-create {
+  background:transparent;border:0;border-radius:0;box-shadow:none;padding:0;
+}
