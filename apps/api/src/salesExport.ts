@@ -80,5 +80,32 @@ export async function salesWorkbook(title: string, rows: SaleRow[], generatedAt 
     }
     detail.pageSetup = { orientation: 'landscape', fitToPage: true, fitToWidth: 1, fitToHeight: 0, printTitlesRow: '1:4' };
   }
+  // Shared palette matches the site; keep numeric cells numeric and buyer data literal.
+  for (const page of workbook.worksheets) {
+    page.properties.tabColor = { argb: page.name === 'Efectivo' ? 'FFB45180' : page.name === 'SINPE' ? 'FF308D98' : 'FF8E60B2' };
+    page.eachRow((row, index) => {
+      row.height = Math.max(row.height ?? 0, index <= 2 ? 38 : 32);
+      row.eachCell({ includeEmpty: true }, cell => {
+        cell.font = { name: 'Arial', size: 11, color: { argb: 'FFF4ECFF' } };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: index % 2 ? 'FF291D39' : 'FF342345' } };
+        cell.alignment = { ...cell.alignment, vertical: 'middle', wrapText: true };
+      });
+    });
+    const header = page.name === 'Resumen de ventas' ? 5 : 4;
+    const total = page.name === 'Resumen de ventas' ? 8 : page.lastRow!.number;
+    for (const [index, color] of [[1, 'FF754B99'], [header, 'FF4C3267'], [total, 'FF245B64']] as const) {
+      page.getRow(index).eachCell(cell => {
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } };
+        cell.font = { name: 'Arial', size: index === 1 ? 14 : 12, bold: true, color: { argb: 'FFFFFFFF' } };
+      });
+      page.getRow(index).height = 38;
+    }
+    page.getRow(2).height = Math.max(42, Math.ceil(title.length / 65) * 18);
+    if (page.name !== 'Resumen de ventas') {
+      page.eachRow((row, index) => {
+        if (index > 4 && index < total) row.height = Math.max(36, Math.ceil(String(row.getCell(2).value ?? '').length / 35) * 17);
+      });
+    }
+  }
   return Buffer.from(await workbook.xlsx.writeBuffer());
 }
