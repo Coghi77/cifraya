@@ -413,9 +413,9 @@
   background:transparent;border:0;border-radius:0;box-shadow:none;padding:0;
 }
 
-/* Participant profile uses an open layout instead of a nested outer card. */
+/* Opaque profile surface keeps the underlying inventory out of the reading area. */
 #root .admin-shell.admin-shell .participant-profile {
-  background:transparent;border:0;border-radius:0;box-shadow:none;
+  background:#251b32;border:0;border-radius:20px;box-shadow:0 24px 80px #0008;
   width:min(760px,100%);max-height:calc(100dvh - 32px);box-sizing:border-box;
   padding:24px;gap:24px;
 }
@@ -436,7 +436,7 @@
 #root .participant-profile .participant-numbers {gap:8px;}
 #root .participant-profile .participant-numbers>span {min-width:36px;box-sizing:border-box;text-align:center;padding:9px;}
 @media(max-width:600px){
- #root .admin-shell.admin-shell .participant-profile {width:100%;padding:18px 8px;gap:22px;}
+ #root .admin-shell.admin-shell .participant-profile {width:100%;padding:22px 18px;gap:22px;border-radius:16px;}
  #root .participant-profile .participant-contact{grid-template-columns:1fr;}
  #root .participant-profile .participant-avatar{width:44px;height:44px;font-size:22px;}
  #root .participant-profile .participant-history-card{padding:16px;}
