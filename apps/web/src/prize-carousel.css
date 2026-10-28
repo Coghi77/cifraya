@@ -1,4 +1,12 @@
 /* Small visible dots with generous touch targets. */
+#root .prize-photo-open>img.prize-slide-out {position:absolute;inset:0;pointer-events:none;}
+.prize-sliding {--slide-direction:1;}
+.prize-sliding.slide-backward {--slide-direction:-1;}
+.prize-sliding .prize-slide-current {animation:prize-slide-enter 550ms cubic-bezier(.22,.61,.36,1) both;}
+.prize-sliding .prize-slide-out {animation:prize-slide-exit 550ms cubic-bezier(.22,.61,.36,1) both;}
+@keyframes prize-slide-enter {from{transform:translateX(calc(var(--slide-direction)*100%));}to{transform:translateX(0);}}
+@keyframes prize-slide-exit {from{transform:translateX(0);}to{transform:translateX(calc(var(--slide-direction)*-100%));}}
+@media(prefers-reduced-motion:reduce){.prize-sliding .prize-slide-current,.prize-sliding .prize-slide-out{animation-duration:1ms;}}
 #root .prize-photo .prize-photo-dots {justify-content:center;gap:0;padding:0;overflow:visible;}
 #root .prize-photo .prize-photo-dots button {display:grid;place-items:center;flex:0 0 36px;width:36px;height:36px;min-height:36px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;opacity:1;clip-path:none;transform:none;filter:none;}
 #root .prize-photo .prize-photo-dots button::before,#root .prize-photo .prize-photo-dots button::after {display:none;}
