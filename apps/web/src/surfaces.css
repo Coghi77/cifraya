@@ -454,3 +454,12 @@ dialog.admin-sale-dialog::backdrop { background:rgba(12,8,20,.94); }
 @media(max-width:600px){
  #root .admin-shell dialog.admin-sale-dialog { padding:18px 12px; }
 }
+#root main.detail-page .random-picker .selection-result {
+  background:transparent;border:0;box-shadow:none;padding:0;border-radius:0;
+}
+#root .selection-result .random-selection-heading {flex-wrap:wrap;gap:8px;}
+#root .selection-result .random-selection-heading>span {color:#c9bddc;}
+#root .selection-result .selection-time {display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px 16px;margin-top:12px;padding:8px 0;background:transparent;}
+#root .selection-time>span {font-size:14px;font-weight:700;color:#f4eafa;}
+#root .selection-time>strong {font-size:clamp(28px,5vw,36px);font-weight:900;line-height:1.1;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:1px;}
+#root .selection-result .selection-time>p {grid-column:1/-1;margin:0;color:#c9bddc;font-size:13px;line-height:1.5;}
