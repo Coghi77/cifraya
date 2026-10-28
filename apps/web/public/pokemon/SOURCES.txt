@@ -1,0 +1,3 @@
+Gengar sprite: https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/versions/generation-iii/emerald/94.png
+Source repository: https://github.com/PokeAPI/sprites
+Stored locally to avoid third-party requests when viewing winners. Displayed with nearest-neighbor pixel scaling, without altering the original asset.

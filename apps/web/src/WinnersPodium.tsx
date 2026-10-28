@@ -36,10 +36,13 @@ export default function WinnersPodium({ winners }: { winners: WinnerResult[] }) 
         const winner = results.find(item => item.position === position);
         const prize = prizeFor(results[0], position);
         return <button className={`podium-place place-${position}${winner ? ' revealed' : ''}${activePosition === position ? ' selected' : ''}`} key={position} type="button" disabled={!winner} aria-expanded={activePosition === position} onClick={() => setSelected(activePosition === position ? null : `${campaign.id}:${position}`)}>
-          <span className="podium-place-top"><span className="podium-emblem"><PixelTrophy/></span><span className="podium-rank"><small>VNOVA / RESULTADO</small><strong>{positionName[position - 1]}</strong></span></span>
-          <span className="podium-result-body"><span className="podium-recipient"><small>{winner ? (winner.awarded ? 'GANADOR' : 'RESULTADO') : 'PRÓXIMAMENTE'}</small><span className="podium-person">{winner ? (winner.awarded ? winner.buyerName : 'Sin boleto ganador') : 'Por anunciar'}</span><span className="podium-prize">{prize}{campaign.prizeSources[position - 1] > 0 && <small> · Inverso del {campaign.prizeSources[position - 1]}.º premio</small>}</span></span>
-          <span className="podium-number"><small>{winner ? (winner.awarded ? 'NÚMERO GANADOR' : 'NÚMERO PUBLICADO') : 'NÚMERO'}</small><strong>{winner ? String(winner.numberValue).padStart(campaign.numberWidth, '0') : '—'}</strong></span></span>
-          <span className="podium-base"><span>{winner ? 'RESULTADO PUBLICADO' : 'POR ANUNCIAR'}</span><span>{winner ? (activePosition === position ? 'Ocultar detalle −' : 'Ver detalle +') : 'Pendiente'}</span></span>
+          <span className="podium-place-top"><PixelTrophy/><strong>{positionName[position - 1]}</strong></span>
+          <span className="podium-recipient"><span className="podium-person">{winner ? (winner.awarded ? winner.buyerName : 'Sin boleto ganador') : 'Por anunciar'}</span><span className="podium-prize">{prize}{campaign.prizeSources[position - 1] > 0 && <small> · Inverso del {campaign.prizeSources[position - 1]}.º premio</small>}</span></span>
+          <span className="podium-scene">
+            {position === 1 ? <img className="podium-pokemon" src="/pokemon/gengar-emerald.png" alt="" aria-hidden="true" width="192" height="192" draggable={false}/> : <span className="podium-medal" aria-hidden="true"><PixelTrophy/></span>}
+            <span className="podium-platform"><span className="podium-platform-top"/><span className="podium-platform-face"><small>{winner ? (winner.awarded ? 'NÚMERO GANADOR' : 'NÚMERO PUBLICADO') : 'POR ANUNCIAR'}</small><strong>{winner ? String(winner.numberValue).padStart(campaign.numberWidth, '0') : '—'}</strong><span className="podium-position">{position}.º</span></span></span>
+          </span>
+          <span className="podium-action">{winner ? (activePosition === position ? 'Ocultar detalle −' : 'Ver detalle +') : 'Resultado pendiente'}</span>
         </button>;
       })}</div>
       <MoreWinners results={results} onSelect={setSelected}/>
