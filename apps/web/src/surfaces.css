@@ -396,3 +396,9 @@
 #root .admin-shell.admin-shell .admin-card.studio-create {
   background:transparent;border:0;border-radius:0;box-shadow:none;padding:0;
 }
+
+/* Remaining studio workspaces also sit directly over the artwork. */
+#root .admin-shell.admin-shell .admin-card.reservations-card,
+#root .admin-shell.admin-shell .admin-card.catalog-admin {
+  background:transparent;border:0;border-radius:0;box-shadow:none;padding:0;
+}
