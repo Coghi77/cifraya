@@ -1,0 +1,57 @@
+/* Retro victory screen: the individual result is framed, never the whole section. */
+#root .winners-page .podium-section { background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible; }
+#root .winners-page .podium-stage { display:flex;align-items:end;justify-content:center;gap:24px;min-height:0;margin-top:24px;padding:8px 0 20px; }
+#root .winners-page button.podium-place {
+ --medal:#d0c9e9;--pixel-edge:#79648f;
+ display:flex;flex-direction:column;gap:0;width:31%;min-width:0;min-height:0;height:auto;
+ padding:4px!important;border:0!important;border-radius:0!important;
+ background:linear-gradient(135deg,var(--pixel-edge),#3e2a52 50%,#110d1b)!important;
+ color:#f6efff!important;box-shadow:6px 7px 0 #09060e88!important;
+ clip-path:polygon(0 12px,4px 12px,4px 4px,12px 4px,12px 0,calc(100% - 12px) 0,calc(100% - 12px) 4px,calc(100% - 4px) 4px,calc(100% - 4px) 12px,100% 12px,100% calc(100% - 12px),calc(100% - 4px) calc(100% - 12px),calc(100% - 4px) calc(100% - 4px),calc(100% - 12px) calc(100% - 4px),calc(100% - 12px) 100%,12px 100%,12px calc(100% - 4px),4px calc(100% - 4px),4px calc(100% - 12px),0 calc(100% - 12px))!important;
+ font-family:Arial,Helvetica,sans-serif!important;text-shadow:none;text-align:left;overflow:visible;transform:none;transition:filter .15s;
+}
+#root .winners-page button.podium-place.place-1 {--medal:#f3d78b;--pixel-edge:#ad8c63;min-height:0;}
+#root .winners-page button.podium-place.place-3 {--medal:#e8ad94;--pixel-edge:#986d7f;min-height:0;}
+#root .winners-page .podium-single button.podium-place {width:min(100%,700px);}
+#root .winners-page button.podium-place::before,#root .winners-page button.podium-place::after {display:none;}
+#root .winners-page .podium-place-top {display:flex;align-items:center;gap:18px;width:100%;padding:22px 24px;background:#352244;color:var(--medal);letter-spacing:0;text-transform:none;}
+#root .winners-page .podium-emblem {display:grid;place-items:center;flex-shrink:0;width:58px;height:58px;background:#1a1326;box-shadow:inset 3px 3px #50375f,inset -3px -3px #110c1b;}
+#root .winners-page .podium-trophy {display:block;width:36px;height:36px;}
+#root .winners-page .podium-rank {display:grid;gap:8px;min-width:0;}
+#root .winners-page .podium-rank small {font:700 10px/1.5 'Courier New',monospace;letter-spacing:1.5px;color:#c8b5d7;}
+#root .winners-page .podium-rank strong {font:700 23px/1.2 'Courier New',monospace;letter-spacing:0;overflow-wrap:anywhere;}
+#root .winners-page .podium-result-body {display:flex;flex-direction:column;gap:24px;width:100%;padding:26px 24px;background:linear-gradient(125deg,#281c36,#1a1326);}
+#root .winners-page .podium-recipient {display:flex;flex-direction:column;gap:10px;min-width:0;flex:1;}
+#root .winners-page .podium-recipient>small {font:700 10px/1.5 'Courier New',monospace;letter-spacing:2px;color:#c6a0e7;}
+#root .winners-page .podium-person {padding:0;max-width:100%;font-size:24px;line-height:1.25;font-weight:800;color:#f6efff;overflow-wrap:anywhere;}
+#root .winners-page .podium-prize {padding:0;color:#d3c4df;font-size:14px;line-height:1.65;overflow-wrap:anywhere;}
+#root .winners-page .podium-number {display:grid;align-content:center;justify-items:start;gap:10px;margin:0;padding:18px;background:#120d1d;box-shadow:inset 3px 3px #0b0711,inset -3px -3px #4b365c;color:var(--medal);}
+#root .winners-page .podium-number small {font:700 10px/1.5 'Courier New',monospace;letter-spacing:1px;}
+#root .winners-page .podium-number strong {font:900 clamp(36px,5vw,62px)/1 'Courier New',monospace;letter-spacing:3px;text-shadow:3px 3px #0008;}
+#root .winners-page .podium-base {display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;width:100%;margin:0;padding:16px 24px;background:#412a55;color:#dec7ee;font:700 10px/1.5 'Courier New',monospace;border:0;}
+#root .winners-page .podium-base>span:last-child {color:#f6efff;}
+#root .winners-page button.podium-place:focus-visible {outline:0;filter:none;box-shadow:0 0 0 4px #f3d78b!important;}
+#root .winners-page button.podium-place.selected {--pixel-edge:#f3d78b;transform:none;}
+#root .winners-page .podium-detail {display:grid;gap:12px;background:transparent!important;box-shadow:none!important;border:0!important;border-radius:0;padding:20px 0;color:#dacbe6;line-height:1.6;overflow-wrap:anywhere;}
+@media(min-width:700px){
+ #root .winners-page .podium-single .podium-result-body {flex-direction:row;align-items:center;gap:32px;padding:30px 28px;}
+ #root .winners-page .podium-single .podium-number {min-width:170px;}
+ #root .winners-page .podium-stage:not(.podium-single) .place-1 {margin-bottom:32px;}
+}
+@media(max-width:800px){
+ #root .winners-page .podium-stage {flex-wrap:wrap;gap:24px;}
+ #root .winners-page button.podium-place {width:100%;max-width:700px;}
+ #root .winners-page button.podium-place.place-1 {order:0;min-height:0;}
+ #root .winners-page .podium-place-top {padding:20px;gap:14px;}
+ #root .winners-page .podium-result-body {padding:24px 20px;gap:22px;}
+ #root .winners-page .podium-base {padding:16px 20px;}
+ #root .winners-page .podium-person {font-size:23px;}
+ #root .winners-page .podium-number {justify-items:center;padding:18px;}
+ #root .winners-page .podium-rank strong {font-size:22px;}
+}
+@media(prefers-reduced-motion:reduce){#root .winners-page button.podium-place {transition:none;}}
+#root .winners-page .podium-heading {color:#f6efff;}
+#root .winners-page .podium-heading>span {color:#c8b5d7;font:700 10px/1.5 'Courier New',monospace;letter-spacing:1.5px;}
+#root .winners-page .podium-heading h2 {color:#f6efff;}
+#root .winners-page .podium-heading p {color:#cbbbd9;}
+#root .winners-page .podium-number strong {font-size:clamp(48px,5vw,62px);}

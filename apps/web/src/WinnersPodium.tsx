@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Trophy } from 'lucide-react';
+function PixelTrophy() {
+  return <svg className="podium-trophy" viewBox="0 0 24 24" aria-hidden="true" shapeRendering="crispEdges"><path fill="currentColor" d="M6 2h12v3h4v7h-3v3h-4v3h2v2h3v3H4v-3h3v-2h2v-3H5v-3H2V5h4V2Zm0 5H4v3h2V7Zm12 0v3h2V7ZM8 4v8h2v2h4v-2h2V4H8Z"/></svg>;
+}
 
 export type WinnerResult = {
   position: number;
@@ -29,16 +31,15 @@ export default function WinnersPodium({ winners }: { winners: WinnerResult[] }) 
     const activePosition = Number(selected?.startsWith(campaign.id + ':') ? selected.split(':')[1] : 0);
     const active = results.find(item => item.position === activePosition);
     return <section className="podium-section" key={campaign.id} aria-label={`Resultados de ${campaign.title}`}>
-      <div className="podium-heading"><span>RESULTADOS / VNOVA TCG</span><h2>{campaign.title}</h2><p>{results.length} de {campaign.prizeCount} premios publicados</p></div>
+      <div className="podium-heading"><span>RESULTADOS / VNOVA TCG</span><h2>{campaign.title}</h2><p>{campaign.prizeCount === 1 ? 'Resultado publicado' : `${results.length} de ${campaign.prizeCount} premios publicados`}</p></div>
       <div className={`podium-stage${campaign.prizeCount === 1 ? ' podium-single' : ''}`}>{[2, 1, 3].filter(position => position <= campaign.prizeCount).map(position => {
         const winner = results.find(item => item.position === position);
         const prize = prizeFor(results[0], position);
-        return <button className={`podium-place place-${position}${winner ? ' revealed' : ''}${activePosition === position ? ' selected' : ''}`} key={position} type="button" disabled={!winner} aria-pressed={activePosition === position} onClick={() => setSelected(activePosition === position ? null : `${campaign.id}:${position}`)}>
-          <Trophy className="podium-trophy" aria-hidden="true"/><span className="podium-place-top"><span>{positionName[position - 1]}</span><strong>{String(position).padStart(2, '0')}</strong></span>
-          <span className="podium-person">{winner ? (winner.awarded ? winner.buyerName : 'Sin boleto ganador') : 'Por anunciar'}</span>
-          <span className="podium-prize">{prize}{campaign.prizeSources[position - 1] > 0 && <small> · Inverso del {campaign.prizeSources[position - 1]}.º premio</small>}</span>
-          <span className="podium-number">{winner ? `N.º ${String(winner.numberValue).padStart(campaign.numberWidth, '0')}` : '—'}</span>
-          <span className="podium-base">{position}</span>
+        return <button className={`podium-place place-${position}${winner ? ' revealed' : ''}${activePosition === position ? ' selected' : ''}`} key={position} type="button" disabled={!winner} aria-expanded={activePosition === position} onClick={() => setSelected(activePosition === position ? null : `${campaign.id}:${position}`)}>
+          <span className="podium-place-top"><span className="podium-emblem"><PixelTrophy/></span><span className="podium-rank"><small>VNOVA / RESULTADO</small><strong>{positionName[position - 1]}</strong></span></span>
+          <span className="podium-result-body"><span className="podium-recipient"><small>{winner ? (winner.awarded ? 'GANADOR' : 'RESULTADO') : 'PRÓXIMAMENTE'}</small><span className="podium-person">{winner ? (winner.awarded ? winner.buyerName : 'Sin boleto ganador') : 'Por anunciar'}</span><span className="podium-prize">{prize}{campaign.prizeSources[position - 1] > 0 && <small> · Inverso del {campaign.prizeSources[position - 1]}.º premio</small>}</span></span>
+          <span className="podium-number"><small>{winner ? (winner.awarded ? 'NÚMERO GANADOR' : 'NÚMERO PUBLICADO') : 'NÚMERO'}</small><strong>{winner ? String(winner.numberValue).padStart(campaign.numberWidth, '0') : '—'}</strong></span></span>
+          <span className="podium-base"><span>{winner ? 'RESULTADO PUBLICADO' : 'POR ANUNCIAR'}</span><span>{winner ? (activePosition === position ? 'Ocultar detalle −' : 'Ver detalle +') : 'Pendiente'}</span></span>
         </button>;
       })}</div>
       <MoreWinners results={results} onSelect={setSelected}/>
