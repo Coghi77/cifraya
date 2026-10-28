@@ -35,3 +35,33 @@
   line-height:1.3;white-space:normal;text-align:left;
 }
 #root button.text-button>svg {flex-shrink:0;}
+
+/* Participation history is a ticket, not a battle button inside a padded card. */
+#root .admin-shell.admin-shell .admin-history-card {
+  min-width:0;padding:0;background:transparent;border:0;border-radius:0;
+  box-shadow:none;overflow:visible;align-content:start;gap:12px;
+}
+#root .admin-shell .admin-history-grid {
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:20px;
+}
+#root .admin-shell .admin-history-card>button:first-child {
+  display:grid;grid-template-columns:minmax(0,1fr);gap:20px;
+  min-width:0;max-width:100%;height:auto;min-height:180px;
+  box-sizing:border-box;padding:20px 22px!important;
+  background:linear-gradient(135deg,#503265,#291c39)!important;
+  border-radius:10px!important;clip-path:none!important;
+  box-shadow:inset 0 3px #a986c366,inset 0 -3px #100b19!important;
+  text-shadow:none;overflow:visible;
+  mask:radial-gradient(circle at 0 70%,transparent 8px,#000 8.5px) left / 51% 100% no-repeat,radial-gradient(circle at 100% 70%,transparent 8px,#000 8.5px) right / 51% 100% no-repeat;
+}
+#root .admin-history-card-top {min-width:0;display:grid;grid-template-columns:minmax(0,1fr);gap:8px;}
+#root .admin-history-card-top strong {white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.5;font-size:13px;}
+#root .admin-history-card-top>span {line-height:1.4;font-size:11px;}
+#root .admin-history-card-count {line-height:1.2;font-size:32px;}
+#root .admin-history-card-count small {display:inline-block;font-size:12px;line-height:1.5;}
+#root .admin-history-card-bottom {
+  min-width:0;flex-wrap:wrap;gap:12px;line-height:1.6;padding-top:14px;
+  border-top:1px dashed #c9a8de88!important;
+}
+#root .admin-history-card-bottom>span {white-space:normal;overflow-wrap:anywhere;}
+#root .admin-shell .admin-history-card>.admin-history-review {margin:0;min-height:44px;}
