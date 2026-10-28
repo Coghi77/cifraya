@@ -412,3 +412,32 @@
 #root .admin-shell.admin-shell .admin-raffle-detail {
   background:transparent;border:0;border-radius:0;box-shadow:none;padding:0;
 }
+
+/* Participant profile uses an open layout instead of a nested outer card. */
+#root .admin-shell.admin-shell .participant-profile {
+  background:transparent;border:0;border-radius:0;box-shadow:none;
+  width:min(760px,100%);max-height:calc(100dvh - 32px);box-sizing:border-box;
+  padding:24px;gap:24px;
+}
+#root .participant-profile>.eyebrow {padding-right:58px;line-height:1.6;}
+#root .participant-profile .participant-heading {align-items:flex-start;gap:16px;}
+#root .participant-profile .participant-heading>div:last-child {min-width:0;}
+#root .participant-profile .participant-heading h2 {font-size:clamp(24px,4vw,32px);line-height:1.2;margin-bottom:8px;}
+#root .participant-profile .participant-contact {background:transparent;gap:16px;}
+#root .participant-profile .participant-contact>div {background:#30213fba;padding:16px;border-radius:0;gap:10px;}
+#root .participant-profile .participant-contact a {font-size:14px;line-height:1.5;}
+#root .participant-profile .participant-section {gap:16px;padding-top:20px;}
+#root .participant-profile .participant-section-heading {flex-wrap:wrap;align-items:baseline;gap:10px;}
+#root .participant-profile .participant-history {gap:16px;}
+#root .participant-profile .participant-history-card {gap:14px;padding:20px;background:#30213fcc;}
+#root .participant-profile .participant-history-card>div:first-child {flex-wrap:wrap;line-height:1.5;}
+#root .participant-profile .participant-history-card>div:first-child>strong {min-width:0;overflow-wrap:anywhere;}
+#root .participant-profile .participant-history-card>div:first-child>span {line-height:1.6;color:#d7c7e3;}
+#root .participant-profile .participant-numbers {gap:8px;}
+#root .participant-profile .participant-numbers>span {min-width:36px;box-sizing:border-box;text-align:center;padding:9px;}
+@media(max-width:600px){
+ #root .admin-shell.admin-shell .participant-profile {width:100%;padding:18px 8px;gap:22px;}
+ #root .participant-profile .participant-contact{grid-template-columns:1fr;}
+ #root .participant-profile .participant-avatar{width:44px;height:44px;font-size:22px;}
+ #root .participant-profile .participant-history-card{padding:16px;}
+}
