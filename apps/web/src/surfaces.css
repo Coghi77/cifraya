@@ -441,3 +441,8 @@
  #root .participant-profile .participant-avatar{width:44px;height:44px;font-size:22px;}
  #root .participant-profile .participant-history-card{padding:16px;}
 }
+
+/* Collection editor keeps only the individual card groups as panels. */
+#root .admin-shell.admin-shell fieldset.catalog-fields {
+  background:transparent;border:0!important;border-radius:0;box-shadow:none;padding:0;
+}
