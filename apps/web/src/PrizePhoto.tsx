@@ -3,7 +3,8 @@ import {useEffect, useRef, useState} from 'react';
 import {ChevronLeft, ChevronRight, X, Search} from 'lucide-react';
 
 type Photo = {url:string};
-const displayPhoto=(url:string)=>url.endsWith('/cmvr04f6a0001ev3q7qujc5z1')?'/tres-etb-transparent.png':url;
+const displayPhoto=(url:string,width=1200)=>url.startsWith('/api/campaign-photos/')?url+'?w='+width:url;
+const photoSet=(url:string)=>url.startsWith('/api/campaign-photos/')?displayPhoto(url,640)+' 640w, '+displayPhoto(url,1200)+' 1200w':undefined;
 // Frame the supplied portrait photo around the full ETB, without changing its pixels.
 const productFrame=(url:string)=>url.endsWith('/cmvpqcpsf0001k43rifof0lfa')?'etb-product-frame':undefined;
 export default function PrizePhoto({photos, src, title}: {photos:Photo[]; src:string; title:string}) {
@@ -26,7 +27,7 @@ export default function PrizePhoto({photos, src, title}: {photos:Photo[]; src:st
   const move=(direction:number)=>choose(images[(index+direction+images.length)%images.length].url,direction);
   const photoUrls=JSON.stringify(images.map(photo=>photo.url));
   useEffect(()=>{
-    (JSON.parse(photoUrls) as string[]).forEach(url=>{const image=new Image();image.src=displayPhoto(url);});
+    (JSON.parse(photoUrls) as string[]).forEach(url=>{const image=new Image();image.sizes='(max-width: 600px) 90vw, 600px';image.srcset=photoSet(url)||'';image.src=displayPhoto(url);});
   },[photoUrls]);
   useEffect(()=>{
     if(!slide)return;
@@ -45,8 +46,8 @@ export default function PrizePhoto({photos, src, title}: {photos:Photo[]; src:st
   return <div className="prize-photo" role="region" aria-label={'Galería de '+title} aria-roledescription="carrusel" onKeyDown={event=>{if(event.key==='ArrowRight'){event.preventDefault();move(1);}if(event.key==='ArrowLeft'){event.preventDefault();move(-1);}}}>
     <div className="prize-carousel-stage" onTouchStart={event=>{swiped.current=false;touch.current=event.touches.length===1?{x:event.touches[0].clientX,y:event.touches[0].clientY}:null;}} onTouchCancel={()=>{touch.current=null;}} onTouchEnd={event=>{const origin=touch.current;touch.current=null;if(!origin||!event.changedTouches.length)return;const dx=event.changedTouches[0].clientX-origin.x,dy=event.changedTouches[0].clientY-origin.y;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)&&images.length>1){swiped.current=true;move(dx<0?1:-1);}}}>
       <button type="button" className={`prize-photo-open${slide?' prize-sliding '+(slide.direction>0?'slide-forward':'slide-backward'):''}`} aria-label={'Ampliar foto '+(index+1)+' de '+title} onClick={()=>{if(swiped.current){swiped.current=false;return;}setOpen(true);}}>
-        {slide&&<img key={'out-'+slide.from} className={`prize-slide-out ${productFrame(slide.from)||''}`} src={displayPhoto(slide.from)} alt="" aria-hidden="true" draggable={false}/>}
-        <img key={selected} className={`prize-slide-current ${productFrame(selected)||''}`} src={displayPhoto(selected)} alt={title+', foto '+(index+1)} draggable={false}/><span className="prize-photo-hint" aria-hidden="true"><Search size={22}/></span></button>
+        {slide&&<img key={'out-'+slide.from} className={`prize-slide-out ${productFrame(slide.from)||''}`} src={displayPhoto(slide.from)} srcSet={photoSet(slide.from)} sizes="(max-width: 600px) 90vw, 600px" decoding="async" alt="" aria-hidden="true" draggable={false}/>}
+        <img key={selected} className={`prize-slide-current ${productFrame(selected)||''}`} src={displayPhoto(selected)} srcSet={photoSet(selected)} sizes="(max-width: 600px) 90vw, 600px" decoding="async" fetchPriority="high" alt={title+', foto '+(index+1)} draggable={false}/><span className="prize-photo-hint" aria-hidden="true"><Search size={22}/></span></button>
 
     </div>
     {images.length>1 && <div className="prize-photo-thumbnails prize-photo-dots" aria-label="Fotos del premio">{images.map((photo,photoIndex)=><button key={photo.url} type="button" aria-label={`Ver foto ${photoIndex+1}`} aria-pressed={selected===photo.url} onClick={()=>choose(photo.url,photoIndex>index?1:-1)}><span aria-hidden="true"/></button>)}</div>}
@@ -70,7 +71,7 @@ export function PrizeGallery({photos,title,initialIndex,onClose}:{photos:Photo[]
     <div className="prize-gallery-panel">
       <div className="prize-gallery-header"><span>{title}</span><button type="button" autoFocus aria-label="Cerrar fotos" onClick={()=>dialog.current?.close()}><X/></button></div>
       <div className="prize-gallery-stage" onTouchCancel={()=>{start.current=null;}} onTouchStart={event=>{start.current=event.touches.length===1?{x:event.touches[0].clientX,y:event.touches[0].clientY}:null;}} onTouchEnd={event=>{const origin=start.current;start.current=null;if(!origin||!event.changedTouches.length)return;const dx=event.changedTouches[0].clientX-origin.x;const dy=event.changedTouches[0].clientY-origin.y;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))move(dx<0?1:-1);}}>
-        {failed ? <Confirmation variant="error" message="La foto no cargó. Probá con otra."/> : <img className={productFrame(photos[index].url)} key={photos[index].url} src={displayPhoto(photos[index].url)} alt={`${title}, foto ${index+1}`} draggable={false} onError={()=>setFailed(true)}/>}
+        {failed ? <Confirmation variant="error" message="La foto no cargó. Probá con otra."/> : <img className={productFrame(photos[index].url)} key={photos[index].url} src={displayPhoto(photos[index].url,1600)} decoding="async" alt={`${title}, foto ${index+1}`} draggable={false} onError={()=>setFailed(true)}/>}
       </div>
       <div className="prize-gallery-controls">{photos.length>1 && <button type="button" aria-label="Foto anterior" onClick={()=>move(-1)}><ChevronLeft/></button>}<span role="status" aria-live="polite">Foto {index+1} de {photos.length}</span>{photos.length>1 && <button type="button" aria-label="Foto siguiente" onClick={()=>move(1)}><ChevronRight/></button>}</div>
     </div>

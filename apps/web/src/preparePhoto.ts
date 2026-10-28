@@ -16,10 +16,6 @@ export default async function preparePhoto(file: File) {
   for (let i = 3; i < pixels.length; i += 4) {
     if (pixels[i] < 255) { transparent = true; break; }
   }
-  if (transparent) {
-    const png = canvas.toDataURL('image/png').split(',')[1];
-    if (png.length <= 2_666_668) return { mimeType: 'image/png', base64: png };
-  }
   const mimeType = transparent ? 'image/webp' : 'image/jpeg';
   for (const quality of [0.82, 0.68, 0.5]) {
     const encoded = canvas.toDataURL(mimeType, quality);

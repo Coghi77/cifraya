@@ -16,6 +16,8 @@ flowchart LR
 
 ## Rutas y archivos
 
+- Fotos públicas: `/api/campaign-photos/:id?w=640|1200|1600` ofrece WebP con transparencia, generado por `photoVariants.ts` y caché de memoria limitada a 20 MB. Siempre verifica que la rifa siga pública/LIVE antes de servir. El original permanece intacto en Supabase. `PrizePhoto.tsx` usa tamaños responsivos y la variante de 1600 al ampliar; las nuevas subidas transparentes se comprimen a WebP.
+
 - `CollectionHome.tsx` y `collection.css`: portada editorial, vitrina de productos con fotos ampliables y guía interactiva de coleccionismo. Usa fotografías proporcionadas por el usuario en `public/collection/`. Se muestra independientemente de las rifas publicadas; no muestra precios de cartas ni promete contenido aleatorio. Reutiliza `PrizePhoto` para la ampliación accesible.
 
 | Nodo | Responsabilidad | Fuente |

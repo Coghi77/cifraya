@@ -1,3 +1,4 @@
+import { photoVariant } from './photoVariants.js';
 import {cardCollectionInput, cardCollectionUpdate} from './cardCatalog.js';
 import { raffleSales, salesWorkbook } from './salesExport.js';
 import {drawFields,resolveDrawSchedule} from './drawSchedule.js';
@@ -192,12 +193,19 @@ app.get<{ Params: { slug: string } }>('/api/campaigns/:slug', async (request, re
   return { ...data, photos: imageList(photos), soldCount: _count.numbers };
 });
 
-app.get<{ Params: { id: string } }>('/api/campaign-photos/:id', async (request, reply) => {
+app.get<{ Params: { id: string }; Querystring: { w?: string } }>('/api/campaign-photos/:id', async (request, reply) => {
   const photo = await db.campaignPhoto.findUnique({
     where: { id: request.params.id },
     select: { mimeType: true, data: true, campaign: { select: { status: true, isTest: true } } },
   });
   if (!photo || photo.campaign.status !== 'LIVE' || photo.campaign.isTest) return reply.code(404).send({ error: 'Foto no disponible' });
+  const width = Number(request.query.w);
+  if ([640, 1200, 1600].includes(width)) {
+    try {
+      const optimized = await photoVariant(request.params.id, photo.data, width);
+      return reply.type('image/webp').header('Cache-Control', 'public, max-age=3600').send(optimized);
+    } catch { /* Keep a valid original available if conversion fails. */ }
+  }
   return reply.type(photo.mimeType).header('Cache-Control', 'public, max-age=3600').send(Buffer.from(photo.data));
 });
 
