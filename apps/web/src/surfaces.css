@@ -402,3 +402,8 @@
 #root .admin-shell.admin-shell .admin-card.catalog-admin {
   background:transparent;border:0;border-radius:0;box-shadow:none;padding:0;
 }
+
+/* Winner confirmation floats over the backdrop without an outer panel. */
+#root .admin-shell.admin-shell .winner-modal {
+  background:transparent;border:0;border-radius:0;box-shadow:none;
+}
