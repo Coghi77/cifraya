@@ -341,7 +341,7 @@
 
 /* Results share the backdrop and classic game-menu framing. */
 #root .winners-page {background:transparent;}
-#root .winners-page :is(.winners-empty,.podium-section,.podium-detail) {
+#root .winners-page :is(.winners-empty,.podium-detail) {
   background:#21172de8;border:0;border-radius:0;
   box-shadow:0 -3px #a68bbd,0 3px #100c18,-3px 0 #a68bbd,3px 0 #100c18,0 0 0 6px #392746,6px 6px 0 3px #100c18;
 }

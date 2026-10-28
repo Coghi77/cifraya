@@ -527,7 +527,7 @@ a { color: inherit; text-decoration: none; }
 .edit-raffle-actions button:last-child { background: #fff; color: #111; }
 .edit-raffle-actions button:disabled { opacity: .5; }
 .podium-groups { display: grid; gap: 38px; }
-.podium-section { padding: clamp(18px, 4vw, 42px); border: 1px solid #d5d5d5; border-radius: 22px; background: #f8f8f8; overflow: hidden; }
+.podium-section { padding: 24px 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; overflow: visible; }
 .podium-heading { text-align: center; }
 .podium-heading > span { font-size: 11px; font-weight: 900; letter-spacing: .16em; }
 .podium-heading h2 { margin: 12px 0 5px; font-size: clamp(28px, 4vw, 48px); letter-spacing: -.05em; }
@@ -547,7 +547,7 @@ a { color: inherit; text-decoration: none; }
 .podium-base { width: 100%; padding: 10px; border-top: 1px solid #111; background: #111; color: #fff; font-size: 24px; font-weight: 900; }
 .podium-detail { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 9px 18px; margin-top: 20px; padding: 17px; border: 1px solid #111; border-radius: 12px; text-align: center; }
 .podium-detail strong { font-size: 20px; }
-@media (max-width: 600px) { .podium-section { padding: 16px 8px; } .podium-stage { gap: 5px; min-height: 285px; } .podium-place { width: 32%; } .podium-place.place-1 { min-height: 280px; } .podium-place.place-2 { min-height: 220px; } .podium-place.place-3 { min-height: 190px; } .podium-place-top { font-size: 9px; } .podium-number { font-size: 11px; } }
+@media (max-width: 600px) { .podium-section { padding: 16px 0; } .podium-stage { gap: 5px; min-height: 285px; } .podium-place { width: 32%; } .podium-place.place-1 { min-height: 280px; } .podium-place.place-2 { min-height: 220px; } .podium-place.place-3 { min-height: 190px; } .podium-place-top { font-size: 9px; } .podium-number { font-size: 11px; } }
 @media (prefers-reduced-motion: reduce) { .podium-place { transition: none; } }
 .winner-modal-backdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 18px; background: #000d; }
 .winner-modal { display: grid; gap: 18px; width: min(470px, 100%); padding: clamp(22px, 4vw, 32px); border: 1px solid #777; border-radius: 18px; background: #1d1d1d; color: #fff; box-shadow: 0 22px 70px #0009; }
