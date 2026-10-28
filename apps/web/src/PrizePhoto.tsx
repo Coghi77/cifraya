@@ -16,12 +16,22 @@ export default function PrizePhoto({photos, src, title}: {photos:Photo[]; src:st
   const swiped=useRef(false);
   const index=Math.max(0,images.findIndex(photo=>photo.url===selected));
   const move=(direction:number)=>setChosen(images[(index+direction+images.length)%images.length].url);
+  const photoUrls=JSON.stringify(images.map(photo=>photo.url));
+  useEffect(()=>{
+    const urls=JSON.parse(photoUrls) as string[];
+    if(open||urls.length<2)return;
+    const timer=window.setInterval(()=>{
+      if(document.hidden||touch.current)return;
+      setChosen(current=>urls[(Math.max(0,urls.indexOf(current))+1)%urls.length]);
+    },3500);
+    return ()=>window.clearInterval(timer);
+  },[photoUrls,open,chosen]);
   return <div className="prize-photo" role="region" aria-label={'Galería de '+title} aria-roledescription="carrusel" onKeyDown={event=>{if(event.key==='ArrowRight'){event.preventDefault();move(1);}if(event.key==='ArrowLeft'){event.preventDefault();move(-1);}}}>
     <div className="prize-carousel-stage" onTouchStart={event=>{swiped.current=false;touch.current=event.touches.length===1?{x:event.touches[0].clientX,y:event.touches[0].clientY}:null;}} onTouchCancel={()=>{touch.current=null;}} onTouchEnd={event=>{const origin=touch.current;touch.current=null;if(!origin||!event.changedTouches.length)return;const dx=event.changedTouches[0].clientX-origin.x,dy=event.changedTouches[0].clientY-origin.y;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)&&images.length>1){swiped.current=true;move(dx<0?1:-1);}}}>
       <button type="button" className="prize-photo-open" aria-label={'Ampliar foto '+(index+1)+' de '+title} onClick={()=>{if(swiped.current){swiped.current=false;return;}setOpen(true);}}><img className={productFrame(selected)} src={displayPhoto(selected)} alt={title+', foto '+(index+1)} draggable={false}/><span className="prize-photo-hint" aria-hidden="true"><Search size={22}/></span></button>
 
     </div>
-    {images.length>1 && <div className="prize-photo-thumbnails" aria-label="Fotos del premio">{images.map((photo,index)=><button key={photo.url} type="button" aria-label={`Ver foto ${index+1}`} aria-pressed={selected===photo.url} onClick={()=>setChosen(photo.url)}><img src={displayPhoto(photo.url)} alt="" loading="lazy"/></button>)}</div>}
+    {images.length>1 && <div className="prize-photo-thumbnails prize-photo-dots" aria-label="Fotos del premio">{images.map((photo,index)=><button key={photo.url} type="button" aria-label={`Ver foto ${index+1}`} aria-pressed={selected===photo.url} onClick={()=>setChosen(photo.url)}><span aria-hidden="true"/></button>)}</div>}
     {open && <PrizeGallery photos={images} title={title} initialIndex={index} onClose={()=>setOpen(false)}/>}
   </div>;
 }

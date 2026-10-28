@@ -16,3 +16,4 @@ import './surfaces.css';
 import './battle-controls.css';
 
 import './podium.css';
+import './prize-carousel.css';
