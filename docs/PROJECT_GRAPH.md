@@ -203,3 +203,8 @@ Correo inicial unificado: RESERVED explica reserva, carga pendiente y revision c
 - AdminReservationReview ofrece cancelación antes de recibir comprobante y mantiene rechazo/confirmación para PENDING_REVIEW. Refresca también cada 20 s visibles si falta SSE.
 - Componentes administrativos, pedidos y cartas se cargan por módulos. Cartas de portada se montan al acercarse al viewport; fotos secundarias se precargan con prioridad baja. Catálogo administrativo conserva cambios al alternar secciones.
 - Pruebas aisladas: cancelación duplicada, comprobante concurrente, protección de confirmados/pendientes, vencimiento, autorización, liberación y correo único. Nunca se ejecutan sobre datos reales.
+
+## Preparación de almacenamiento R2 (2026-10-29)
+
+- `mediaStorage.ts` permite R2 privado para nuevas fotos/comprobantes con SHA-256 y mantiene lectura de bytes históricos. Se activa solo con MEDIA_STORAGE=r2; por defecto sigue PostgreSQL. La migración SQL es aditiva.
+- `scripts/migrate-media-r2.mjs` copia/verifica históricos sin borrar bytes. Plan y estado de corte: `docs/STORAGE_MIGRATION.md`. No dar por migrado PostgreSQL ni las imágenes hasta verificar el corte.

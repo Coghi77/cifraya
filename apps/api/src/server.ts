@@ -1,3 +1,4 @@
+import {readMedia, storeMedia} from './mediaStorage.js';
 import { photoVariant } from './photoVariants.js';
 import {cardCollectionInput, cardCollectionUpdate} from './cardCatalog.js';
 import { raffleSales, salesWorkbook } from './salesExport.js';
@@ -216,17 +217,18 @@ app.get<{ Params: { slug: string } }>('/api/campaigns/:slug', async (request, re
 app.get<{ Params: { id: string }; Querystring: { w?: string } }>('/api/campaign-photos/:id', async (request, reply) => {
   const photo = await db.campaignPhoto.findUnique({
     where: { id: request.params.id },
-    select: { mimeType: true, data: true, campaign: { select: { status: true, isTest: true } } },
+    select: { mimeType: true, data: true, storageKey: true, sha256: true, campaign: { select: { status: true, isTest: true } } },
   });
   if (!photo || photo.campaign.status !== 'LIVE' || photo.campaign.isTest) return reply.code(404).send({ error: 'Foto no disponible' });
+  const imageBytes = await readMedia(photo);
   const width = Number(request.query.w);
   if ([640, 1200, 1600].includes(width)) {
     try {
-      const optimized = await photoVariant(request.params.id, photo.data, width);
+      const optimized = await photoVariant(request.params.id, imageBytes, width);
       return reply.type('image/webp').header('Cache-Control', 'public, max-age=3600').send(optimized);
     } catch { /* Keep a valid original available if conversion fails. */ }
   }
-  return reply.type(photo.mimeType).header('Cache-Control', 'public, max-age=3600').send(Buffer.from(photo.data));
+  return reply.type(photo.mimeType).header('Cache-Control', 'public, max-age=3600').send(imageBytes);
 });
 
 app.get<{ Params: { slug: string }; Querystring: { page?: string; search?: string } }>('/api/campaigns/:slug/numbers', async (request, reply) => {
@@ -455,12 +457,16 @@ app.post<{ Params: { token: string } }>('/api/reservations/:token/proofs', { bod
   if (!parsed.success) return reply.code(400).send({ error: 'El comprobante debe ser JPG, PNG o WebP y pesar menos de 2 MB.' });
   const bytes = Buffer.from(parsed.data.base64, 'base64');
   if (!validPhoto(bytes, parsed.data.mimeType)) return reply.code(400).send({ error: 'Archivo inválido o demasiado grande.' });
+  const eligible = await db.reservation.findUnique({where:{lookupToken:request.params.token},select:{status:true,expiresAt:true,_count:{select:{proofs:true}}}});
+  if (!eligible || !['ACTIVE','PENDING_REVIEW'].includes(eligible.status) || (eligible.status==='ACTIVE' && eligible.expiresAt<=new Date())) return reply.code(409).send({error:'La reserva ya venció o fue revisada.'});
+  if(eligible._count.proofs>=3)return reply.code(409).send({error:'Podés adjuntar hasta tres comprobantes.'});
+  const stored = await storeMedia(bytes,parsed.data.mimeType,'proofs');
   try {
     const proof = await db.$transaction(async tx => {
       const reservation = await tx.reservation.findUnique({ where: { lookupToken: request.params.token }, select: { id: true, status: true, expiresAt: true, _count: { select: { proofs: true } } } });
       if (!reservation || !['ACTIVE', 'PENDING_REVIEW'].includes(reservation.status) || (reservation.status === 'ACTIVE' && reservation.expiresAt <= new Date())) throw new Error('RESERVATION_CLOSED');
       if (reservation._count.proofs >= 3) throw new Error('PROOF_LIMIT');
-      const created = await tx.paymentProof.create({ data: { reservationId: reservation.id, mimeType: parsed.data.mimeType, data: bytes }, select: { id: true } });
+      const created = await tx.paymentProof.create({ data: { reservationId: reservation.id, mimeType: parsed.data.mimeType, ...stored }, select: { id: true } });
       if (reservation.status === 'ACTIVE') {
         const updated = await tx.reservation.updateMany({ where: { id: reservation.id, status: 'ACTIVE', expiresAt: { gt: new Date() } }, data: { status: 'PENDING_REVIEW', proofSubmittedAt: new Date() } });
         if (updated.count !== 1) throw new Error('RESERVATION_CLOSED');
@@ -487,9 +493,9 @@ app.get('/api/admin/campaigns', async (request, reply) => {
 
 app.get<{ Params: { id: string } }>('/api/admin/campaign-photos/:id', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
-  const photo = await db.campaignPhoto.findUnique({ where: { id: request.params.id }, select: { mimeType: true, data: true } });
+  const photo = await db.campaignPhoto.findUnique({ where: { id: request.params.id }, select: { mimeType: true, data: true, storageKey: true, sha256: true } });
   if (!photo) return reply.code(404).send({ error: 'Foto no encontrada' });
-  return reply.type(photo.mimeType).header('Cache-Control', 'private, no-store').send(Buffer.from(photo.data));
+  return reply.type(photo.mimeType).header('Cache-Control', 'private, no-store').send(await readMedia(photo));
 });
 
 app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/photos', { bodyLimit: 3_000_000 }, async (request, reply) => {
@@ -498,13 +504,17 @@ app.post<{ Params: { id: string } }>('/api/admin/campaigns/:id/photos', { bodyLi
   if (!parsed.success) return reply.code(400).send({ error: 'La foto debe ser JPG, PNG o WebP y pesar menos de 2 MB.' });
   const bytes = Buffer.from(parsed.data.base64, 'base64');
   if (!validPhoto(bytes, parsed.data.mimeType)) return reply.code(400).send({ error: 'Archivo de imagen inválido o demasiado grande.' });
+  const eligible = await db.campaign.findUnique({where:{id:request.params.id},select:{_count:{select:{photos:true}}}});
+  if(!eligible)return reply.code(404).send({error:'Rifa no encontrada'});
+  if(eligible._count.photos>=3)return reply.code(409).send({error:'Cada rifa admite hasta 3 fotos.'});
+  const stored = await storeMedia(bytes,parsed.data.mimeType,'photos');
   try {
     const photo = await db.$transaction(async tx => {
       const campaign = await tx.campaign.findUnique({ where: { id: request.params.id }, select: { id: true, _count: { select: { photos: true } } } });
       if (!campaign) throw new Error('CAMPAIGN_NOT_FOUND');
       if (campaign._count.photos >= 3) throw new Error('PHOTO_LIMIT');
       return tx.campaignPhoto.create({
-        data: { campaignId: campaign.id, mimeType: parsed.data.mimeType, data: bytes, sortOrder: campaign._count.photos },
+        data: { campaignId: campaign.id, mimeType: parsed.data.mimeType, ...stored, sortOrder: campaign._count.photos },
         select: { id: true },
       });
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
@@ -571,9 +581,9 @@ app.get<{ Params: { id: string } }>('/api/admin/reservations/:id', async (reques
 
 app.get<{ Params: { id: string } }>('/api/admin/payment-proofs/:id', async (request, reply) => {
   if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({ error: 'Acceso no autorizado' });
-  const proof = await db.paymentProof.findUnique({ where: { id: request.params.id }, select: { mimeType: true, data: true } });
+  const proof = await db.paymentProof.findUnique({ where: { id: request.params.id }, select: { mimeType: true, data: true, storageKey: true, sha256: true } });
   if (!proof) return reply.code(404).send({ error: 'Comprobante no encontrado.' });
-  return reply.type(proof.mimeType).header('Cache-Control', 'private, no-store').send(Buffer.from(proof.data));
+  return reply.type(proof.mimeType).header('Cache-Control', 'private, no-store').send(await readMedia(proof));
 });
 
 app.post('/api/admin/campaigns', async (request, reply) => {

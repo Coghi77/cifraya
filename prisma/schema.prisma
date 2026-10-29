@@ -118,7 +118,9 @@ model CampaignPhoto {
   id         String   @id @default(cuid())
   campaignId String
   mimeType   String
-  data       Bytes
+  data       Bytes?
+  storageKey String?
+  sha256     String?
   sortOrder  Int
   createdAt  DateTime @default(now())
   campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
@@ -177,7 +179,9 @@ model PaymentProof {
   id            String      @id @default(cuid())
   reservationId String
   mimeType      String
-  data          Bytes
+  data          Bytes?
+  storageKey    String?
+  sha256        String?
   createdAt     DateTime    @default(now())
   reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
 
