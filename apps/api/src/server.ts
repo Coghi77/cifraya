@@ -1,3 +1,4 @@
+import { validAdminCredential } from './adminCredential.js';
 import {readMedia, storeMedia} from './mediaStorage.js';
 import { registerSeo } from './seo.js';
 import { photoVariant } from './photoVariants.js';
@@ -8,7 +9,7 @@ import { composeLotteryNumber } from './lotteryResults.js';
 import { purchaseOffer, validStickerQuantity } from './stickers.js';
 import { selectNumbers } from './selectionHolds.js';
 import { createEmailWorker, enqueuePaymentEmail, emailConfigured, paymentEmail } from './paymentEmails.js';
-import { randomBytes, timingSafeEqual } from 'node:crypto';
+import { randomBytes } from 'node:crypto';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Fastify, {type FastifyRequest,type FastifyReply} from 'fastify';
@@ -163,14 +164,12 @@ app.post('/api/admin/login', async (request, reply) => {
   if (attempts && attempts.resetAt > now && attempts.count >= 5) {
     return reply.code(429).send({ error: 'Demasiados intentos. Volvé a intentar en 15 minutos.' });
   }
-  const parsed = z.object({ pin: z.string().regex(/^\d{6}$/) }).safeParse(request.body);
-  const expected = process.env.ADMIN_PIN;
-  const valid = Boolean(parsed.success && expected && /^\d{6}$/.test(expected) &&
-    timingSafeEqual(Buffer.from(parsed.data.pin), Buffer.from(expected)));
+  const parsed = z.object({ password: z.string().max(128).optional(), pin: z.string().max(128).optional() }).safeParse(request.body);
+  const valid = parsed.success && validAdminCredential(parsed.data.password ?? parsed.data.pin, process.env);
   if (!valid) {
     const current = attempts?.resetAt && attempts.resetAt > now ? attempts : { count: 0, resetAt: now + 15 * 60_000 };
     failedLogins.set(key, { count: current.count + 1, resetAt: current.resetAt });
-    return reply.code(401).send({ error: 'PIN incorrecto o no configurado.' });
+    return reply.code(401).send({ error: 'Contraseña incorrecta o no configurada.' });
   }
   failedLogins.delete(key);
   if (!process.env.ADMIN_TOKEN || process.env.ADMIN_TOKEN.length < 24) {

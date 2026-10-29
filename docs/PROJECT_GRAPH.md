@@ -210,3 +210,4 @@ Correo inicial unificado: RESERVED explica reserva, carga pendiente y revision c
 
 - `mediaStorage.ts` permite R2 privado para nuevas fotos/comprobantes con SHA-256 y mantiene lectura de bytes históricos. Se activa solo con MEDIA_STORAGE=r2; por defecto sigue PostgreSQL. La migración SQL es aditiva.
 - `scripts/migrate-media-r2.mjs` copia/verifica históricos sin borrar bytes. Plan y estado de corte: `docs/STORAGE_MIGRATION.md`. No dar por migrado PostgreSQL ni las imágenes hasta verificar el corte.
+`n- Acceso admin: ADMIN_PASSWORD (20–128 caracteres) tiene prioridad sobre ADMIN_PIN legado; nunca acepta el PIN si se configura contraseña. Formulario con username admin y current-password para gestores de contraseñas. Límite de intentos y sesiones firmadas siguen activos.

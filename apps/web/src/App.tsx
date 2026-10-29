@@ -476,14 +476,14 @@ export default function App() {
     setAdminReservations([]);
     setAdminToken('');
     setReviewReservationId(null);
-    setError('La sesión venció. Ingresá el PIN de nuevo; tu borrador sigue guardado en esta pestaña.');
+    setError('La sesión venció. Ingresá tu contraseña de nuevo; tu borrador sigue guardado en esta pestaña.');
   }
 
   async function unlockAdmin(event: FormEvent) {
     event.preventDefault();
     setBusy(true); setError('');
     try {
-      const session = await api<{ token: string }>('/api/admin/login', { method: 'POST', body: JSON.stringify({ pin: adminPin }) });
+      const session = await api<{ token: string }>('/api/admin/login', { method: 'POST', body: JSON.stringify({ password: adminPin }) });
       setAdminToken(session.token);
       setAdminPin('');
       await loadAdmin(session.token);
@@ -523,7 +523,7 @@ export default function App() {
     } catch (cause) {
       if (cause instanceof ApiError && cause.status === 401) {
         expireAdminSession();
-        if (created) setError('La rifa se creó, pero la sesión venció al cargar una foto. Ingresá el PIN de nuevo y agregala en Tus rifas.');
+        if (created) setError('La rifa se creó, pero la sesión venció al cargar una foto. Ingresá tu contraseña de nuevo y agregala en Tus rifas.');
       } else {
         if (created) await loadAdmin();
         setError((created ? 'La rifa se creó, pero faltó cargar alguna foto. Podés agregarla en Tus rifas. ' : '') + (cause as Error).message);
@@ -655,7 +655,7 @@ export default function App() {
 
     {view === 'admin' && <main className={`admin-page${!adminUnlocked ? ' admin-entry' : ''}`}>
       <div className="admin-top"><div><div className="eyebrow">VNOVA TCG / STUDIO</div><h1>Tu panel de administración</h1><p>Elegí una sección para trabajar. Tus rifas y pagos, en un solo lugar.</p></div><div className="admin-badge"><LockKeyhole size={16}/> Acceso con clave</div></div>
-      {!adminUnlocked ? <section className="admin-login"><div className="admin-login-icon"><LockKeyhole size={26}/></div><h2>Entrá a tu estudio</h2><form onSubmit={event => void unlockAdmin(event)} className="form-grid"><label>Contraseña<input type="password" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required value={adminPin} onChange={event => setAdminPin(event.target.value.replace(/\D/g, ''))} autoComplete="off" placeholder="Contraseña" /></label><button className="button primary full" disabled={busy || adminPin.length !== 6}>{busy ? 'Verificando...' : 'Ingresar al panel'} <ArrowRight size={17}/></button></form></section> : adminDetailId ? <AdminRaffleDetail id={adminDetailId} token={adminToken} onBack={closeAdminRaffle} onReview={setReviewReservationId} onChange={() => { void loadAdmin(); void loadRaffles(); void loadWinners(); }}/> : <>
+      {!adminUnlocked ? <section className="admin-login"><div className="admin-login-icon"><LockKeyhole size={26}/></div><h2>Entrá a tu estudio</h2><form onSubmit={event => void unlockAdmin(event)} className="form-grid" autoComplete="on"><label>Usuario<input name="username" autoComplete="username" value="admin" readOnly /></label><label>Contraseña<input type="password" name="password" autoCapitalize="none" spellCheck={false} maxLength={128} required value={adminPin} onChange={event => setAdminPin(event.target.value)} autoComplete="current-password" placeholder="Contraseña" /></label><button className="button primary full" disabled={busy || !adminPin.length}>{busy ? 'Verificando...' : 'Ingresar al panel'} <ArrowRight size={17}/></button></form></section> : adminDetailId ? <AdminRaffleDetail id={adminDetailId} token={adminToken} onBack={closeAdminRaffle} onReview={setReviewReservationId} onChange={() => { void loadAdmin(); void loadRaffles(); void loadWinners(); }}/> : <>
         <section className="site-screen-control"><div><h2>Pantalla pública</h2><p>{comingSoon ? 'Solo se muestra Próximamente. Las compras están pausadas.' : 'El sitio está visible para los visitantes.'}</p><small>Al activarla se ocultan todas las páginas públicas. Las reservas existentes conservan su plazo.</small></div><button type="button" disabled={savingScreen || comingSoon === null} onClick={async () => {
           setSavingScreen(true);
           try {
