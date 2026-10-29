@@ -1,4 +1,5 @@
 import {readMedia, storeMedia} from './mediaStorage.js';
+import { registerSeo } from './seo.js';
 import { photoVariant } from './photoVariants.js';
 import {cardCollectionInput, cardCollectionUpdate} from './cardCatalog.js';
 import { raffleSales, salesWorkbook } from './salesExport.js';
@@ -34,6 +35,12 @@ app.setErrorHandler((error, request, reply) => {
   return reply.code(status).send({ error: status === 500 ? 'No se pudo completar la operación. Intentá de nuevo.' : 'Solicitud inválida.' });
 });
 const publicCache = createPublicCache();
+registerSeo(app, async () => {
+  const settings = await db.siteSettings.findUnique({where:{id:'main'},select:{comingSoon:true}});
+  const comingSoon = settings?.comingSoon ?? false;
+  const campaigns = comingSoon ? [] : await db.campaign.findMany({where:{status:'LIVE',isTest:false},select:{slug:true,status:true,isTest:true}});
+  return {campaigns,comingSoon};
+});
 app.get('/api/site-settings', async (_request, reply) => {
   reply.header('Cache-Control', 'no-store');
   const settings = await publicCache.get('site-settings', () => db.siteSettings.findUnique({where:{id:'main'}}));

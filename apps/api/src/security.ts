@@ -24,6 +24,10 @@ export function registerSecurityHeaders(app: FastifyInstance, production: boolea
     if (request.url.startsWith('/api/')) {
       reply.header('Cache-Control', 'private, no-store');
     }
+    const path = request.url.split('?')[0];
+    if (/^\/(?:api|estudio-vnova|estudio-cifraya|pedido|buscar-boletos)(?:\/|$)/.test(path)) {
+      reply.header('X-Robots-Tag', 'noindex, nofollow');
+    }
     done();
   });
 }
