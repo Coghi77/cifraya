@@ -184,6 +184,11 @@ model PaymentProof {
   @@index([reservationId])
 }
 
+model SiteSettings {
+  id String @id @default("main")
+  comingSoon Boolean @default(false)
+}
+
 model EmailNotification {
   id String @id @default(cuid())
   reservationId String?

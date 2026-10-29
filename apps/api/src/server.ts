@@ -33,6 +33,26 @@ app.setErrorHandler((error, request, reply) => {
   return reply.code(status).send({ error: status === 500 ? 'No se pudo completar la operación. Intentá de nuevo.' : 'Solicitud inválida.' });
 });
 const publicCache = createPublicCache();
+app.get('/api/site-settings', async (_request, reply) => {
+  reply.header('Cache-Control', 'no-store');
+  const settings = await db.siteSettings.findUnique({where:{id:'main'}});
+  return {comingSoon:settings?.comingSoon ?? false};
+});
+app.put('/api/admin/site-settings', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({error:'Acceso no autorizado'});
+  const parsed = z.object({comingSoon:z.boolean()}).strict().safeParse(request.body);
+  if (!parsed.success) return reply.code(400).send({error:'Configuración inválida'});
+  const settings = await db.siteSettings.upsert({where:{id:'main'},create:{id:'main',...parsed.data},update:parsed.data});
+  broadcast('campaigns');
+  return {comingSoon:settings.comingSoon};
+});
+// Also stop new purchases from tabs opened before the public screen was enabled.
+app.addHook('preHandler', async (request, reply) => {
+  if (request.method === 'POST' && (request.url.startsWith('/api/campaigns/') || request.url.split('?')[0] === '/api/reservations')) {
+    const settings = await db.siteSettings.findUnique({where:{id:'main'}});
+    if (settings?.comingSoon) return reply.code(503).send({error:'Próximamente. Las compras están pausadas.'});
+  }
+});
 app.get('/api/card-collections', async () => db.cardCollection.findMany({where:{published:true},orderBy:{createdAt:'asc'},select:{id:true,name:true,edition:true,sourceUrl:true,cards:true}}));
 app.get('/api/admin/card-collections', async (request,reply) => {
   if(!adminAuthorized(request.headers.authorization))return reply.code(401).send({error:'Acceso no autorizado'});

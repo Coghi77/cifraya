@@ -218,6 +218,15 @@ function ProofUploader({ token, proofCount, onUploaded }: { token: string; proof
 }
 
 export default function App() {
+  const [comingSoon, setComingSoon] = useState<boolean | null>(null);
+  const [savingScreen, setSavingScreen] = useState(false);
+  useEffect(() => {
+    let stopped = false;
+    const refresh = () => { void api<{comingSoon:boolean}>('/api/site-settings').then(value => { if (!stopped) setComingSoon(value.comingSoon); }).catch(() => {}); };
+    refresh();
+    const interval = window.setInterval(refresh, 10000);
+    return () => { stopped = true; window.clearInterval(interval); };
+  }, []);
   const [view, setView] = useState<View>(() => viewFromPath(window.location.pathname));
   const [raffles, setRaffles] = useState<Raffle[]>([]);
   const [raffle, setRaffle] = useState<Raffle | null>(null);
@@ -574,6 +583,8 @@ export default function App() {
   const heldTickets = activeHolds.reduce((sum, item) => sum + item.ticketCount, 0);
   const featured = raffles[0];
 
+  if (view !== 'admin' && comingSoon !== false) return <main className="coming-soon-screen" aria-live="polite"><h1>{comingSoon ? 'Próximamente' : 'Cargando…'}</h1></main>;
+
   return <div className={'app-shell ' + (view === 'admin' ? 'admin-shell' : '')}>
     {view === 'admin' ? <header className="studio-header"><div><img src="/vnova-transparent.webp" alt="Vnova TCG"/><span>Administración<small>Rifas, ventas y pagos</small></span></div><div className="studio-header-actions"><button type="button" onClick={goHome}>Salir al sitio <ArrowRight size={16}/></button>{adminUnlocked && <button type="button" onClick={() => { setAdminToken(''); setAdminPin(''); setAdminUnlocked(false); window.location.replace(ADMIN_PATH); }}>Cerrar sesión <LockKeyhole size={16}/></button>}</div></header> : <SiteHeader onHome={goHome}>
         <>
@@ -644,6 +655,14 @@ export default function App() {
     {view === 'admin' && <main className={`admin-page${!adminUnlocked ? ' admin-entry' : ''}`}>
       <div className="admin-top"><div><div className="eyebrow">VNOVA TCG / STUDIO</div><h1>Tu panel de administración</h1><p>Elegí una sección para trabajar. Tus rifas y pagos, en un solo lugar.</p></div><div className="admin-badge"><LockKeyhole size={16}/> Acceso con clave</div></div>
       {!adminUnlocked ? <section className="admin-login"><div className="admin-login-icon"><LockKeyhole size={26}/></div><h2>Entrá a tu estudio</h2><form onSubmit={event => void unlockAdmin(event)} className="form-grid"><label>Contraseña<input type="password" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required value={adminPin} onChange={event => setAdminPin(event.target.value.replace(/\D/g, ''))} autoComplete="off" placeholder="Contraseña" /></label><button className="button primary full" disabled={busy || adminPin.length !== 6}>{busy ? 'Verificando...' : 'Ingresar al panel'} <ArrowRight size={17}/></button></form></section> : adminDetailId ? <AdminRaffleDetail id={adminDetailId} token={adminToken} onBack={closeAdminRaffle} onReview={setReviewReservationId} onChange={() => { void loadAdmin(); void loadRaffles(); void loadWinners(); }}/> : <>
+        <section className="site-screen-control"><div><h2>Pantalla pública</h2><p>{comingSoon ? 'Solo se muestra Próximamente. Las compras están pausadas.' : 'El sitio está visible para los visitantes.'}</p><small>Al activarla se ocultan todas las páginas públicas. Las reservas existentes conservan su plazo.</small></div><button type="button" disabled={savingScreen || comingSoon === null} onClick={async () => {
+          setSavingScreen(true);
+          try {
+            const result = await api<{comingSoon:boolean}>('/api/admin/site-settings', {method:'PUT',headers:{Authorization:'Bearer '+adminToken},body:JSON.stringify({comingSoon:!comingSoon})});
+            setComingSoon(result.comingSoon);
+          } catch (cause) { setError((cause as Error).message); }
+          finally { setSavingScreen(false); }
+        }}>{savingScreen ? 'Guardando…' : comingSoon ? 'Desactivar Próximamente' : 'Activar Próximamente'}</button></section>
         <div className="admin-stats"><div><small>RIFAS</small><strong>{adminRaffles.length}</strong><span>Creadas en el sistema</span></div><div><small>RESERVAS ACTIVAS</small><strong>{activeHolds.length}</strong><span>Con vencimiento</span></div><div><small>BOLETOS APARTADOS</small><strong>{heldTickets}</strong><span>Pendientes de confirmar</span></div></div>
         <div className="studio-navigation" role="group" aria-label="Secciones del estudio"><button type="button" aria-pressed={adminWorkspace === 'raffles'} onClick={() => setAdminWorkspace('raffles')}><Ticket size={20}/><span>Tus rifas<small>Gestioná premios, fotos y resultados</small></span><b>{adminRaffles.length}</b></button><button type="button" aria-pressed={adminWorkspace === 'create'} onClick={() => setAdminWorkspace('create')}><Plus size={20}/><span>Nueva rifa<small>Prepará y guardá tu próximo sorteo</small></span></button><button type="button" aria-pressed={adminWorkspace === 'payments'} onClick={() => setAdminWorkspace('payments')}><LockKeyhole size={20}/><span>Pagos y reservas<small>Revisá comprobantes pendientes</small></span><b>{adminReservations.length}</b></button><button type="button" aria-pressed={adminWorkspace === 'cards'} onClick={() => setAdminWorkspace('cards')}><Sparkles size={20}/><span>Cartas destacadas<small>Administrá las cartas de la portada</small></span></button></div>
         <div hidden={adminWorkspace !== 'cards'}><CardCatalogAdmin token={adminToken}/></div>
