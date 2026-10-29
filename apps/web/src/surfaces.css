@@ -465,8 +465,11 @@ dialog.admin-sale-dialog::backdrop { background:rgba(12,8,20,.94); }
 #root .selection-result .selection-time>p {grid-column:1/-1;margin:0;color:#c9bddc;font-size:13px;line-height:1.5;}
 
 /* Public curtain: intentionally only one message, without navigation or cards. */
-#root .coming-soon-screen {min-height:100dvh;width:100%;display:grid;place-items:center;background:#281438;color:#f5eaff;padding:24px;box-sizing:border-box;text-align:center;}
+#root .coming-soon-screen {min-height:100dvh;width:100%;display:grid;place-items:center;background:linear-gradient(#120e1d35,#120e1d65),url('/collection/matte-calligraphy.webp') center / cover no-repeat,#120e1d;color:#f5eaff;padding:24px;box-sizing:border-box;text-align:center;}
 #root .coming-soon-screen h1 {font-size:clamp(32px,7vw,76px);line-height:1.2;margin:0;overflow-wrap:anywhere;}
+#root .coming-soon-glass {width:min(100%,840px);box-sizing:border-box;padding:clamp(32px,6vw,72px) clamp(20px,4vw,48px);border-radius:28px;background:linear-gradient(135deg,#79529330,#301d4938);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 16px 60px #0002,inset 0 1px 0 #ffffff12;}
+#root .coming-soon-glass p {margin:20px 0 0;color:#e1d4ed;font-size:clamp(16px,2.3vw,22px);line-height:1.6;text-wrap:balance;}
+@media(max-width:600px) {#root .coming-soon-screen {padding:20px;background-size:auto 100%;}#root .coming-soon-glass {border-radius:20px;} }
 .site-screen-control {display:flex;align-items:center;justify-content:space-between;gap:24px;margin:24px 0 32px;}
 .site-screen-control h2 {margin:0 0 8px;}
 .site-screen-control p {margin:0 0 8px;}

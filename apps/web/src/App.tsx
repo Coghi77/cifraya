@@ -584,7 +584,7 @@ export default function App() {
   const heldTickets = activeHolds.reduce((sum, item) => sum + item.ticketCount, 0);
   const featured = raffles[0];
 
-  if (view !== 'admin' && comingSoon !== false) return <main className="coming-soon-screen" aria-live="polite"><h1>{comingSoon ? 'Próximamente' : 'Cargando…'}</h1></main>;
+  if (view !== 'admin' && comingSoon !== false) return <main className="coming-soon-screen" aria-live="polite"><div className="coming-soon-glass"><h1>{comingSoon ? 'Próximamente' : 'Cargando…'}</h1>{comingSoon && <p>Está en camino…</p>}</div></main>;
 
   return <div className={'app-shell ' + (view === 'admin' ? 'admin-shell' : '')}>
     {view === 'admin' ? <header className="studio-header"><div><img src="/vnova-transparent.webp" alt="Vnova TCG"/><span>Administración<small>Rifas, ventas y pagos</small></span></div><div className="studio-header-actions"><button type="button" onClick={goHome}>Salir al sitio <ArrowRight size={16}/></button>{adminUnlocked && <button type="button" onClick={() => { setAdminToken(''); setAdminPin(''); setAdminUnlocked(false); window.location.replace(ADMIN_PATH); }}>Cerrar sesión <LockKeyhole size={16}/></button>}</div></header> : <SiteHeader onHome={goHome}>
