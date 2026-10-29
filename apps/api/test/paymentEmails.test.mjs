@@ -70,3 +70,11 @@ test('every order email includes the exact reusable lookup code in HTML and text
  const escaped=paymentEmail({...order,lookupToken:'<script>&"'},'RESERVED','https://vnovatcg.com');
  assert.ok(escaped.html.includes('&lt;script&gt;&amp;&quot;'));
 });
+
+test('cancellation email never claims a payment or proof was reviewed',()=>{
+ const email=paymentEmail(order,'CANCELLED','https://vnovatcg.com');
+ assert.match(email.subject,/reserva fue cancelada/);
+ assert.match(email.html,/Los números quedaron disponibles/);
+ assert.match(email.html,/&lt;script&gt;/);
+ assert.doesNotMatch(email.html,/Revisamos tu comprobante|Tu pago no fue aprobado/);
+});

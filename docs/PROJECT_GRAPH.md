@@ -197,3 +197,9 @@ Correo inicial unificado: RESERVED explica reserva, carga pendiente y revision c
 - GET `/api/site-settings` sin caché; PUT `/api/admin/site-settings` requiere sesión administrativa y booleano válido.
 - App consulta el estado cada 10 segundos y cubre todas las rutas públicas con una pantalla morada sin navegación. `/estudio-vnova` permanece accesible.
 - El servidor rechaza nuevas propuestas y reservas públicas mientras esté activo. No cambia rifas, ventas ni vencimientos existentes.
+
+### Cancelación sin comprobante y carga inicial (2026-10-28)
+- POST admin `/reservations/:id/cancel` cancela solo ACTIVE no vencidas y sin comprobantes, con motivo obligatorio. Transacción serializable libera números y encola CANCELLED; rechaza pagos en revisión/confirmados y cambios concurrentes. Cancelación no equivale a rechazo de un comprobante.
+- AdminReservationReview ofrece cancelación antes de recibir comprobante y mantiene rechazo/confirmación para PENDING_REVIEW. Refresca también cada 20 s visibles si falta SSE.
+- Componentes administrativos, pedidos y cartas se cargan por módulos. Cartas de portada se montan al acercarse al viewport; fotos secundarias se precargan con prioridad baja. Catálogo administrativo conserva cambios al alternar secciones.
+- Pruebas aisladas: cancelación duplicada, comprobante concurrente, protección de confirmados/pendientes, vencimiento, autorización, liberación y correo único. Nunca se ejecutan sobre datos reales.

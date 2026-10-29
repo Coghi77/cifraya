@@ -5,7 +5,7 @@ import './styles.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <React.Suspense fallback={<main className="coming-soon-screen"><p>Cargando…</p></main>}><App /></React.Suspense>
   </React.StrictMode>,
 );
 

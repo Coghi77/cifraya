@@ -35,7 +35,7 @@ app.setErrorHandler((error, request, reply) => {
 const publicCache = createPublicCache();
 app.get('/api/site-settings', async (_request, reply) => {
   reply.header('Cache-Control', 'no-store');
-  const settings = await db.siteSettings.findUnique({where:{id:'main'}});
+  const settings = await publicCache.get('site-settings', () => db.siteSettings.findUnique({where:{id:'main'}}));
   return {comingSoon:settings?.comingSoon ?? false};
 });
 app.put('/api/admin/site-settings', async (request, reply) => {
@@ -840,6 +840,25 @@ app.post<{ Params: { id: string } }>('/api/admin/reservations/:id/confirm', asyn
   } catch (error) {
     if (error instanceof Error && error.message === 'RESERVATION_NOT_ACTIVE') return reply.code(409).send({ error: 'La reserva debe tener un comprobante pendiente de revisión.' });
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2034') return reply.code(409).send({ error: 'La reserva cambió mientras se confirmaba. Intentá de nuevo.' });
+    throw error;
+  }
+});
+
+app.post<{ Params: { id: string } }>('/api/admin/reservations/:id/cancel', async (request, reply) => {
+  if (!adminAuthorized(request.headers.authorization)) return reply.code(401).send({error:'Acceso no autorizado'});
+  const parsed = z.object({reason:z.string().trim().min(3).max(500)}).safeParse(request.body);
+  if (!parsed.success) return reply.code(400).send({error:'Indicá el motivo de la cancelación.'});
+  await expireReservations();
+  try {
+    await db.$transaction(async tx => {
+      const changed = await tx.reservation.updateMany({where:{id:request.params.id,status:'ACTIVE',expiresAt:{gt:new Date()},proofs:{none:{}}},data:{status:'CANCELLED',reviewNote:parsed.data.reason}});
+      if (changed.count !== 1) throw new Error('RESERVATION_CHANGED');
+      await tx.entryNumber.updateMany({where:{reservationId:request.params.id,status:'RESERVED'},data:{status:'AVAILABLE',reservationId:null}});
+      await enqueuePaymentEmail(tx,request.params.id,'CANCELLED');
+    }, {isolationLevel:Prisma.TransactionIsolationLevel.Serializable});
+    broadcast('reservations'); emailWorker.kick(); return {ok:true};
+  } catch (error) {
+    if ((error instanceof Error && error.message === 'RESERVATION_CHANGED') || (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2034')) return reply.code(409).send({error:'La reserva cambió o venció. Actualizá antes de continuar.'});
     throw error;
   }
 });

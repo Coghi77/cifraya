@@ -1,12 +1,13 @@
 import type { Prisma, PrismaClient } from '@prisma/client';
 
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
-export function paymentEmail(order: { paymentMethod?:string; stickerCount?: number | null; numbersPerSticker?: number | null; orderNumber: number; buyerName: string; lookupToken: string; selectedValues: number[]; totalCrc: number; reviewNote: string | null; campaign: { title: string; numberWidth: number } }, kind: 'CONFIRMED' | 'REJECTED' | 'RESERVED' | 'PENDING_REVIEW', origin: string, diagnostic = false) {
+export function paymentEmail(order: { paymentMethod?:string; stickerCount?: number | null; numbersPerSticker?: number | null; orderNumber: number; buyerName: string; lookupToken: string; selectedValues: number[]; totalCrc: number; reviewNote: string | null; campaign: { title: string; numberWidth: number } }, kind: 'CONFIRMED' | 'REJECTED' | 'RESERVED' | 'PENDING_REVIEW' | 'CANCELLED', origin: string, diagnostic = false) {
   const url = new URL(origin);
   if (url.protocol !== 'https:' || url.username || url.password) throw new Error('INVALID_PUBLIC_APP_URL');
   const link = diagnostic ? url.origin : `${url.origin}/pedido#${encodeURIComponent(order.lookupToken)}`;
   const reference = diagnostic ? 'PRUEBA-SIN-COMPRA' : `CY-${String(order.orderNumber).padStart(6, '0')}`;
   const copy = {
+    CANCELLED: { heading: 'Tu reserva fue cancelada', title: 'Reserva cancelada', label: 'RESERVA CANCELADA', description: 'Administración canceló tu reserva sin comprobante. Los números quedaron disponibles nuevamente. Podés consultar el motivo en este correo y en tu pedido.' },
     CONFIRMED: { heading: 'Tu pago fue aprobado', title: '¡Tus números ya son tuyos!', label: 'COMPRA CONFIRMADA', description: 'Verificamos tu pago. Tu participación está confirmada y estos boletos quedaron registrados a tu nombre.' },
     REJECTED: { heading: 'Tu pago fue rechazado', title: 'Tu pago no fue aprobado', label: 'REVISIÓN DEL PAGO', description: 'Revisamos tu comprobante y no pudimos confirmar el pago. Encontrá el motivo y los detalles a continuación.' },
     RESERVED: { heading: 'Tu reserva y el estado de tu pago', title: 'Recibimos tu pedido', label: 'BOLETOS APARTADOS · PAGO NO CONFIRMADO', description: 'Tus boletos están apartados. Si ya adjuntaste el comprobante, tu pago está pendiente de revisión. Si todavía no lo adjuntaste, ingresá al enlace de tu pedido y subilo antes de que venza la reserva de 30 minutos. Consultá allí el estado actualizado. Te avisaremos por correo cuando aprobemos o rechacemos el pago.' },
@@ -15,9 +16,9 @@ export function paymentEmail(order: { paymentMethod?:string; stickerCount?: numb
   const heading = copy.heading;
   const numbers = order.selectedValues.map(n => String(n).padStart(order.campaign.numberWidth, '0')).join(', ');
   const stickerDetail = order.stickerCount ? `${order.stickerCount} boletos · ${order.numbersPerSticker} números por boleto` : '';
-  const lines = [...(order.paymentMethod==='CASH'?['Método de pago: efectivo recibido.']:[]),stickerDetail,heading, `Hola, ${order.buyerName}.`, `Pedido: ${reference}`, `Rifa: ${order.campaign.title}`, `Total: ₡${order.totalCrc.toLocaleString('es-CR')}`, `Números: ${numbers}`, kind === 'REJECTED' ? `Motivo: ${order.reviewNote ?? ''}` : copy.description, ...(diagnostic ? [] : [`Código de consulta: ${order.lookupToken}`, `Para buscar tus boletos, copiá este código completo en ${url.origin}/buscar-boletos. Guardalo: es privado.`]), `Consultá tu pedido: ${link}`, 'Este enlace es privado. No lo compartás.'];
+  const lines = [...(order.paymentMethod==='CASH'?['Método de pago: efectivo recibido.']:[]),stickerDetail,heading, `Hola, ${order.buyerName}.`, `Pedido: ${reference}`, `Rifa: ${order.campaign.title}`, `Total: ₡${order.totalCrc.toLocaleString('es-CR')}`, `Números: ${numbers}`, (kind === 'REJECTED' || kind === 'CANCELLED') ? `Motivo: ${order.reviewNote ?? ''}` : copy.description, ...(diagnostic ? [] : [`Código de consulta: ${order.lookupToken}`, `Para buscar tus boletos, copiá este código completo en ${url.origin}/buscar-boletos. Guardalo: es privado.`]), `Consultá tu pedido: ${link}`, 'Este enlace es privado. No lo compartás.'];
   const approved = kind === 'CONFIRMED';
-  const accent = kind === 'REJECTED' ? '#b32240' : '#4654dc';
+  const accent = (kind === 'REJECTED' || kind === 'CANCELLED') ? '#b32240' : '#4654dc';
   const tickets = order.selectedValues.map(n => '<span style="display:inline-block;margin:4px;padding:12px 16px;border:1px dashed #9e9eae;border-radius:5px;background:#ffffff;font-family:Courier New,monospace;font-size:18px;font-weight:700;letter-spacing:2px;color:#202020">' + String(n).padStart(order.campaign.numberWidth, '0') + '</span>').join('');
   const html = `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escapeHtml(heading)}</title></head>
 <body style="margin:0;padding:0;background:#f3f3f7;color:#202020;font-family:Arial,Helvetica,sans-serif">
@@ -33,7 +34,7 @@ ${diagnostic ? '<p style="margin:0 0 22px;padding:12px;border:1px solid #c8caff;
 <p style="margin:0 0 8px;font-size:15px;line-height:1.7;color:#50505c">Hola, ${escapeHtml(order.buyerName)}.</p>
 <p style="margin:0 0 24px;font-size:15px;line-height:1.7;color:#50505c">${copy.description}</p>
 ${order.paymentMethod==='CASH'?'<p style="color:#202020;font-size:15px"><strong>Método de pago:</strong> efectivo recibido.</p>':''}
-${kind === 'REJECTED' ? '<div style="padding:18px;background:#fff2f2;border-left:3px solid #ff8fa9;border-radius:4px;margin:0 0 24px"><p style="margin:0 0 8px;font-size:12px;font-weight:700;color:#a32240">MOTIVO DEL RECHAZO</p><p style="margin:0;font-size:15px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;color:#202020">' + escapeHtml(order.reviewNote ?? '') + '</p></div>' : ''}
+${(kind === 'REJECTED' || kind === 'CANCELLED') ? '<div style="padding:18px;background:#fff2f2;border-left:3px solid #ff8fa9;border-radius:4px;margin:0 0 24px"><p style="margin:0 0 8px;font-size:12px;font-weight:700;color:#a32240">MOTIVO</p><p style="margin:0;font-size:15px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;color:#202020">' + escapeHtml(order.reviewNote ?? '') + '</p></div>' : ''}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #dddde7;border-bottom:1px solid #dddde7">
 <tr><td style="padding:16px 0 6px;font-size:12px;color:#666674">PEDIDO</td></tr><tr><td style="padding:0 0 18px;font-size:17px;font-weight:700;overflow-wrap:anywhere">${escapeHtml(reference)}</td></tr>
 <tr><td style="padding:0 0 6px;font-size:12px;color:#666674">RIFA</td></tr><tr><td style="padding:0 0 18px;font-size:17px;font-weight:700;overflow-wrap:anywhere">${escapeHtml(order.campaign.title)}</td></tr>
@@ -50,7 +51,7 @@ ${diagnostic ? '' : `<div style="margin:0 0 24px;padding:18px;border:1px solid #
 
 }
 
-export async function enqueuePaymentEmail(tx: Prisma.TransactionClient, reservationId: string, kind: 'CONFIRMED' | 'REJECTED' | 'RESERVED' | 'PENDING_REVIEW') {
+export async function enqueuePaymentEmail(tx: Prisma.TransactionClient, reservationId: string, kind: 'CONFIRMED' | 'REJECTED' | 'RESERVED' | 'PENDING_REVIEW' | 'CANCELLED') {
   const order = await tx.reservation.findUniqueOrThrow({ where: { id: reservationId }, include: { campaign: { select: { title: true, numberWidth: true, isTest: true } } } });
   if (order.campaign.isTest) return;
   await tx.emailNotification.create({ data: { reservationId, kind, recipient: order.buyerEmail, ...paymentEmail(order, kind, process.env.PUBLIC_APP_URL || 'https://vnovatcg.com') } });

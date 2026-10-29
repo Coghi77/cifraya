@@ -49,6 +49,34 @@ try {
  const old=await reserve(await proposal([43]));await db.reservation.update({where:{lookupToken:old.data.token},data:{expiresAt:new Date(Date.now()-1)}});
  assert.equal((await request('/api/reservations/'+old.data.token+'/proofs',proof)).status,409);
  await wait(5100);await request('/api/campaigns/local-audit/numbers');assert.equal((await proposal([43])).status,200);
+ // Manual cancellation without proof: authorization, atomic release and closed-state protection.
+ const cancelOrder=await reserve(await proposal([44]));assert.equal(cancelOrder.status,201);
+ const cancelId=(await db.reservation.findUnique({where:{lookupToken:cancelOrder.data.token}})).id;
+ const cancelPath='/api/admin/reservations/'+cancelId+'/cancel';
+ assert.equal((await request(cancelPath,{reason:'Sin comprobante'})).status,401);
+ assert.equal((await request(cancelPath,{reason:''},'',login.data.token)).status,400);
+ const cancelResults=await Promise.all([request(cancelPath,{reason:'Solicitud del comprador'},'',login.data.token),request(cancelPath,{reason:'Solicitud del comprador'},'',login.data.token)]);
+ assert.equal(cancelResults.filter(r=>r.status===200).length,1);
+ assert.ok(cancelResults.every(r=>[200,409].includes(r.status)));
+ assert.equal((await db.reservation.findUnique({where:{id:cancelId}})).status,'CANCELLED');
+ assert.equal(await db.entryNumber.count({where:{reservationId:cancelId}}),0);
+ assert.equal(await db.emailNotification.count({where:{reservationId:cancelId,kind:'CANCELLED'}}),1);
+ assert.equal((await request('/api/reservations/'+cancelOrder.data.token+'/proofs',proof)).status,409);
+ assert.equal((await request('/api/admin/reservations/'+reservation.id+'/cancel',{reason:'No permitido'},'',login.data.token)).status,409);
+ const pendingOrder=await reserve(await proposal([45]));assert.equal(pendingOrder.status,201);
+ const pendingId=(await db.reservation.findUnique({where:{lookupToken:pendingOrder.data.token}})).id;
+ assert.equal((await request('/api/reservations/'+pendingOrder.data.token+'/proofs',proof)).status,201);
+ assert.equal((await request('/api/admin/reservations/'+pendingId+'/cancel',{reason:'No permitido'},'',login.data.token)).status,409);
+ assert.equal((await request('/api/admin/reservations/'+pendingId+'/reject',{reason:'Comprobante incorrecto'},'',login.data.token)).status,200);
+ assert.equal(await db.entryNumber.count({where:{reservationId:pendingId}}),0);
+ const raceOrder=await reserve(await proposal([46]));assert.equal(raceOrder.status,201);
+ const raceId=(await db.reservation.findUnique({where:{lookupToken:raceOrder.data.token}})).id;
+ const raced=await Promise.all([request('/api/reservations/'+raceOrder.data.token+'/proofs',proof),request('/api/admin/reservations/'+raceId+'/cancel',{reason:'Solicitud del comprador'},'',login.data.token)]);
+ const finalRace=await db.reservation.findUnique({where:{id:raceId},include:{proofs:true,numbers:true}});
+ assert.ok(['CANCELLED','PENDING_REVIEW'].includes(finalRace.status));
+ if(finalRace.status==='CANCELLED'){assert.equal(finalRace.proofs.length,0);assert.equal(finalRace.numbers.length,0);}
+ else {assert.equal(finalRace.proofs.length,1);assert.equal(finalRace.numbers.length,1);assert.equal(raced[1].status,409);}
+ console.log('PASS cancellation: no proof, duplicate race, unauthorized, invalid reason, late proof, confirmed protection, pending protection, rejection release');
  const pairs=await Promise.all([proposal([10,11]),proposal([10,12])]);assert.equal(pairs.filter(p=>p.status===200).length,1);assert.ok(pairs.every(p=>[200,409].includes(p.status)));
  assert.equal((await reserve(pairs.find(p=>p.status===200))).status,201);
  const grouped=await db.entryNumber.count({where:{campaignId:campaign.id,value:{in:[10,11,12]},status:'RESERVED'}});assert.equal(grouped,2);

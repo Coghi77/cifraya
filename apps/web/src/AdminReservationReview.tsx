@@ -41,6 +41,7 @@ export default function AdminReservationReview({ id, token, onClose, onReviewed 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [reason, setReason] = useState('');
+  const [refreshVersion,setRefreshVersion] = useState(0);
   const [confirmingPayment, setConfirmingPayment] = useState(false);
   useEffect(() => {
     let active = true;
@@ -54,18 +55,19 @@ export default function AdminReservationReview({ id, token, onClose, onReviewed 
       .catch(cause => { if (active) setError((cause as Error).message); }).finally(() => { loading = false; });
     };
     refresh();
+    const timer=window.setInterval(refresh,20000);
     window.addEventListener('cifraya:update', refresh);
-    return () => { active = false; window.removeEventListener('cifraya:update', refresh); };
-  }, [id, token]);
+    return () => { active = false; window.clearInterval(timer); window.removeEventListener('cifraya:update', refresh); };
+  }, [id, token, refreshVersion]);
 
-  async function review(action: 'confirm' | 'reject') {
+  async function review(action: 'confirm' | 'reject' | 'cancel') {
     if (!detail) return;
-    if (action === 'reject' && reason.trim().length < 3) { setError('Escribí el motivo del rechazo.'); return; }
+    if (action !== 'confirm' && reason.trim().length < 3) { setError('Escribí el motivo del rechazo.'); return; }
     setBusy(true); setError('');
     try {
-      const response = await fetch(`/api/admin/reservations/${id}/${action}`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: action === 'reject' ? JSON.stringify({ reason: reason.trim() }) : '{}' });
+      const response = await fetch(`/api/admin/reservations/${id}/${action}`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: action !== 'confirm' ? JSON.stringify({ reason: reason.trim() }) : '{}' });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'No se pudo revisar el pago.');
+      if (!response.ok) { if(response.status===409)setRefreshVersion(value=>value+1); throw new Error(data.error || 'No se pudo revisar el pago.'); }
       onReviewed(); onClose();
     } catch (cause) { setError((cause as Error).message); }
     finally { setBusy(false); }
@@ -78,6 +80,7 @@ export default function AdminReservationReview({ id, token, onClose, onReviewed 
     <div className="review-numbers">{detail.selectedValues.map(value => <span key={value}>{String(value).padStart(detail.campaign.numberWidth, '0')}</span>)}</div>
     <p className="review-date">Reservado: {new Date(detail.createdAt).toLocaleString('es-CR')}{detail.proofSubmittedAt && ` · Comprobante: ${new Date(detail.proofSubmittedAt).toLocaleString('es-CR')}`}</p>
     <p>Método de pago: <strong>{detail.paymentMethod==='CASH'?'Efectivo recibido':'SINPE Móvil'}</strong></p><div className="review-proofs"><h3>{detail.paymentMethod==='CASH'?'Pago presencial':'Comprobantes SINPE Móvil'}</h3>{detail.proofs.length ? <div>{detail.proofs.map(proof => <ProofImage key={proof.id} id={proof.id} token={token}/>)}</div> : <p>{detail.paymentMethod==='CASH'?'Pago en efectivo registrado por administración. No requiere imagen de comprobante.':'Aún no se adjuntó un comprobante.'}</p>}</div>
+    {detail.status === 'ACTIVE' && <div className="review-actions"><p>Sin comprobante, los números se liberan al vencer: <strong>{new Date(detail.expiresAt).toLocaleString('es-CR')}</strong>. Podés cancelar antes para liberarlos ahora.</p><label>Motivo de cancelación<textarea value={reason} onChange={event => setReason(event.target.value)} maxLength={500} placeholder="Ej. El comprador solicitó cancelar la reserva" /></label><button type="button" className="review-reject" disabled={busy || reason.trim().length < 3} onClick={() => void review('cancel')}>{busy ? 'Cancelando…' : 'Cancelar reserva y liberar números'}</button></div>}
     {detail.status === 'PENDING_REVIEW' && <div className="review-actions">{confirmingPayment ? <div className="review-confirmation" role="group" aria-label="Confirmar pago"><strong>¿Confirmás el pago de {money(detail.totalCrc)}?</strong><p>Comprobá primero que el dinero ingresó a tu cuenta. Al confirmar, estos {detail.selectedValues.length} boletos pasarán a vendidos.</p><div><button type="button" className="review-reject" disabled={busy} onClick={() => setConfirmingPayment(false)}>Cancelar</button><button type="button" className="review-approve" disabled={busy} onClick={() => void review('confirm')}>{busy ? 'Confirmando...' : 'Sí, verifiqué el pago'}</button></div></div> : <button type="button" className="review-approve" disabled={busy || detail.proofs.length === 0} onClick={() => setConfirmingPayment(true)}>Verifiqué el pago · confirmar boletos</button>}<label>Motivo si rechazás el pago<textarea value={reason} onChange={event => setReason(event.target.value)} maxLength={500} placeholder="Ej. Comprobante no corresponde al monto recibido" /></label><button type="button" className="review-reject" disabled={busy || reason.trim().length < 3} onClick={() => void review('reject')}>Rechazar comprobante</button></div>}
   </> : !error && <p>Cargando reserva...</p>}</section></div>;
 }

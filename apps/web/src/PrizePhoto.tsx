@@ -27,8 +27,9 @@ export default function PrizePhoto({photos, src, title}: {photos:Photo[]; src:st
   const move=(direction:number)=>choose(images[(index+direction+images.length)%images.length].url,direction);
   const photoUrls=JSON.stringify(images.map(photo=>photo.url));
   useEffect(()=>{
-    (JSON.parse(photoUrls) as string[]).forEach(url=>{const image=new Image();image.sizes='(max-width: 600px) 90vw, 600px';image.srcset=photoSet(url)||'';image.src=displayPhoto(url);});
-  },[photoUrls]);
+    const timer=window.setTimeout(()=>(JSON.parse(photoUrls) as string[]).filter(url=>url!==src).forEach(url=>{const image=new Image();image.sizes='(max-width: 600px) 90vw, 600px';image.srcset=photoSet(url)||'';image.fetchPriority='low';image.src=displayPhoto(url);}),1200);
+    return()=>window.clearTimeout(timer);
+  },[photoUrls,src]);
   useEffect(()=>{
     if(!slide)return;
     const timer=window.setTimeout(()=>{setSlide(null);sliding.current=false;},550);
